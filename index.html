@@ -1,839 +1,815 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.3px Courier; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.3px Courier; -webkit-text-stroke: #000000; min-height: 16.0px}
-    span.s1 {font-kerning: none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Türkçe Okunabilirlik Analizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F5EE;
+    --surface: #FFFFFF;
+    --ink: #1A1208;
+    --ink-2: #4A3F2F;
+    --ink-3: #8A7B68;
+    --accent: #8B4513;
+    --accent-light: #D4956A;
+    --accent-bg: #FFF3E8;
+    --border: #D8CFC4;
+    --green: #2D6A4F;
+    --green-bg: #EDF7F1;
+    --amber: #92600A;
+    --amber-bg: #FFF8E6;
+    --red: #8B2020;
+    --red-bg: #FEF0F0;
+    --blue: #1A4A7A;
+    --blue-bg: #EEF4FB;
+    --purple: #4A1F7A;
+    --purple-bg: #F3EEF9;
+    --shadow: 0 1px 3px rgba(26,18,8,0.08), 0 4px 16px rgba(26,18,8,0.06);
+    --shadow-sm: 0 1px 2px rgba(26,18,8,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.02) 40px,
+      rgba(255,255,255,0.02) 41px
+    );
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  header h1 span {
+    color: var(--accent-light);
+  }
+  header p {
+    font-size: 0.95rem;
+    color: #B5A89A;
+    margin-top: 0.5rem;
+    position: relative;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── PANELS ── */
+  .panel {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .panel-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .panel-icon {
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-size: 12px;
+  }
+
+  .panel-body { padding: 1.25rem; }
+
+  /* ── TEXTAREA ── */
+  textarea {
+    width: 100%;
+    min-height: 220px;
+    resize: vertical;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  textarea::placeholder { color: var(--ink-3); font-style: italic; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-family: 'Source Serif 4', serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tool-btn:hover { background: var(--accent-bg); border-color: var(--accent-light); color: var(--accent); }
+  .tool-btn:active { transform: scale(0.97); }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+  }
+  .stat-card {
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-size: 1.4rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .stat-val.small { font-size: 1rem; }
+
+  /* ── FORMULA CARDS ── */
+  .formula-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .formula-card:hover { box-shadow: var(--shadow); }
+
+  .formula-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .formula-head-left { display: flex; align-items: center; gap: 10px; }
+  .formula-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+  }
+  .formula-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .formula-year { font-size: 0.75rem; color: var(--ink-3); font-style: italic; }
+
+  .formula-score-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .formula-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .formula-level {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .formula-detail {
+    border-top: 1px solid var(--border);
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.015);
+    display: none;
+  }
+  .formula-detail.open { display: block; }
+
+  .formula-eq {
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    font-style: italic;
+    margin-bottom: 8px;
+    font-family: Georgia, serif;
+  }
+  .formula-vars {
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+  .levels-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    margin-top: 8px;
+  }
+  .levels-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); }
+  .levels-table td:first-child { font-weight: 600; }
+
+  /* Color themes */
+  .theme-atesman   { --fc: #8B4513; --fbg: #FFF3E8; --fborder: #D4956A; }
+  .theme-cetinkaya { --fc: #1A4A7A; --fbg: #EEF4FB; --fborder: #7AADDA; }
+  .theme-bezirci   { --fc: #2D6A4F; --fbg: #EDF7F1; --fborder: #6EC49A; }
+  .theme-sonmez    { --fc: #4A1F7A; --fbg: #F3EEF9; --fborder: #A07ADA; }
+
+  .formula-card { border-color: var(--fborder, var(--border)); }
+  .formula-head { background: var(--fbg, white); }
+  .formula-badge { background: var(--fcc, white); color: var(--fc); border: 1.5px solid var(--fc); }
+  .formula-score { color: var(--fc); }
+
+  /* ── SÖNMEZ INPUT ── */
+  .sonmez-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: var(--purple-bg);
+    border-top: 1px dashed #C4A8E8;
+  }
+  .sonmez-input-row label { font-size: 0.78rem; color: var(--purple); flex: 1; }
+  .sonmez-input-row input[type=number] {
+    width: 70px;
+    padding: 5px 8px;
+    border: 1px solid #C4A8E8;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-family: 'Source Serif 4', serif;
+    background: white;
+    color: var(--ink);
+    text-align: center;
+  }
+  .sonmez-input-row input:focus { outline: none; border-color: var(--purple); }
+
+  /* ── FREQUENCY TABLE ── */
+  .freq-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 0.5rem;
+  }
+  .freq-table th {
+    text-align: left;
+    color: var(--ink-3);
+    font-weight: 400;
+    padding: 5px 8px;
+    border-bottom: 1.5px solid var(--border);
+    font-style: italic;
+  }
+  .freq-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .freq-bar-bg {
+    background: var(--bg);
+    border-radius: 3px;
+    height: 6px;
+    width: 80px;
+    overflow: hidden;
+  }
+  .freq-bar { height: 6px; border-radius: 3px; background: var(--accent); }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 2rem 1rem; color: var(--ink-3); font-style: italic; font-size: 0.9rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── ABOUT TOGGLE ── */
+  .about-toggle {
+    font-size: 0.8rem;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    border: none;
+    background: none;
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    padding: 0;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .about-box {
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    line-height: 1.7;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    display: none;
+    border: 1px solid var(--border);
+  }
+  .about-box.open { display: block; }
+
+  .chevron {
+    font-size: 10px;
+    color: var(--ink-3);
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .notice {
+    font-size: 0.78rem;
+    background: var(--amber-bg);
+    border: 1px solid #E8C875;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--amber);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="tr"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;title&gt;Türkçe Okunabilirlik Analizi&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1">&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</span></p>
-<p class="p1"><span class="s1">&lt;link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&amp;display=swap" rel="stylesheet"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>:root {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--bg: #F8F5EE;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--surface: #FFFFFF;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--ink: #1A1208;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--ink-2: #4A3F2F;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--ink-3: #8A7B68;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--accent: #8B4513;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--accent-light: #D4956A;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--accent-bg: #FFF3E8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--border: #D8CFC4;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--green: #2D6A4F;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--green-bg: #EDF7F1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--amber: #92600A;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--amber-bg: #FFF8E6;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--red: #8B2020;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--red-bg: #FEF0F0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--blue: #1A4A7A;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--blue-bg: #EEF4FB;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--purple: #4A1F7A;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--purple-bg: #F3EEF9;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--shadow: 0 1px 3px rgba(26,18,8,0.08), 0 4px 16px rgba(26,18,8,0.06);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>--shadow-sm: 0 1px 2px rgba(26,18,8,0.06);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; margin: 0; padding: 0; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Source Serif 4', Georgia, serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1.7;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── HEADER ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 2.5rem 2rem 2rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header::before {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>content: '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>inset: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: repeating-linear-gradient(</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>-45deg,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transparent,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transparent 40px,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>rgba(255,255,255,0.02) 40px,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>rgba(255,255,255,0.02) 41px</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header h1 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: clamp(1.8rem, 4vw, 2.8rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>letter-spacing: -0.02em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header h1 span {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--accent-light);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>header p {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.95rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: #B5A89A;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 0.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 300;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── LAYOUT ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.container {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>max-width: 1100px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin: 0 auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 2rem 1.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>grid-template-columns: 1fr 360px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 1.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: start;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>@media (max-width: 800px) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.grid { grid-template-columns: 1fr; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── PANELS ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.panel {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--surface);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>box-shadow: var(--shadow);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.panel-head {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 1rem 1.25rem 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-bottom: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 0.6rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.panel-head h2 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.panel-icon {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 22px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>height: 22px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--accent);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>flex-shrink: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.panel-body { padding: 1.25rem; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── TEXTAREA ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>textarea {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>min-height: 220px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>resize: vertical;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1.5px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Source Serif 4', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1.7;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>transition: border-color 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>textarea:focus { outline: none; border-color: var(--accent); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>textarea::placeholder { color: var(--ink-3); font-style: italic; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── TOOLBAR ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.toolbar {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>flex-wrap: wrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.tool-btn {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 6px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--surface);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Source Serif 4', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>transition: all 0.15s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.tool-btn:hover { background: var(--accent-bg); border-color: var(--accent-light); color: var(--accent); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.tool-btn:active { transform: scale(0.97); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── STATS GRID ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.stats-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>grid-template-columns: repeat(3, 1fr);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.stat-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 10px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.stat-label {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 11px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>letter-spacing: 0.06em;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-bottom: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.stat-val {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 1.4rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.stat-val.small { font-size: 1rem; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── FORMULA CARDS ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-bottom: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>transition: box-shadow 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-card:hover { box-shadow: var(--shadow); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-head {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>justify-content: space-between;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 10px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>user-select: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-head-left { display: flex; align-items: center; gap: 10px; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-badge {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 28px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>height: 28px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>flex-shrink: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-name {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.88rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-year { font-size: 0.75rem; color: var(--ink-3); font-style: italic; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-score-block {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: flex-end;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 2px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-score {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Playfair Display', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 1.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 700;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-level {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.72rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 2px 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>white-space: nowrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-detail {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-top: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 12px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: rgba(0,0,0,0.015);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-detail.open { display: block; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-eq {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.78rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-bottom: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: Georgia, serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-vars {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1.8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.levels-table {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-collapse: collapse;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.levels-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.levels-table td:first-child { font-weight: 600; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* Color themes */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.theme-atesman <span class="Apple-converted-space">  </span>{ --fc: #8B4513; --fbg: #FFF3E8; --fborder: #D4956A; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.theme-cetinkaya { --fc: #1A4A7A; --fbg: #EEF4FB; --fborder: #7AADDA; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.theme-bezirci <span class="Apple-converted-space">  </span>{ --fc: #2D6A4F; --fbg: #EDF7F1; --fborder: #6EC49A; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.theme-sonmez<span class="Apple-converted-space">    </span>{ --fc: #4A1F7A; --fbg: #F3EEF9; --fborder: #A07ADA; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-card { border-color: var(--fborder, var(--border)); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-head { background: var(--fbg, white); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-badge { background: var(--fcc, white); color: var(--fc); border: 1.5px solid var(--fc); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.formula-score { color: var(--fc); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── SÖNMEZ INPUT ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.sonmez-input-row {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 10px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--purple-bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-top: 1px dashed #C4A8E8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.sonmez-input-row label { font-size: 0.78rem; color: var(--purple); flex: 1; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.sonmez-input-row input[type=number] {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 70px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 5px 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid #C4A8E8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.85rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Source Serif 4', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.sonmez-input-row input:focus { outline: none; border-color: var(--purple); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── FREQUENCY TABLE ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.freq-table {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-collapse: collapse;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.82rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 0.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.freq-table th {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-align: left;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-weight: 400;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 5px 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-bottom: 1.5px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.freq-table td {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 5px 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-bottom: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>vertical-align: middle;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.freq-bar-bg {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 3px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>height: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>width: 80px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.freq-bar { height: 6px; border-radius: 3px; background: var(--accent); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── EMPTY STATE ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.empty { text-align: center; padding: 2rem 1rem; color: var(--ink-3); font-style: italic; font-size: 0.9rem; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── FOOTER ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>footer {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 2rem 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-top: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>footer a { color: var(--accent); text-decoration: none; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>/* ── ABOUT TOGGLE ── */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.about-toggle {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--accent);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>text-decoration: underline;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-family: 'Source Serif 4', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: inline-block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.about-box {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.82rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1.7;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--accent-bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 12px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-top: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.about-box.open { display: block; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.chevron {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--ink-3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>transition: transform 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>display: inline-block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.chevron.open { transform: rotate(180deg); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>.notice {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>font-size: 0.78rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>background: var(--amber-bg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border: 1px solid #E8C875;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>border-radius: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>padding: 8px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>color: var(--amber);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>margin-bottom: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>line-height: 1.5;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1">&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;header&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Türkçe &lt;span&gt;Okunabilirlik&lt;/span&gt; Analizi&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;p&gt;Ateşman · Çetinkaya-Uzun · Bezirci-Yılmaz · Sönmez formülleriyle anlık hesaplama&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/header&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="grid"&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- LEFT: Input + Stats --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="panel"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-head"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="panel-icon"&gt;✎&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Metin Girişi&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-body"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;textarea id="txt" placeholder="Analiz etmek istediğiniz metni buraya yapıştırın veya yazın…"&gt;&lt;/textarea&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="toolbar"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="tool-btn" onclick="htmlSil()"&gt;HTML Etiketlerini Sil&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="tool-btn" onclick="buyukHarf()"&gt;BÜYÜK HARF&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="tool-btn" onclick="kucukHarf()"&gt;küçük harf&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="tool-btn" onclick="temizle()"&gt;Temizle&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- Stats --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="panel" style="margin-top:1rem;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-head"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="panel-icon"&gt;≡&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Metin İstatistikleri&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-body"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="stats-grid"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Karakter&lt;/span&gt;&lt;span class="stat-val" id="s-kar"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Sözcük&lt;/span&gt;&lt;span class="stat-val" id="s-soz"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Cümle&lt;/span&gt;&lt;span class="stat-val" id="s-cum"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Paragraf&lt;/span&gt;&lt;span class="stat-val" id="s-par"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Ort. Hece/Sözcük&lt;/span&gt;&lt;span class="stat-val small" id="s-x1"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card"&gt;&lt;span class="stat-label"&gt;Ort. Sözcük/Cümle&lt;/span&gt;&lt;span class="stat-val small" id="s-x2"&gt;—&lt;/span&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- Frequency --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="panel" style="margin-top:1rem;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-head"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="panel-icon"&gt;↑&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;h2&gt;Sözcük Frekansı&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="panel-body" id="freq-area"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="empty"&gt;Metin girin, en sık sözcükler burada görünecek.&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- RIGHT: Formulas --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="notice"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>Metin girerken sonuçlar anlık hesaplanır. Sönmez formülü için bilinmeyen sözcük sayısını manüel girmeniz gerekmektedir.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- ATEŞMAN --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="formula-card theme-atesman" style="--fcc:#FFF3E8;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-head" onclick="toggleDetail('det-atesman', 'ch-atesman')"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-head-left"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-badge"&gt;A&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-name"&gt;Ateşman Formülü&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-year"&gt;Ateşman, 1997&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:center;gap:8px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-score-block"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-score" id="sc-atesman"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-level" id="lv-atesman" style="background:var(--accent-bg);color:var(--accent);"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="chevron" id="ch-atesman"&gt;▼&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-detail" id="det-atesman"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-eq"&gt;OP = 198,825 – 40,175 × (Hece/Sözcük) – 2,610 × (Sözcük/Cümle)&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-vars"&gt;Flesch okunabilirlik formülünün Türkçeye uyarlamasıdır.&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;table class="levels-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;90–100&lt;/td&gt;&lt;td&gt;Çok Kolay&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;70–89&lt;/td&gt;&lt;td&gt;Kolay&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;50–69&lt;/td&gt;&lt;td&gt;Orta Güçlükte&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;30–49&lt;/td&gt;&lt;td&gt;Güç&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;1–29&lt;/td&gt;&lt;td&gt;Çok Güç&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/table&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button class="about-toggle" onclick="toggleAbout('ab-atesman','this')"&gt;Daha fazla bilgi ▾&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="about-box" id="ab-atesman"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>Ateşman (1997), Flesch Reading Ease formülünü Türkçe metinler üzerinde sınayarak katsayıları yeniden hesaplamış ve Türkçeye özgü bu formülü ortaya koymuştur. Puan 100'e yaklaştıkça metin daha kolay okunabilir hale gelir.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- ÇETİNKAYA-UZUN --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="formula-card theme-cetinkaya" style="--fcc:#EEF4FB;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-head" onclick="toggleDetail('det-cetinkaya', 'ch-cetinkaya')"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-head-left"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-badge"&gt;Ç&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-name"&gt;Çetinkaya-Uzun Formülü&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-year"&gt;Çetinkaya &amp;amp; Uzun, 2010&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:center;gap:8px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-score-block"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-score" id="sc-cetinkaya" style="color:var(--blue)"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-level" id="lv-cetinkaya" style="background:var(--blue-bg);color:var(--blue);"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="chevron" id="ch-cetinkaya"&gt;▼&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-detail" id="det-cetinkaya"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-eq"&gt;OP = 118,823 – 25,987 × OKU – 0,971 × OCU&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-vars"&gt;OKU: Ortalama kelime uzunluğu (hece/sözcük) &amp;nbsp;|&amp;nbsp; OCU: Ortalama cümle uzunluğu (sözcük/cümle)&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;table class="levels-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;≥ 65&lt;/td&gt;&lt;td&gt;Bağımsız Okuma (1–5. sınıf)&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;50–64&lt;/td&gt;&lt;td&gt;Kolay (6–7. sınıf)&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;35–49&lt;/td&gt;&lt;td&gt;Eğitsel Okuma (8–9. sınıf)&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;0–34&lt;/td&gt;&lt;td&gt;Engelli Okuma (10+ sınıf)&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/table&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button class="about-toggle" onclick="toggleAbout('ab-cetinkaya','this')"&gt;Daha fazla bilgi ▾&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="about-box" id="ab-cetinkaya"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>Çetinkaya (2010) doktora çalışmasında boşluk tamamlama testleri aracılığıyla değişkenlerin metin zorluğuna etkisini ölçerek Türkçeye özgü bilimsel bir formül geliştirmiştir. Formül, ortalama kelime ve cümle uzunluklarını baz alır.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- BEZİRCİ-YILMAZ --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="formula-card theme-bezirci" style="--fcc:#EDF7F1;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-head" onclick="toggleDetail('det-bezirci', 'ch-bezirci')"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-head-left"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-badge"&gt;B&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-name"&gt;Bezirci-Yılmaz Formülü&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-year"&gt;Bezirci &amp;amp; Yılmaz, 2010&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:center;gap:8px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-score-block"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-score" id="sc-bezirci" style="color:var(--green)"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-level" id="lv-bezirci" style="background:var(--green-bg);color:var(--green);"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="chevron" id="ch-bezirci"&gt;▼&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-detail" id="det-bezirci"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-eq"&gt;YOD = √[ OKS × (H3×0,84 + H4×1,5 + H5×3,5 + H6×26,25) ]&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-vars"&gt;OKS: ort. sözcük/cümle &amp;nbsp;|&amp;nbsp; H3–H6: cümle başına 3, 4, 5, 6+ heceli sözcük ort.&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="font-size:0.73rem;color:#8B4513;background:#FFF8F2;border-radius:5px;padding:6px 8px;margin-top:6px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;strong&gt;Not:&lt;/strong&gt; Bu formülde puan &lt;em&gt;düştükçe&lt;/em&gt; metin daha kolay okunur.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;table class="levels-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;1–8&lt;/td&gt;&lt;td&gt;İlköğretim Düzeyi&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;9–12&lt;/td&gt;&lt;td&gt;Ortaöğretim (Lise) Düzeyi&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;13–16&lt;/td&gt;&lt;td&gt;Lisans Düzeyi&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;≥ 17&lt;/td&gt;&lt;td&gt;Akademik Düzey&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/table&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button class="about-toggle" onclick="toggleAbout('ab-bezirci','this')"&gt;Daha fazla bilgi ▾&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="about-box" id="ab-bezirci"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>Bezirci ve Yılmaz (2010), Türkçedeki tek heceli sözcüklerin ortalama hece uzunluğunu yapay olarak düşürdüğünü saptayarak 3, 4, 5, 6 ve üzeri heceli sözcükleri ayrı ayrı ağırlıklandıran özgün bir formül geliştirmiştir. Yüksek değer → daha zor.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- SÖNMEZ --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="formula-card theme-sonmez" style="--fcc:#F3EEF9;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-head" onclick="toggleDetail('det-sonmez', 'ch-sonmez')"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-head-left"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-badge"&gt;S&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-name"&gt;Sönmez Formülü&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-year"&gt;Sönmez, 2003&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:center;gap:8px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="formula-score-block"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-score" id="sc-sonmez" style="color:var(--purple)"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>&lt;div class="formula-level" id="lv-sonmez" style="background:var(--purple-bg);color:var(--purple);"&gt;—&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span class="chevron" id="ch-sonmez"&gt;▼&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="sonmez-input-row" onclick="event.stopPropagation()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;label for="yabanciSay"&gt;Metindeki bilinmeyen/yabancı sözcük sayısı:&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;input type="number" id="yabanciSay" min="0" value="0" oninput="hesapla()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="formula-detail" id="det-sonmez"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-eq"&gt;Anlaşılırlık Oranı = ((N – Y) / N) × 100&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="formula-vars"&gt;N: Toplam sözcük sayısı &amp;nbsp;|&amp;nbsp; Y: Bilinmeyen/yabancı sözcük sayısı&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;table class="levels-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;≥ 75%&lt;/td&gt;&lt;td&gt;Bağımsız Okuma&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;50–74%&lt;/td&gt;&lt;td&gt;Eğitsel Okuma&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;tr&gt;&lt;td&gt;&amp;lt; 50%&lt;/td&gt;&lt;td&gt;Engelli Okuma&lt;/td&gt;&lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/table&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;button class="about-toggle" onclick="toggleAbout('ab-sonmez','this')"&gt;Daha fazla bilgi ▾&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="about-box" id="ab-sonmez"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>Sönmez (2003), bilinmeyen sözcük oranını temel alan bu formülü geliştirmiştir. Okuyucu için "yabancı" olan sözcüklerin belirlenmesi araştırmacı veya öğretmen tarafından yapılır. Bu nedenle otomasyonu kısmi olan sübjektif bir bileşen içerir.</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;!-- Kaynak --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:0.75rem;color:var(--ink-3);margin-top:0.5rem;line-height:1.6;font-style:italic;padding:0 4px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>Kaynak: Ateşman (1997), Çetinkaya (2010), Bezirci &amp;amp; Yılmaz (2010), Sönmez (2003)</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;footer&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>Türkçe Okunabilirlik Analizi &amp;nbsp;·&amp;nbsp;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>Formüller: Ateşman (1997), Çetinkaya-Uzun (2010), Bezirci-Yılmaz (2010), Sönmez (2003) &amp;nbsp;·&amp;nbsp;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;a href="https://github.com" target="_blank"&gt;GitHub&lt;/a&gt; &amp;nbsp;·&amp;nbsp;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;strong&gt;Geliştiren:&lt;/strong&gt;<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;a href="https://x.com/idrisdemirsoy" target="_blank" style="color:var(--accent); text-decoration:underline;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>İdris Demirsoy, PhD</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/footer&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;script&gt;</span></p>
-<p class="p1"><span class="s1">// ── TÜRKÇE YARDIMCI ──</span></p>
-<p class="p1"><span class="s1">const SESLI = /[aeıiouöüAEIİOUÖÜ]/g;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function heceHesapla(w) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const m = w.match(SESLI);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return m ? m.length : 1;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function sozcukBol(t) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇ']+/g) || [];</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function cumleBol(t) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Noktadan önce kısaltmalar gelirse de bölme</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return t.split(/(?&lt;=[.!?…])\s+/).map(s =&gt; s.trim()).filter(s =&gt; sozcukBol(s).length &gt; 0);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function paragrafSay(t) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return t.split(/\n+/).map(s =&gt; s.trim()).filter(s =&gt; s.length &gt; 0).length;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── HESAPLAMA ──</span></p>
-<p class="p1"><span class="s1">function hesapla() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const txt = document.getElementById('txt').value;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (!txt.trim()) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>['s-kar','s-soz','s-cum','s-par','s-x1','s-x2'].forEach(id =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById(id).textContent = '—';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>['sc-atesman','sc-cetinkaya','sc-bezirci','sc-sonmez'].forEach(id =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById(id).textContent = '—';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>['lv-atesman','lv-cetinkaya','lv-bezirci','lv-sonmez'].forEach(id =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById(id).textContent = '—';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('freq-area').innerHTML = '&lt;div class="empty"&gt;Metin girin, en sık sözcükler burada görünecek.&lt;/div&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const cumler<span class="Apple-converted-space">  </span>= cumleBol(txt);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const sozler<span class="Apple-converted-space">  </span>= sozcukBol(txt);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const karSay<span class="Apple-converted-space">  </span>= txt.length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const sozSay<span class="Apple-converted-space">  </span>= sozler.length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const cumSay<span class="Apple-converted-space">  </span>= Math.max(cumler.length, 1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const parSay<span class="Apple-converted-space">  </span>= paragrafSay(txt);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-kar').textContent = karSay.toLocaleString('tr-TR');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-soz').textContent = sozSay.toLocaleString('tr-TR');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-cum').textContent = cumSay.toLocaleString('tr-TR');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-par').textContent = parSay.toLocaleString('tr-TR');</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (sozSay === 0) return;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Hece sayıları</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let toplamHece = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sozler.forEach(w =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const h = heceHesapla(w);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>toplamHece += h;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if (h === 3) h3++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>else if (h === 4) h4++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>else if (h === 5) h5++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>else if (h &gt;= 6) h6++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const x1 = toplamHece / sozSay; <span class="Apple-converted-space">        </span>// ort. hece/sözcük</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const x2 = sozSay / cumSay; <span class="Apple-converted-space">            </span>// ort. sözcük/cümle</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const OKS = x2;<span class="Apple-converted-space">                          </span>// cümledeki ort. kelime = x2</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-x1').textContent = x1.toFixed(2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('s-x2').textContent = x2.toFixed(2);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 1. ATEŞMAN</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pAtesman = 198.825 - 40.175 * x1 - 2.610 * x2;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('sc-atesman').textContent = Math.round(pAtesman);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('lv-atesman').textContent = lvAtesman(pAtesman);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 2. ÇETİNKAYA-UZUN</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pCetinkaya = 118.823 - 25.987 * x1 - 0.971 * x2;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('sc-cetinkaya').textContent = Math.round(pCetinkaya);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('lv-cetinkaya').textContent = lvCetinkaya(pCetinkaya);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 3. BEZİRCİ-YILMAZ</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// H3, H4, H5, H6 are averages per sentence</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const H3 = h3 / cumSay;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const H4 = h4 / cumSay;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const H5 = h5 / cumSay;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const H6 = h6 / cumSay;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const inner = OKS * (H3 * 0.84 + H4 * 1.5 + H5 * 3.5 + H6 * 26.25);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pBezirci = inner &gt; 0 ? Math.sqrt(inner) : 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('sc-bezirci').textContent = pBezirci.toFixed(2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('lv-bezirci').textContent = lvBezirci(pBezirci);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 4. SÖNMEZ</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const yabanciSay = parseInt(document.getElementById('yabanciSay').value) || 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pSonmez = ((sozSay - yabanciSay) / sozSay) * 100;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('sc-sonmez').textContent = Math.round(pSonmez) + '%';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('lv-sonmez').textContent = lvSonmez(pSonmez);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// Frekans</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>renderFreq(sozler);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── SEVIYE FONKSİYONLARI ──</span></p>
-<p class="p1"><span class="s1">function lvAtesman(p) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 90) return 'Çok Kolay';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 70) return 'Kolay';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 50) return 'Orta Güçlükte';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 30) return 'Güç';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return 'Çok Güç';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">function lvCetinkaya(p) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 65) return 'Bağımsız Okuma';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 50) return 'Kolay';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 35) return 'Eğitsel Okuma';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return 'Engelli Okuma';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">function lvBezirci(p) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &lt;= 0) return '—';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &lt;= 8) return 'İlköğretim';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &lt;= 12) return 'Ortaöğretim';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &lt;= 16) return 'Lisans';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return 'Akademik';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">function lvSonmez(p) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 75) return 'Bağımsız Okuma';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (p &gt;= 50) return 'Eğitsel Okuma';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return 'Engelli Okuma';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── FREKANS ──</span></p>
-<p class="p1"><span class="s1">function renderFreq(sozler) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const freq = {};</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sozler.forEach(w =&gt; { const k = w.toLowerCase(); freq[k] = (freq[k] || 0) + 1; });</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const top = Object.entries(freq).sort((a,b) =&gt; b[1] - a[1]).slice(0, 15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (top.length === 0) return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const max = top[0][1];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let rows = top.map(([w, c]) =&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>`&lt;tr&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;td&gt;${w}&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;td style="text-align:right;color:var(--ink-2)"&gt;${c}&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;td&gt;&lt;div class="freq-bar-bg"&gt;&lt;div class="freq-bar" style="width:${Math.round(c/max*100)}%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/td&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/tr&gt;`).join('');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('freq-area').innerHTML =</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>`&lt;table class="freq-table"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Sözcük&lt;/th&gt;&lt;th&gt;Sıklık&lt;/th&gt;&lt;th&gt;Dağılım&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;tbody&gt;${rows}&lt;/tbody&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/table&gt;`;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── ARAÇLAR ──</span></p>
-<p class="p1"><span class="s1">function htmlSil() { const el = document.getElementById('txt'); el.value = el.value.replace(/&lt;[^&gt;]*&gt;/g,''); hesapla(); }</span></p>
-<p class="p1"><span class="s1">function buyukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleUpperCase('tr-TR'); hesapla(); }</span></p>
-<p class="p1"><span class="s1">function kucukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleLowerCase('tr-TR'); hesapla(); }</span></p>
-<p class="p1"><span class="s1">function temizle() { document.getElementById('txt').value = ''; document.getElementById('yabanciSay').value = 0; hesapla(); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── UI TOGGLE ──</span></p>
-<p class="p1"><span class="s1">function toggleDetail(id, chevId) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const el = document.getElementById(id);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const ch = document.getElementById(chevId);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>el.classList.toggle('open');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>ch.classList.toggle('open');</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">function toggleAbout(id) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const el = document.getElementById(id);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>el.classList.toggle('open');</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ── EVENTS ──</span></p>
-<p class="p1"><span class="s1">document.getElementById('txt').addEventListener('input', hesapla);</span></p>
-<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+<header>
+  <h1>Türkçe <span>Okunabilirlik</span> Analizi</h1>
+  <p>Ateşman · Çetinkaya-Uzun · Bezirci-Yılmaz · Sönmez formülleriyle anlık hesaplama</p>
+</header>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- LEFT: Input + Stats -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-icon">✎</div>
+          <h2>Metin Girişi</h2>
+        </div>
+        <div class="panel-body">
+          <textarea id="txt" placeholder="Analiz etmek istediğiniz metni buraya yapıştırın veya yazın…"></textarea>
+          <div class="toolbar">
+            <button class="tool-btn" onclick="htmlSil()">HTML Etiketlerini Sil</button>
+            <button class="tool-btn" onclick="buyukHarf()">BÜYÜK HARF</button>
+            <button class="tool-btn" onclick="kucukHarf()">küçük harf</button>
+            <button class="tool-btn" onclick="temizle()">Temizle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="panel" style="margin-top:1rem;">
+        <div class="panel-head">
+          <div class="panel-icon">≡</div>
+          <h2>Metin İstatistikleri</h2>
+        </div>
+        <div class="panel-body">
+          <div class="stats-grid">
+            <div class="stat-card"><span class="stat-label">Karakter</span><span class="stat-val" id="s-kar">—</span></div>
+            <div class="stat-card"><span class="stat-label">Sözcük</span><span class="stat-val" id="s-soz">—</span></div>
+            <div class="stat-card"><span class="stat-label">Cümle</span><span class="stat-val" id="s-cum">—</span></div>
+            <div class="stat-card"><span class="stat-label">Paragraf</span><span class="stat-val" id="s-par">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Sözcük/Cümle</span><span class="stat-val small" id="s-x2">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequency -->
+      <div class="panel" style="margin-top:1rem;">
+        <div class="panel-head">
+          <div class="panel-icon">↑</div>
+          <h2>Sözcük Frekansı</h2>
+        </div>
+        <div class="panel-body" id="freq-area">
+          <div class="empty">Metin girin, en sık sözcükler burada görünecek.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Formulas -->
+    <div>
+      <div class="notice">
+        Metin girerken sonuçlar anlık hesaplanır. Sönmez formülü için bilinmeyen sözcük sayısını manüel girmeniz gerekmektedir.
+      </div>
+
+      <!-- ATEŞMAN -->
+      <div class="formula-card theme-atesman" style="--fcc:#FFF3E8;">
+        <div class="formula-head" onclick="toggleDetail('det-atesman', 'ch-atesman')">
+          <div class="formula-head-left">
+            <div class="formula-badge">A</div>
+            <div>
+              <div class="formula-name">Ateşman Formülü</div>
+              <div class="formula-year">Ateşman, 1997</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-atesman">—</div>
+              <div class="formula-level" id="lv-atesman" style="background:var(--accent-bg);color:var(--accent);">—</div>
+            </div>
+            <span class="chevron" id="ch-atesman">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-atesman">
+          <div class="formula-eq">OP = 198,825 – 40,175 × (Hece/Sözcük) – 2,610 × (Sözcük/Cümle)</div>
+          <div class="formula-vars">Flesch okunabilirlik formülünün Türkçeye uyarlamasıdır.</div>
+          <table class="levels-table">
+            <tr><td>90–100</td><td>Çok Kolay</td></tr>
+            <tr><td>70–89</td><td>Kolay</td></tr>
+            <tr><td>50–69</td><td>Orta Güçlükte</td></tr>
+            <tr><td>30–49</td><td>Güç</td></tr>
+            <tr><td>1–29</td><td>Çok Güç</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-atesman','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-atesman">
+            Ateşman (1997), Flesch Reading Ease formülünü Türkçe metinler üzerinde sınayarak katsayıları yeniden hesaplamış ve Türkçeye özgü bu formülü ortaya koymuştur. Puan 100'e yaklaştıkça metin daha kolay okunabilir hale gelir.
+          </div>
+        </div>
+      </div>
+
+      <!-- ÇETİNKAYA-UZUN -->
+      <div class="formula-card theme-cetinkaya" style="--fcc:#EEF4FB;">
+        <div class="formula-head" onclick="toggleDetail('det-cetinkaya', 'ch-cetinkaya')">
+          <div class="formula-head-left">
+            <div class="formula-badge">Ç</div>
+            <div>
+              <div class="formula-name">Çetinkaya-Uzun Formülü</div>
+              <div class="formula-year">Çetinkaya &amp; Uzun, 2010</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-cetinkaya" style="color:var(--blue)">—</div>
+              <div class="formula-level" id="lv-cetinkaya" style="background:var(--blue-bg);color:var(--blue);">—</div>
+            </div>
+            <span class="chevron" id="ch-cetinkaya">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-cetinkaya">
+          <div class="formula-eq">OP = 118,823 – 25,987 × OKU – 0,971 × OCU</div>
+          <div class="formula-vars">OKU: Ortalama kelime uzunluğu (hece/sözcük) &nbsp;|&nbsp; OCU: Ortalama cümle uzunluğu (sözcük/cümle)</div>
+          <table class="levels-table">
+            <tr><td>≥ 65</td><td>Bağımsız Okuma (1–5. sınıf)</td></tr>
+            <tr><td>50–64</td><td>Kolay (6–7. sınıf)</td></tr>
+            <tr><td>35–49</td><td>Eğitsel Okuma (8–9. sınıf)</td></tr>
+            <tr><td>0–34</td><td>Engelli Okuma (10+ sınıf)</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-cetinkaya','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-cetinkaya">
+            Çetinkaya (2010) doktora çalışmasında boşluk tamamlama testleri aracılığıyla değişkenlerin metin zorluğuna etkisini ölçerek Türkçeye özgü bilimsel bir formül geliştirmiştir. Formül, ortalama kelime ve cümle uzunluklarını baz alır.
+          </div>
+        </div>
+      </div>
+
+      <!-- BEZİRCİ-YILMAZ -->
+      <div class="formula-card theme-bezirci" style="--fcc:#EDF7F1;">
+        <div class="formula-head" onclick="toggleDetail('det-bezirci', 'ch-bezirci')">
+          <div class="formula-head-left">
+            <div class="formula-badge">B</div>
+            <div>
+              <div class="formula-name">Bezirci-Yılmaz Formülü</div>
+              <div class="formula-year">Bezirci &amp; Yılmaz, 2010</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-bezirci" style="color:var(--green)">—</div>
+              <div class="formula-level" id="lv-bezirci" style="background:var(--green-bg);color:var(--green);">—</div>
+            </div>
+            <span class="chevron" id="ch-bezirci">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-bezirci">
+          <div class="formula-eq">YOD = √[ OKS × (H3×0,84 + H4×1,5 + H5×3,5 + H6×26,25) ]</div>
+          <div class="formula-vars">OKS: ort. sözcük/cümle &nbsp;|&nbsp; H3–H6: cümle başına 3, 4, 5, 6+ heceli sözcük ort.</div>
+          <div style="font-size:0.73rem;color:#8B4513;background:#FFF8F2;border-radius:5px;padding:6px 8px;margin-top:6px;">
+            <strong>Not:</strong> Bu formülde puan <em>düştükçe</em> metin daha kolay okunur.
+          </div>
+          <table class="levels-table">
+            <tr><td>1–8</td><td>İlköğretim Düzeyi</td></tr>
+            <tr><td>9–12</td><td>Ortaöğretim (Lise) Düzeyi</td></tr>
+            <tr><td>13–16</td><td>Lisans Düzeyi</td></tr>
+            <tr><td>≥ 17</td><td>Akademik Düzey</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-bezirci','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-bezirci">
+            Bezirci ve Yılmaz (2010), Türkçedeki tek heceli sözcüklerin ortalama hece uzunluğunu yapay olarak düşürdüğünü saptayarak 3, 4, 5, 6 ve üzeri heceli sözcükleri ayrı ayrı ağırlıklandıran özgün bir formül geliştirmiştir. Yüksek değer → daha zor.
+          </div>
+        </div>
+      </div>
+
+      <!-- SÖNMEZ -->
+      <div class="formula-card theme-sonmez" style="--fcc:#F3EEF9;">
+        <div class="formula-head" onclick="toggleDetail('det-sonmez', 'ch-sonmez')">
+          <div class="formula-head-left">
+            <div class="formula-badge">S</div>
+            <div>
+              <div class="formula-name">Sönmez Formülü</div>
+              <div class="formula-year">Sönmez, 2003</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-sonmez" style="color:var(--purple)">—</div>
+              <div class="formula-level" id="lv-sonmez" style="background:var(--purple-bg);color:var(--purple);">—</div>
+            </div>
+            <span class="chevron" id="ch-sonmez">▼</span>
+          </div>
+        </div>
+        <div class="sonmez-input-row" onclick="event.stopPropagation()">
+          <label for="yabanciSay">Metindeki bilinmeyen/yabancı sözcük sayısı:</label>
+          <input type="number" id="yabanciSay" min="0" value="0" oninput="hesapla()">
+        </div>
+        <div class="formula-detail" id="det-sonmez">
+          <div class="formula-eq">Anlaşılırlık Oranı = ((N – Y) / N) × 100</div>
+          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: Bilinmeyen/yabancı sözcük sayısı</div>
+          <table class="levels-table">
+            <tr><td>≥ 75%</td><td>Bağımsız Okuma</td></tr>
+            <tr><td>50–74%</td><td>Eğitsel Okuma</td></tr>
+            <tr><td>&lt; 50%</td><td>Engelli Okuma</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-sonmez','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-sonmez">
+            Sönmez (2003), bilinmeyen sözcük oranını temel alan bu formülü geliştirmiştir. Okuyucu için "yabancı" olan sözcüklerin belirlenmesi araştırmacı veya öğretmen tarafından yapılır. Bu nedenle otomasyonu kısmi olan sübjektif bir bileşen içerir.
+          </div>
+        </div>
+      </div>
+
+      <!-- Kaynak -->
+      <div style="font-size:0.75rem;color:var(--ink-3);margin-top:0.5rem;line-height:1.6;font-style:italic;padding:0 4px;">
+        Kaynak: Ateşman (1997), Çetinkaya (2010), Bezirci &amp; Yılmaz (2010), Sönmez (2003)
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Türkçe Okunabilirlik Analizi &nbsp;·&nbsp; Formüller: Ateşman (1997), Çetinkaya-Uzun (2010), Bezirci-Yılmaz (2010), Sönmez (2003) &nbsp;·&nbsp;
+  <a href="https://github.com" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// ── TÜRKÇE YARDIMCI ──
+const SESLI = /[aeıiouöüAEIİOUÖÜ]/g;
+
+function heceHesapla(w) {
+  const m = w.match(SESLI);
+  return m ? m.length : 1;
+}
+
+function sozcukBol(t) {
+  return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇ']+/g) || [];
+}
+
+function cumleBol(t) {
+  // Noktadan önce kısaltmalar gelirse de bölme
+  return t.split(/(?<=[.!?…])\s+/).map(s => s.trim()).filter(s => sozcukBol(s).length > 0);
+}
+
+function paragrafSay(t) {
+  return t.split(/\n+/).map(s => s.trim()).filter(s => s.length > 0).length;
+}
+
+// ── HESAPLAMA ──
+function hesapla() {
+  const txt = document.getElementById('txt').value;
+
+  if (!txt.trim()) {
+    ['s-kar','s-soz','s-cum','s-par','s-x1','s-x2'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    ['sc-atesman','sc-cetinkaya','sc-bezirci','sc-sonmez'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    ['lv-atesman','lv-cetinkaya','lv-bezirci','lv-sonmez'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    document.getElementById('freq-area').innerHTML = '<div class="empty">Metin girin, en sık sözcükler burada görünecek.</div>';
+    return;
+  }
+
+  const cumler  = cumleBol(txt);
+  const sozler  = sozcukBol(txt);
+  const karSay  = txt.length;
+  const sozSay  = sozler.length;
+  const cumSay  = Math.max(cumler.length, 1);
+  const parSay  = paragrafSay(txt);
+
+  document.getElementById('s-kar').textContent = karSay.toLocaleString('tr-TR');
+  document.getElementById('s-soz').textContent = sozSay.toLocaleString('tr-TR');
+  document.getElementById('s-cum').textContent = cumSay.toLocaleString('tr-TR');
+  document.getElementById('s-par').textContent = parSay.toLocaleString('tr-TR');
+
+  if (sozSay === 0) return;
+
+  // Hece sayıları
+  let toplamHece = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0;
+  sozler.forEach(w => {
+    const h = heceHesapla(w);
+    toplamHece += h;
+    if (h === 3) h3++;
+    else if (h === 4) h4++;
+    else if (h === 5) h5++;
+    else if (h >= 6) h6++;
+  });
+
+  const x1 = toplamHece / sozSay;         // ort. hece/sözcük
+  const x2 = sozSay / cumSay;             // ort. sözcük/cümle
+  const OKS = x2;                          // cümledeki ort. kelime = x2
+
+  document.getElementById('s-x1').textContent = x1.toFixed(2);
+  document.getElementById('s-x2').textContent = x2.toFixed(2);
+
+  // 1. ATEŞMAN
+  const pAtesman = 198.825 - 40.175 * x1 - 2.610 * x2;
+  document.getElementById('sc-atesman').textContent = Math.round(pAtesman);
+  document.getElementById('lv-atesman').textContent = lvAtesman(pAtesman);
+
+  // 2. ÇETİNKAYA-UZUN
+  const pCetinkaya = 118.823 - 25.987 * x1 - 0.971 * x2;
+  document.getElementById('sc-cetinkaya').textContent = Math.round(pCetinkaya);
+  document.getElementById('lv-cetinkaya').textContent = lvCetinkaya(pCetinkaya);
+
+  // 3. BEZİRCİ-YILMAZ
+  // H3, H4, H5, H6 are averages per sentence
+  const H3 = h3 / cumSay;
+  const H4 = h4 / cumSay;
+  const H5 = h5 / cumSay;
+  const H6 = h6 / cumSay;
+  const inner = OKS * (H3 * 0.84 + H4 * 1.5 + H5 * 3.5 + H6 * 26.25);
+  const pBezirci = inner > 0 ? Math.sqrt(inner) : 0;
+  document.getElementById('sc-bezirci').textContent = pBezirci.toFixed(2);
+  document.getElementById('lv-bezirci').textContent = lvBezirci(pBezirci);
+
+  // 4. SÖNMEZ
+  const yabanciSay = parseInt(document.getElementById('yabanciSay').value) || 0;
+  const pSonmez = ((sozSay - yabanciSay) / sozSay) * 100;
+  document.getElementById('sc-sonmez').textContent = Math.round(pSonmez) + '%';
+  document.getElementById('lv-sonmez').textContent = lvSonmez(pSonmez);
+
+  // Frekans
+  renderFreq(sozler);
+}
+
+// ── SEVIYE FONKSİYONLARI ──
+function lvAtesman(p) {
+  if (p >= 90) return 'Çok Kolay';
+  if (p >= 70) return 'Kolay';
+  if (p >= 50) return 'Orta Güçlükte';
+  if (p >= 30) return 'Güç';
+  return 'Çok Güç';
+}
+function lvCetinkaya(p) {
+  if (p >= 65) return 'Bağımsız Okuma';
+  if (p >= 50) return 'Kolay';
+  if (p >= 35) return 'Eğitsel Okuma';
+  return 'Engelli Okuma';
+}
+function lvBezirci(p) {
+  if (p <= 0) return '—';
+  if (p <= 8) return 'İlköğretim';
+  if (p <= 12) return 'Ortaöğretim';
+  if (p <= 16) return 'Lisans';
+  return 'Akademik';
+}
+function lvSonmez(p) {
+  if (p >= 75) return 'Bağımsız Okuma';
+  if (p >= 50) return 'Eğitsel Okuma';
+  return 'Engelli Okuma';
+}
+
+// ── FREKANS ──
+function renderFreq(sozler) {
+  const freq = {};
+  sozler.forEach(w => { const k = w.toLowerCase(); freq[k] = (freq[k] || 0) + 1; });
+  const top = Object.entries(freq).sort((a,b) => b[1] - a[1]).slice(0, 15);
+  if (top.length === 0) return;
+  const max = top[0][1];
+  let rows = top.map(([w, c]) =>
+    `<tr>
+      <td>${w}</td>
+      <td style="text-align:right;color:var(--ink-2)">${c}</td>
+      <td><div class="freq-bar-bg"><div class="freq-bar" style="width:${Math.round(c/max*100)}%"></div></div></td>
+    </tr>`).join('');
+  document.getElementById('freq-area').innerHTML =
+    `<table class="freq-table">
+      <thead><tr><th>Sözcük</th><th>Sıklık</th><th>Dağılım</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── ARAÇLAR ──
+function htmlSil() { const el = document.getElementById('txt'); el.value = el.value.replace(/<[^>]*>/g,''); hesapla(); }
+function buyukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleUpperCase('tr-TR'); hesapla(); }
+function kucukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleLowerCase('tr-TR'); hesapla(); }
+function temizle() { document.getElementById('txt').value = ''; document.getElementById('yabanciSay').value = 0; hesapla(); }
+
+// ── UI TOGGLE ──
+function toggleDetail(id, chevId) {
+  const el = document.getElementById(id);
+  const ch = document.getElementById(chevId);
+  el.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+function toggleAbout(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── EVENTS ──
+document.getElementById('txt').addEventListener('input', hesapla);
+</script>
 </body>
 </html>
