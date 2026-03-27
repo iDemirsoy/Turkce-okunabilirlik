@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Türkçe Okunabilirlik Analizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F8F5EE;
+    --surface: #FFFFFF;
+    --ink: #1A1208;
+    --ink-2: #4A3F2F;
+    --ink-3: #8A7B68;
+    --accent: #8B4513;
+    --accent-light: #D4956A;
+    --accent-bg: #FFF3E8;
+    --border: #D8CFC4;
+    --green: #2D6A4F;
+    --green-bg: #EDF7F1;
+    --amber: #92600A;
+    --amber-bg: #FFF8E6;
+    --red: #8B2020;
+    --red-bg: #FEF0F0;
+    --blue: #1A4A7A;
+    --blue-bg: #EEF4FB;
+    --purple: #4A1F7A;
+    --purple-bg: #F3EEF9;
+    --shadow: 0 1px 3px rgba(26,18,8,0.08), 0 4px 16px rgba(26,18,8,0.06);
+    --shadow-sm: 0 1px 2px rgba(26,18,8,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.02) 40px,
+      rgba(255,255,255,0.02) 41px
+    );
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  header h1 span {
+    color: var(--accent-light);
+  }
+  header p {
+    font-size: 0.95rem;
+    color: #B5A89A;
+    margin-top: 0.5rem;
+    position: relative;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── PANELS ── */
+  .panel {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .panel-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .panel-icon {
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-size: 12px;
+  }
+
+  .panel-body { padding: 1.25rem; }
+
+  /* ── TEXTAREA ── */
+  textarea {
+    width: 100%;
+    min-height: 220px;
+    resize: vertical;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  textarea::placeholder { color: var(--ink-3); font-style: italic; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-family: 'Source Serif 4', serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tool-btn:hover { background: var(--accent-bg); border-color: var(--accent-light); color: var(--accent); }
+  .tool-btn:active { transform: scale(0.97); }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+  }
+  .stat-card {
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-size: 1.4rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .stat-val.small { font-size: 1rem; }
+
+  /* ── FORMULA CARDS ── */
+  .formula-card {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .formula-card:hover { box-shadow: var(--shadow); }
+
+  .formula-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .formula-head-left { display: flex; align-items: center; gap: 10px; }
+  .formula-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+  }
+  .formula-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .formula-year { font-size: 0.75rem; color: var(--ink-3); font-style: italic; }
+
+  .formula-score-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .formula-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .formula-level {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .formula-detail {
+    border-top: 1px solid var(--border);
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.015);
+    display: none;
+  }
+  .formula-detail.open { display: block; }
+
+  .formula-eq {
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    font-style: italic;
+    margin-bottom: 8px;
+    font-family: Georgia, serif;
+  }
+  .formula-vars {
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    line-height: 1.8;
+  }
+  .levels-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    margin-top: 8px;
+  }
+  .levels-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); }
+  .levels-table td:first-child { font-weight: 600; }
+
+  /* Color themes */
+  .theme-atesman   { --fc: #8B4513; --fbg: #FFF3E8; --fborder: #D4956A; }
+  .theme-cetinkaya { --fc: #1A4A7A; --fbg: #EEF4FB; --fborder: #7AADDA; }
+  .theme-bezirci   { --fc: #2D6A4F; --fbg: #EDF7F1; --fborder: #6EC49A; }
+  .theme-sonmez    { --fc: #4A1F7A; --fbg: #F3EEF9; --fborder: #A07ADA; }
+
+  .formula-card { border-color: var(--fborder, var(--border)); }
+  .formula-head { background: var(--fbg, white); }
+  .formula-badge { background: var(--fcc, white); color: var(--fc); border: 1.5px solid var(--fc); }
+  .formula-score { color: var(--fc); }
+
+  /* ── SÖNMEZ INPUT ── */
+  .sonmez-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: var(--purple-bg);
+    border-top: 1px dashed #C4A8E8;
+  }
+  .sonmez-input-row label { font-size: 0.78rem; color: var(--purple); flex: 1; }
+  .sonmez-input-row input[type=number] {
+    width: 70px;
+    padding: 5px 8px;
+    border: 1px solid #C4A8E8;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-family: 'Source Serif 4', serif;
+    background: white;
+    color: var(--ink);
+    text-align: center;
+  }
+  .sonmez-input-row input:focus { outline: none; border-color: var(--purple); }
+
+  /* ── FREQUENCY TABLE ── */
+  .freq-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 0.5rem;
+  }
+  .freq-table th {
+    text-align: left;
+    color: var(--ink-3);
+    font-weight: 400;
+    padding: 5px 8px;
+    border-bottom: 1.5px solid var(--border);
+    font-style: italic;
+  }
+  .freq-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .freq-bar-bg {
+    background: var(--bg);
+    border-radius: 3px;
+    height: 6px;
+    width: 80px;
+    overflow: hidden;
+  }
+  .freq-bar { height: 6px; border-radius: 3px; background: var(--accent); }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 2rem 1rem; color: var(--ink-3); font-style: italic; font-size: 0.9rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── ABOUT TOGGLE ── */
+  .about-toggle {
+    font-size: 0.8rem;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    border: none;
+    background: none;
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    padding: 0;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .about-box {
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    line-height: 1.7;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    display: none;
+    border: 1px solid var(--border);
+  }
+  .about-box.open { display: block; }
+
+  .chevron {
+    font-size: 10px;
+    color: var(--ink-3);
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .notice {
+    font-size: 0.78rem;
+    background: var(--amber-bg);
+    border: 1px solid #E8C875;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--amber);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Türkçe <span>Okunabilirlik</span> Analizi</h1>
+  <p>Ateşman · Çetinkaya-Uzun · Bezirci-Yılmaz · Sönmez formülleriyle anlık hesaplama</p>
+</header>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- LEFT: Input + Stats -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-icon">✎</div>
+          <h2>Metin Girişi</h2>
+        </div>
+        <div class="panel-body">
+          <textarea id="txt" placeholder="Analiz etmek istediğiniz metni buraya yapıştırın veya yazın…"></textarea>
+          <div class="toolbar">
+            <button class="tool-btn" onclick="htmlSil()">HTML Etiketlerini Sil</button>
+            <button class="tool-btn" onclick="buyukHarf()">BÜYÜK HARF</button>
+            <button class="tool-btn" onclick="kucukHarf()">küçük harf</button>
+            <button class="tool-btn" onclick="temizle()">Temizle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="panel" style="margin-top:1rem;">
+        <div class="panel-head">
+          <div class="panel-icon">≡</div>
+          <h2>Metin İstatistikleri</h2>
+        </div>
+        <div class="panel-body">
+          <div class="stats-grid">
+            <div class="stat-card"><span class="stat-label">Karakter</span><span class="stat-val" id="s-kar">—</span></div>
+            <div class="stat-card"><span class="stat-label">Sözcük</span><span class="stat-val" id="s-soz">—</span></div>
+            <div class="stat-card"><span class="stat-label">Cümle</span><span class="stat-val" id="s-cum">—</span></div>
+            <div class="stat-card"><span class="stat-label">Paragraf</span><span class="stat-val" id="s-par">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Sözcük/Cümle</span><span class="stat-val small" id="s-x2">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequency -->
+      <div class="panel" style="margin-top:1rem;">
+        <div class="panel-head">
+          <div class="panel-icon">↑</div>
+          <h2>Sözcük Frekansı</h2>
+        </div>
+        <div class="panel-body" id="freq-area">
+          <div class="empty">Metin girin, en sık sözcükler burada görünecek.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Formulas -->
+    <div>
+      <div class="notice">
+        Metin girerken sonuçlar anlık hesaplanır. Sönmez formülü için bilinmeyen sözcük sayısını manüel girmeniz gerekmektedir.
+      </div>
+
+      <!-- ATEŞMAN -->
+      <div class="formula-card theme-atesman" style="--fcc:#FFF3E8;">
+        <div class="formula-head" onclick="toggleDetail('det-atesman', 'ch-atesman')">
+          <div class="formula-head-left">
+            <div class="formula-badge">A</div>
+            <div>
+              <div class="formula-name">Ateşman Formülü</div>
+              <div class="formula-year">Ateşman, 1997</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-atesman">—</div>
+              <div class="formula-level" id="lv-atesman" style="background:var(--accent-bg);color:var(--accent);">—</div>
+            </div>
+            <span class="chevron" id="ch-atesman">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-atesman">
+          <div class="formula-eq">OP = 198,825 – 40,175 × (Hece/Sözcük) – 2,610 × (Sözcük/Cümle)</div>
+          <div class="formula-vars">Flesch okunabilirlik formülünün Türkçeye uyarlamasıdır.</div>
+          <table class="levels-table">
+            <tr><td>90–100</td><td>Çok Kolay</td></tr>
+            <tr><td>70–89</td><td>Kolay</td></tr>
+            <tr><td>50–69</td><td>Orta Güçlükte</td></tr>
+            <tr><td>30–49</td><td>Güç</td></tr>
+            <tr><td>1–29</td><td>Çok Güç</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-atesman','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-atesman">
+            Ateşman (1997), Flesch Reading Ease formülünü Türkçe metinler üzerinde sınayarak katsayıları yeniden hesaplamış ve Türkçeye özgü bu formülü ortaya koymuştur. Puan 100'e yaklaştıkça metin daha kolay okunabilir hale gelir.
+          </div>
+        </div>
+      </div>
+
+      <!-- ÇETİNKAYA-UZUN -->
+      <div class="formula-card theme-cetinkaya" style="--fcc:#EEF4FB;">
+        <div class="formula-head" onclick="toggleDetail('det-cetinkaya', 'ch-cetinkaya')">
+          <div class="formula-head-left">
+            <div class="formula-badge">Ç</div>
+            <div>
+              <div class="formula-name">Çetinkaya-Uzun Formülü</div>
+              <div class="formula-year">Çetinkaya &amp; Uzun, 2010</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-cetinkaya" style="color:var(--blue)">—</div>
+              <div class="formula-level" id="lv-cetinkaya" style="background:var(--blue-bg);color:var(--blue);">—</div>
+            </div>
+            <span class="chevron" id="ch-cetinkaya">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-cetinkaya">
+          <div class="formula-eq">OP = 118,823 – 25,987 × OKU – 0,971 × OCU</div>
+          <div class="formula-vars">OKU: Ortalama kelime uzunluğu (hece/sözcük) &nbsp;|&nbsp; OCU: Ortalama cümle uzunluğu (sözcük/cümle)</div>
+          <table class="levels-table">
+            <tr><td>≥ 65</td><td>Bağımsız Okuma (1–5. sınıf)</td></tr>
+            <tr><td>50–64</td><td>Kolay (6–7. sınıf)</td></tr>
+            <tr><td>35–49</td><td>Eğitsel Okuma (8–9. sınıf)</td></tr>
+            <tr><td>0–34</td><td>Engelli Okuma (10+ sınıf)</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-cetinkaya','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-cetinkaya">
+            Çetinkaya (2010) doktora çalışmasında boşluk tamamlama testleri aracılığıyla değişkenlerin metin zorluğuna etkisini ölçerek Türkçeye özgü bilimsel bir formül geliştirmiştir. Formül, ortalama kelime ve cümle uzunluklarını baz alır.
+          </div>
+        </div>
+      </div>
+
+      <!-- BEZİRCİ-YILMAZ -->
+      <div class="formula-card theme-bezirci" style="--fcc:#EDF7F1;">
+        <div class="formula-head" onclick="toggleDetail('det-bezirci', 'ch-bezirci')">
+          <div class="formula-head-left">
+            <div class="formula-badge">B</div>
+            <div>
+              <div class="formula-name">Bezirci-Yılmaz Formülü</div>
+              <div class="formula-year">Bezirci &amp; Yılmaz, 2010</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-bezirci" style="color:var(--green)">—</div>
+              <div class="formula-level" id="lv-bezirci" style="background:var(--green-bg);color:var(--green);">—</div>
+            </div>
+            <span class="chevron" id="ch-bezirci">▼</span>
+          </div>
+        </div>
+        <div class="formula-detail" id="det-bezirci">
+          <div class="formula-eq">YOD = √[ OKS × (H3×0,84 + H4×1,5 + H5×3,5 + H6×26,25) ]</div>
+          <div class="formula-vars">OKS: ort. sözcük/cümle &nbsp;|&nbsp; H3–H6: cümle başına 3, 4, 5, 6+ heceli sözcük ort.</div>
+          <div style="font-size:0.73rem;color:#8B4513;background:#FFF8F2;border-radius:5px;padding:6px 8px;margin-top:6px;">
+            <strong>Not:</strong> Bu formülde puan <em>düştükçe</em> metin daha kolay okunur.
+          </div>
+          <table class="levels-table">
+            <tr><td>1–8</td><td>İlköğretim Düzeyi</td></tr>
+            <tr><td>9–12</td><td>Ortaöğretim (Lise) Düzeyi</td></tr>
+            <tr><td>13–16</td><td>Lisans Düzeyi</td></tr>
+            <tr><td>≥ 17</td><td>Akademik Düzey</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-bezirci','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-bezirci">
+            Bezirci ve Yılmaz (2010), Türkçedeki tek heceli sözcüklerin ortalama hece uzunluğunu yapay olarak düşürdüğünü saptayarak 3, 4, 5, 6 ve üzeri heceli sözcükleri ayrı ayrı ağırlıklandıran özgün bir formül geliştirmiştir. Yüksek değer → daha zor.
+          </div>
+        </div>
+      </div>
+
+      <!-- SÖNMEZ -->
+      <div class="formula-card theme-sonmez" style="--fcc:#F3EEF9;">
+        <div class="formula-head" onclick="toggleDetail('det-sonmez', 'ch-sonmez')">
+          <div class="formula-head-left">
+            <div class="formula-badge">S</div>
+            <div>
+              <div class="formula-name">Sönmez Formülü</div>
+              <div class="formula-year">Sönmez, 2003</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="formula-score-block">
+              <div class="formula-score" id="sc-sonmez" style="color:var(--purple)">—</div>
+              <div class="formula-level" id="lv-sonmez" style="background:var(--purple-bg);color:var(--purple);">—</div>
+            </div>
+            <span class="chevron" id="ch-sonmez">▼</span>
+          </div>
+        </div>
+        <div class="sonmez-input-row" onclick="event.stopPropagation()">
+          <label for="yabanciSay">Metindeki bilinmeyen/yabancı sözcük sayısı:</label>
+          <input type="number" id="yabanciSay" min="0" value="0" oninput="hesapla()">
+        </div>
+        <div class="formula-detail" id="det-sonmez">
+          <div class="formula-eq">Anlaşılırlık Oranı = ((N – Y) / N) × 100</div>
+          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: Bilinmeyen/yabancı sözcük sayısı</div>
+          <table class="levels-table">
+            <tr><td>≥ 75%</td><td>Bağımsız Okuma</td></tr>
+            <tr><td>50–74%</td><td>Eğitsel Okuma</td></tr>
+            <tr><td>&lt; 50%</td><td>Engelli Okuma</td></tr>
+          </table>
+          <button class="about-toggle" onclick="toggleAbout('ab-sonmez','this')">Daha fazla bilgi ▾</button>
+          <div class="about-box" id="ab-sonmez">
+            Sönmez (2003), bilinmeyen sözcük oranını temel alan bu formülü geliştirmiştir. Okuyucu için "yabancı" olan sözcüklerin belirlenmesi araştırmacı veya öğretmen tarafından yapılır. Bu nedenle otomasyonu kısmi olan sübjektif bir bileşen içerir.
+          </div>
+        </div>
+      </div>
+
+      <!-- Kaynak -->
+      <div style="font-size:0.75rem;color:var(--ink-3);margin-top:0.5rem;line-height:1.6;font-style:italic;padding:0 4px;">
+        Kaynak: Ateşman (1997), Çetinkaya (2010), Bezirci &amp; Yılmaz (2010), Sönmez (2003)
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Türkçe Okunabilirlik Analizi &nbsp;·&nbsp; Formüller: Ateşman (1997), Çetinkaya-Uzun (2010), Bezirci-Yılmaz (2010), Sönmez (2003) &nbsp;·&nbsp;
+  <a href="https://github.com" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// ── TÜRKÇE YARDIMCI ──
+const SESLI = /[aeıiouöüAEIİOUÖÜ]/g;
+
+function heceHesapla(w) {
+  const m = w.match(SESLI);
+  return m ? m.length : 1;
+}
+
+function sozcukBol(t) {
+  return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇ']+/g) || [];
+}
+
+function cumleBol(t) {
+  // Noktadan önce kısaltmalar gelirse de bölme
+  return t.split(/(?<=[.!?…])\s+/).map(s => s.trim()).filter(s => sozcukBol(s).length > 0);
+}
+
+function paragrafSay(t) {
+  return t.split(/\n+/).map(s => s.trim()).filter(s => s.length > 0).length;
+}
+
+// ── HESAPLAMA ──
+function hesapla() {
+  const txt = document.getElementById('txt').value;
+
+  if (!txt.trim()) {
+    ['s-kar','s-soz','s-cum','s-par','s-x1','s-x2'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    ['sc-atesman','sc-cetinkaya','sc-bezirci','sc-sonmez'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    ['lv-atesman','lv-cetinkaya','lv-bezirci','lv-sonmez'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    document.getElementById('freq-area').innerHTML = '<div class="empty">Metin girin, en sık sözcükler burada görünecek.</div>';
+    return;
+  }
+
+  const cumler  = cumleBol(txt);
+  const sozler  = sozcukBol(txt);
+  const karSay  = txt.length;
+  const sozSay  = sozler.length;
+  const cumSay  = Math.max(cumler.length, 1);
+  const parSay  = paragrafSay(txt);
+
+  document.getElementById('s-kar').textContent = karSay.toLocaleString('tr-TR');
+  document.getElementById('s-soz').textContent = sozSay.toLocaleString('tr-TR');
+  document.getElementById('s-cum').textContent = cumSay.toLocaleString('tr-TR');
+  document.getElementById('s-par').textContent = parSay.toLocaleString('tr-TR');
+
+  if (sozSay === 0) return;
+
+  // Hece sayıları
+  let toplamHece = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0;
+  sozler.forEach(w => {
+    const h = heceHesapla(w);
+    toplamHece += h;
+    if (h === 3) h3++;
+    else if (h === 4) h4++;
+    else if (h === 5) h5++;
+    else if (h >= 6) h6++;
+  });
+
+  const x1 = toplamHece / sozSay;         // ort. hece/sözcük
+  const x2 = sozSay / cumSay;             // ort. sözcük/cümle
+  const OKS = x2;                          // cümledeki ort. kelime = x2
+
+  document.getElementById('s-x1').textContent = x1.toFixed(2);
+  document.getElementById('s-x2').textContent = x2.toFixed(2);
+
+  // 1. ATEŞMAN
+  const pAtesman = 198.825 - 40.175 * x1 - 2.610 * x2;
+  document.getElementById('sc-atesman').textContent = Math.round(pAtesman);
+  document.getElementById('lv-atesman').textContent = lvAtesman(pAtesman);
+
+  // 2. ÇETİNKAYA-UZUN
+  const pCetinkaya = 118.823 - 25.987 * x1 - 0.971 * x2;
+  document.getElementById('sc-cetinkaya').textContent = Math.round(pCetinkaya);
+  document.getElementById('lv-cetinkaya').textContent = lvCetinkaya(pCetinkaya);
+
+  // 3. BEZİRCİ-YILMAZ
+  // H3, H4, H5, H6 are averages per sentence
+  const H3 = h3 / cumSay;
+  const H4 = h4 / cumSay;
+  const H5 = h5 / cumSay;
+  const H6 = h6 / cumSay;
+  const inner = OKS * (H3 * 0.84 + H4 * 1.5 + H5 * 3.5 + H6 * 26.25);
+  const pBezirci = inner > 0 ? Math.sqrt(inner) : 0;
+  document.getElementById('sc-bezirci').textContent = pBezirci.toFixed(2);
+  document.getElementById('lv-bezirci').textContent = lvBezirci(pBezirci);
+
+  // 4. SÖNMEZ
+  const yabanciSay = parseInt(document.getElementById('yabanciSay').value) || 0;
+  const pSonmez = ((sozSay - yabanciSay) / sozSay) * 100;
+  document.getElementById('sc-sonmez').textContent = Math.round(pSonmez) + '%';
+  document.getElementById('lv-sonmez').textContent = lvSonmez(pSonmez);
+
+  // Frekans
+  renderFreq(sozler);
+}
+
+// ── SEVIYE FONKSİYONLARI ──
+function lvAtesman(p) {
+  if (p >= 90) return 'Çok Kolay';
+  if (p >= 70) return 'Kolay';
+  if (p >= 50) return 'Orta Güçlükte';
+  if (p >= 30) return 'Güç';
+  return 'Çok Güç';
+}
+function lvCetinkaya(p) {
+  if (p >= 65) return 'Bağımsız Okuma';
+  if (p >= 50) return 'Kolay';
+  if (p >= 35) return 'Eğitsel Okuma';
+  return 'Engelli Okuma';
+}
+function lvBezirci(p) {
+  if (p <= 0) return '—';
+  if (p <= 8) return 'İlköğretim';
+  if (p <= 12) return 'Ortaöğretim';
+  if (p <= 16) return 'Lisans';
+  return 'Akademik';
+}
+function lvSonmez(p) {
+  if (p >= 75) return 'Bağımsız Okuma';
+  if (p >= 50) return 'Eğitsel Okuma';
+  return 'Engelli Okuma';
+}
+
+// ── FREKANS ──
+function renderFreq(sozler) {
+  const freq = {};
+  sozler.forEach(w => { const k = w.toLowerCase(); freq[k] = (freq[k] || 0) + 1; });
+  const top = Object.entries(freq).sort((a,b) => b[1] - a[1]).slice(0, 15);
+  if (top.length === 0) return;
+  const max = top[0][1];
+  let rows = top.map(([w, c]) =>
+    `<tr>
+      <td>${w}</td>
+      <td style="text-align:right;color:var(--ink-2)">${c}</td>
+      <td><div class="freq-bar-bg"><div class="freq-bar" style="width:${Math.round(c/max*100)}%"></div></div></td>
+    </tr>`).join('');
+  document.getElementById('freq-area').innerHTML =
+    `<table class="freq-table">
+      <thead><tr><th>Sözcük</th><th>Sıklık</th><th>Dağılım</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── ARAÇLAR ──
+function htmlSil() { const el = document.getElementById('txt'); el.value = el.value.replace(/<[^>]*>/g,''); hesapla(); }
+function buyukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleUpperCase('tr-TR'); hesapla(); }
+function kucukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleLowerCase('tr-TR'); hesapla(); }
+function temizle() { document.getElementById('txt').value = ''; document.getElementById('yabanciSay').value = 0; hesapla(); }
+
+// ── UI TOGGLE ──
+function toggleDetail(id, chevId) {
+  const el = document.getElementById(id);
+  const ch = document.getElementById(chevId);
+  el.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+function toggleAbout(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── EVENTS ──
+document.getElementById('txt').addEventListener('input', hesapla);
+</script>
+</body>
+</html>
