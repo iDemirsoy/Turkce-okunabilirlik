@@ -99,6 +99,16 @@
   @media (max-width: 800px) {
     .grid { grid-template-columns: 1fr; }
   }
+    header { background: #1A1208 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toolbar, .tool-btn, footer button { display: none !important; }
+    .panel, .formula-card { break-inside: avoid; box-shadow: none; }
+    .formula-detail { display: block !important; }
+    .chevron { display: none; }
+    body { font-size: 13px; }
+    .container { padding: 0.5rem; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    textarea { min-height: 80px; }
+  }
 
   /* ── PANELS ── */
   .panel {
@@ -417,6 +427,19 @@
     margin-bottom: 1rem;
     line-height: 1.5;
   }
+
+  @media print {
+    header { background: #1A1208 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toolbar, .tool-btn, footer button, .sonmez-input-row { display: none !important; }
+    .panel, .formula-card { break-inside: avoid; box-shadow: none !important; }
+    .formula-detail { display: block !important; }
+    .chevron, .about-toggle { display: none !important; }
+    .about-box { display: block !important; }
+    body { font-size: 12px; }
+    .container { padding: 0.5rem; }
+    .grid { grid-template-columns: 1fr 320px; gap: 1rem; }
+    textarea { min-height: 60px; }
+  }
 </style>
 </head>
 <body>
@@ -460,11 +483,11 @@
             <div class="stat-card"><span class="stat-label">Sözcük</span><span class="stat-val" id="s-soz">—</span></div>
             <div class="stat-card"><span class="stat-label">Cümle</span><span class="stat-val" id="s-cum">—</span></div>
             <div class="stat-card"><span class="stat-label">Paragraf</span><span class="stat-val" id="s-par">—</span></div>
-            <div class="stat-card"><span class="stat-label">Ort. Sözcük/Cümle</span><span class="stat-val small" id="s-x2">—</span></div>
-            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
-            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük (Yaklaşımsal)</span><span class="stat-val small" id="s-x1a">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Sözcük / Cümle</span><span class="stat-val small" id="s-x2">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece / Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece / Sözcük (Ateşman)</span><span class="stat-val small" id="s-x1a">—</span></div>
             <div class="stat-card"><span class="stat-label">Zor Sözcükler</span><span class="stat-val" id="s-zor">—</span></div>
-            <div class="stat-card"><span class="stat-label">Yabancı Sözcükler</span><span class="stat-val" id="s-yab">—</span></div>
+            <div class="stat-card"><span class="stat-label">Yabancı Sözcükler</span><span class="stat-val" id="s-yab" style="font-size:0.85rem;color:var(--ink-3)">yakında</span></div>
           </div>
         </div>
       </div>
@@ -611,14 +634,14 @@
           </div>
         </div>
         <div class="sonmez-input-row" onclick="event.stopPropagation()">
-          <label for="yabanciSay">Metindeki bilinmeyen/yabancı sözcük sayısı:</label>
-          <input type="number" id="yabanciSay" min="0" value="0" oninput="hesapla()">
+          <label for="yabanciSay">Zor sözcük sayısını manuel geçersiz kıl (boş bırakın = otomatik):</label>
+          <input type="number" id="yabanciSay" min="0" placeholder="otomatik" oninput="hesapla()">
         </div>
         <div class="formula-detail" id="det-sonmez">
           <div class="formula-eq">G = Y / N &nbsp;→&nbsp; Anlaşılırlık Oranı = G²</div>
-          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: Yabancı/bilinmeyen sözcük, deyim, terim, kavram sayısı &nbsp;|&nbsp; G: Güçlük oranı</div>
+          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: 3000 Temel Türkçe Sözcük Listesi dışındaki sözcük sayısı &nbsp;|&nbsp; G: Güçlük oranı</div>
           <div style="font-size:0.73rem;color:#4A1F7A;background:#F3EEF9;border-radius:5px;padding:6px 8px;margin-top:6px;">
-            <strong>Not:</strong> Sonuç 0'a yaklaştıkça metin daha <em>kolay</em> anlaşılır.
+            <strong>Not:</strong> Sonuç 0'a yaklaştıkça metin daha <em>kolay</em> anlaşılır. Zor sözcükler otomatik hesaplanır.
           </div>
           <table class="levels-table">
             <tr><td>1.00 – 0.99</td><td>Tümüyle anlamsız</td></tr>
@@ -630,9 +653,9 @@
             <tr><td>0.00099 – 0.0001</td><td>Açık ve anlaşılır</td></tr>
             <tr><td>0.00001 – 0</td><td>Tam iletişim sağlanır</td></tr>
           </table>
-          <button class="about-toggle" onclick="toggleAbout('ab-sonmez','this')">Daha fazla bilgi ▾</button>
+          <button class="about-toggle" onclick="toggleAbout('ab-sonmez')">Daha fazla bilgi ▾</button>
           <div class="about-box" id="ab-sonmez">
-            Sönmez (2003), bilinmeyen sözcük oranını temel alan bu formülü geliştirmiştir. Okuyucu için "yabancı" olan sözcüklerin belirlenmesi araştırmacı veya öğretmen tarafından yapılır. Bu nedenle otomasyonu kısmi olan sübjektif bir bileşen içerir.
+            Sönmez (2003), yabancı/bilinmeyen ifadelerin oranına dayanan bu formülü geliştirmiştir. Bu sitede "zor sözcük" olarak 3000 Temel Türkçe Sözcük Listesi dışında kalan sözcükler otomatik sayılmaktadır.
           </div>
         </div>
       </div>
@@ -647,18 +670,181 @@
 </div>
 
 <footer>
-  Türkçe Okunabilirlik Analizi &nbsp;·&nbsp; 
-  
-  <a href="https://github.com" target="_blank">GitHub</a> &nbsp;·&nbsp;
-  
-  <strong>Developed by:</strong> 
-  <a href="https://x.com/idrisdemirsoy" target="_blank" style="color:var(--accent); text-decoration:underline;">
-    İdris Demirsoy, PhD
-  </a>
+  <div style="margin-bottom:0.4rem;">
+    <button class="tool-btn" onclick="window.print()" style="font-size:13px;padding:7px 18px;border-radius:7px;background:var(--ink);color:var(--bg);border-color:var(--ink);">⬇ PDF / Yazdır</button>
+  </div>
+  Türkçe Okunabilirlik Analizi &nbsp;·&nbsp;
+  <a href="https://github.com/iDemirsoy/Turkce-okunabilirlik" target="_blank">GitHub</a> &nbsp;·&nbsp;
+  <strong>Developed by:</strong>
+  <a href="https://x.com/idrisdemirsoy" target="_blank" style="color:var(--accent);text-decoration:underline;">İdris Demirsoy, PhD</a>
+  <br>
+  Sorun ve öneriler için:
+  <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--accent);">idris.demirsoy@usak.edu.tr</a>
 </footer>
 
 <script>
-// ── TÜRKÇE YARDIMCI ──
+// ── 3000 TEMEL TÜRKÇE SÖZCÜK LİSTESİ ──
+function buildWordSet() {
+  return new Set([
+"abe","abla","abladan","acaba","acele","acı","acısından","ad","ada","adalet","adam","adama","adamakıllı","adamdı","adamları","adamı","adamın","adet","adeta","adlarını",
+"adlı","adı","adım","adına","adını","ah","ahlak","aile","ait","ajansı","ak","akla","aklı","aklıma","aklına","aklından","aklını","aksak","aktör","akıl",
+"akıllı","akımı","akışkan","akşam","akşama","al","alacak","alaka","alalım","alan","alanda","alarak","alay","aldı","aldık","aldım","aldınız","aldığı","alem","alemi",
+"alemin","alkol","allah","almak","alman","almaz","almağa","almış","almıştı","almıştır","alt","altmış","altı","altın","altına","altıncı","altında","altından","alçak","alın",
+"alınacaktır","alınan","alıp","alır","alıyor","alıştırmalar","amacı","amacıyla","aman","amatör","amaçla","amca","amerikan","an","ana","anam","anası","anasını","anayasa","anda",
+"andaki","anladı","anladım","anlam","anlamak","anlamda","anlamlı","anlamı","anlamıştı","anlattı","anlatınız","anne","annem","annemin","annesi","annesinin","ansızın","apartman","ara","araba",
+"arabayı","aracı","arada","aradan","aralarında","aralık","aramızda","aranıyor","arap","arapça","arası","arasına","arasında","arasındaki","arasından","arasıra","araya","araç","araştırma","ardından",
+"arka","arkada","arkadaş","arkadaşlar","arkadaşları","arkadaşlarına","arkadaşı","arkasına","arkasında","arkasından","arslan","artan","artış","artışı","arı","asit","asker","askeri","asla","aslında",
+"asıl","asılı","asır","at","ateş","attı","attığı","atış","avukat","aya","ayak","ayakları","ayakta","ayağa","ayağı","ayda","aydın","aydınlar","aydınlık","aykırı",
+"aylık","ayna","aynanın","aynı","aynıdır","ayol","ayrı","ayrıca","ayrık","ayrılması","ayrılır","ayrımsal","ayında","ayıp","ayırma","ayırt","az","aç","açarak","açtı",
+"açtım","açı","açıdan","açık","açıkça","açıldı","açıp","açısal","açısı","açısından","ağa","ağabey","ağacı","ağaları","ağanın","ağaç","ağaçlar","ağustos","ağzı","ağzına",
+"ağzından","ağzını","ağır","ağırlaştığı","ağırlık","ağız","aşağı","aşağıdaki","aşağıya","aşk","baba","babam","babamın","babanın","babası","babasını","babasının","bahar","baharda","bahçe",
+"bahçenin","bahçesinde","bahçeye","bak","bakalım","bakan","bakanlığı","bakarak","bakayım","baktı","baktım","baktığını","bakımdan","bakımından","bakın","bakındı","bakır","bakıyor","bakıyordu","bakıyorum",
+"bal","balık","bana","barok","barış","basit","baskı","basın","basınç","batı","batılı","bay","bayrak","bayram","bazan","bazı","bağ","bağa","bağlı","bağlıdır",
+"bağımsız","bağıntısı","bağıra","bağırdı","bağırıyordu","baş","başa","başarı","başarılı","başbakan","başka","başkaları","başkan","başkanı","başkanının","başkenti","başladı","başladılar","başladım","başladığı",
+"başlamış","başlamıştı","başlamıştır","başlangıç","başlar","başlayan","başlıca","başta","baştan","baştarafı","başı","başım","başımı","başımıza","başına","başında","başından","başını","bedel","beden",
+"beher","bekleyen","bekliyor","bekçi","bekçilere","bela","belediye","belirgin","belirli","belirtileri","belirtmek","belkemiğindeki","belki","belli","bemol","ben","bende","benden","beni","benim",
+"benimle","benzer","benzeri","benzeyen","benzin","beraber","bereket","besbelli","bey","beyaz","beye","beyi","beyim","beyin","bezlere","beş","beşinci","beşte","bildirilmektedir","bilen",
+"bileyim","bileşeni","bileşenlerin","bileşenlerine","bileşenlerinin","bileşik","bilfiil","bilgi","bilgin","bilginin","bilgisi","bilgisini","bilgiye","bilhassa","bilim","bilimsel","bilir","bilirim","bilirsin","biliyor",
+"biliyordu","biliyordum","biliyorum","biliyoruz","bilmediği","bilmek","bilmem","bilmez","bilmiyordu","bilmiyorum","bin","binbir","binlerce","binmiş","biraz","birbirimize","birbirinden","birbirine","birbirlerine","birde",
+"birden","birdenbire","birer","biri","birim","birimi","birin","birinci","birinde","birine","birini","birinin","birisi","birkaç","birleşik","birleştiren","birlik","birlikte","birliği","birtakım",
+"birçok","birşey","bitirdim","bitişik","bitti","biz","bizde","bizden","bize","bizi","bizim","biçim","biçimde","biçiminde","bol","boru","borunun","borç","boy","boylu",
+"boynuna","boyu","boyuna","boyunca","boş","bre","budur","bugün","bugüne","bugünkü","buldu","buldum","bulduğu","bulma","bulmak","bulmuş","bulunan","bulunduğu","bulunduğunu","bulunmaktadır",
+"bulunması","bulunur","bulunuyordu","bulunuz","bulup","buna","bunca","bunda","bundan","bunlar","bunlara","bunlardan","bunları","bunların","bunu","bunun","bununla","bura","burada","buradan",
+"buradayım","buranın","burası","buraya","burcu","burjuva","burjuvazi","burjuvazinin","buyur","buz","buçuk","buğday","bölüm","bölümde","bölümü","böylece","böylesine","büsbütün","bütçe","bütün",
+"büyük","büyüme","bırak","bıraktı","bırakıp","cadde","cahil","cam","can","canlı","canlıdır","canı","canım","canın","cari","cebine","ceng","cephe","cesaret","cetvel",
+"cevabını","cevap","cevaplandırın","ceza","ciddi","cihan","cinsinden","cisim","cisimler","cisimlerin","cisme","cismi","cismin","cumhuriyet","cumhuriyeti","cumhuriyetin","cümle","cümlede","cümleler","cümlelerin",
+"dahilinde","daima","dair","daire","dairesel","dakika","daldı","dalga","dalgalar","dalgaların","dalganın","dalgın","damarlarında","damıtma","dana","dans","dar","davet","dayanan","dayanarak",
+"dayanışma","dayım","dayısı","dağlar","dağın","dede","dedi","dedik","dediler","dedim","dediği","defa","defter","defteri","dek","deli","delikanlı","delikanlının","delikli","deme",
+"demedi","demek","demektir","demir","demiş","demişti","demiştir","demokrasi","demokrat","demokratik","denen","deney","deneyde","deneyi","deneyler","deneylerden","denge","denir","deniz","denizde",
+"denize","denli","der","derdi","dere","derebeylik","derece","derecede","dereceli","dergi","derginin","derhal","derim","derin","derken","derler","derneği","ders","dersen","dershanemizim",
+"dersin","dese","devam","devamlı","devamı","devir","devlet","devleti","devletin","devletleri","devletçilik","devri","devrimci","deyimle","deyip","değer","değeri","değerini","değerler","değerli",
+"değil","değildi","değildir","değilim","değilse","değin","değişen","değişik","değişiklik","değişiklikler","değişiklikleri","değişir","değişme","değişmesi","değişmez","değişmezi","değiştirdi","dibinde","dik","dikkat",
+"dikkate","dikkatle","dil","dilbilgisi","dilde","dile","dili","dilin","din","dinle","dinledi","direnci","direnç","disiplin","disipline","disiplini","diyeceksin","diyeceğim","diyelim","diyen",
+"diyerek","diyez","diyor","diyordu","diyorlar","diyorlardı","diyorum","diyoruz","dizi","dizisi","diğer","diğeri","do","doksan","doktor","dokuz","dokuzuncu","dolayı","dolayısıyla","dolaşan",
+"dolaştı","dolu","donanma","dost","doğan","doğmuştur","doğru","doğrudan","doğrudur","doğruldu","doğrultusunda","doğruluk","doğrusu","doğruya","doğruyu","doğu","doğum","dua","dudakları","dul",
+"duman","dur","duran","durdu","durgun","durmadan","durum","duruma","durumda","durumu","durumuna","durumunda","durumunu","durup","durur","duruyor","duruyordu","duvar","duvara","duydu",
+"duyduğu","duymuş","duyulan","duyularla","döken","döndü","döndüm","dönem","dönemde","dönemi","döneminde","dönen","döner","dönerek","dönme","dönüp","dördüncü","dört","dörtlü","dörtlük",
+"dörtte","dükkanlar","dün","dünya","dünyada","dünyadaki","dünyanın","dünyaya","dünyayı","düyek","düzeneği","düzeni","düzenlenen","düzgün","düzlem","düşen","düşer","düşey","düşman","düşmanın",
+"düşme","düşmüş","düşmüştü","düştü","düşük","düşünce","düşünceleri","düşündü","düşündüm","düşünmek","düşünür","düşünüyor","düşünüyordu","dış","dışarı","dışarıda","dışı","dışına","dışında","edebiyat",
+"edecek","edelim","eden","eder","ederdi","ederek","ederim","ederler","edici","edildi","edilen","edilir","edilmektedir","edilmesi","edilmiş","edilmiştir","edin","edinmek","edip","ediyor",
+"ediyordu","ediyorum","efendi","efendim","efendimizin","efendinin","efendiyi","egemen","ek","eki","ekim","ekiyle","eklemi","eklemleri","ekmek","ekonomi","ekonomik","eksen","ekseni","eksik",
+"el","elbet","elbette","elbise","elde","elden","ele","elektrik","eli","elimde","elimden","elimi","elinde","elindeki","elinden","eline","elini","elinin","eliyle","elleri",
+"ellerimi","ellerini","elli","elma","emek","emekçi","emin","emir","emlak","emniyet","enerji","enerjisi","enstitüsü","erime","erkek","erken","ertesi","esas","eser","eseri",
+"eserler","eserleri","esir","eski","eskiden","esnasında","esnek","esneklik","et","etil","etki","etkin","etkisi","etkiyen","etme","etmeden","etmek","etmektedir","etmesi","etmez",
+"etmeğe","etmiş","etmişti","etmiştir","etrafına","etrafında","etti","ettiler","ettim","ettiği","ettiğiniz","ev","evde","evden","eve","evet","evetleme","evi","evimizde","evin",
+"evinde","evine","evladım","evler","evleri","evvel","evvela","evvelki","ey","eylemsizlik","eğer","eğik","eğildi","eğilim","eğilimi","eğitim","eğlence","eğri","eşek","eşit",
+"eşittir","eşya","fa","faal","faaliyet","fabrika","fakültesine","falan","fark","farkları","farklı","farkı","farkında","farsça","faz","fazla","faşist","felek","felsefe","felsefenin",
+"felsefesi","felsefi","fen","fena","ferdi","fert","fethi","fevkalade","fiil","fiilen","fiiller","fiillerin","fikir","fikri","filan","film","fiyat","fiyatlarla","fiyatları","fiyatlarıyla",
+"fizik","fotoğraf","fransız","fransızca","fırladı","fırsat","fısıldadı","galiba","garip","gayet","gayret","gayri","gaz","gazete","gazetesi","gazi","gazinin","gazların","gazı","gazın",
+"gece","geceden","geceler","geceleri","gecenin","gel","geldi","geldik","geldiler","geldim","geldin","geldiniz","geldiği","geldiğini","gelecek","gelen","geleneksel","gelenin","gelenler","gelerek",
+"gelin","gelince","gelip","gelir","geliri","gelirim","gelirse","geliyor","geliyordu","gelişim","gelişme","gelişmeler","gelişmiş","gelmedi","gelmek","gelmektedir","gelmiş","gelmişti","gelmiştir","gelsin",
+"gemi","gemisi","gence","genel","genellikle","geniş","genç","gençler","gençlik","gerek","gereken","gerekir","gerekli","gerektiğini","gereği","geri","geride","geriye","gerçek","gerçekleşme",
+"gerçeklik","gerçekte","gerçekten","gerçeği","gerçi","getirdi","getirdiği","getiren","getirir","getirmiş","geç","geçen","geçer","geçerken","geçerli","geçip","geçirdi","geçiyor","geçmiş","geçti",
+"gibidir","gibiydi","gidecek","gidelim","giden","gider","giderek","giderken","gidip","gidiyor","gidiyordu","gidiyorum","girdi","girdiler","girdim","giren","girer","girip","giriş","girmek",
+"girmiş","git","gitmek","gitmiş","gitti","gittikten","gittikçe","gittim","gittiği","gizli","gram","grev","grup","gök","gökler","gökyüzü","gönderdi","gönül","gördü","gördüm",
+"gördün","gördünüz","gördüğü","gördüğüm","gördüğümüz","gördüğünüz","göre","gören","görev","görevi","görmek","görmüş","görüldüğü","görülen","görülmektedir","görülür","görülüyor","görünce","görünen","görünüyordu",
+"görüp","görür","görüyor","görüyorum","görüş","görüşü","gösterdi","gösteren","gösterilmiştir","gösterir","göstermektedir","göstermiştir","gövde","göz","gözden","göze","gözleri","gözlerim","gözlerimi","gözlerinde",
+"gözlerinden","gözlerini","gözlerinin","gözleriyle","gözlerle","gözlü","gözü","gözüm","gözüne","gözünü","göğe","göğsü","göğsüme","gücü","gücünü","gül","güldü","güle","gülerek","gülmece",
+"gülümsedi","gülünç","gülüyordu","güm","gün","günde","günden","gündüz","güne","güney","güneş","güneşin","günler","günlerde","günleri","günlük","günü","günün","gürültü","güven",
+"güvenlik","güzel","güç","güçlü","haber","haberi","hacmi","hacmini","hacı","hadise","hafif","hafifçe","hafta","haftalık","hafız","hak","hakikaten","hakim","hakkı","hakkında",
+"hakkındaki","hakkını","haklı","hala","halbuki","halde","hale","halen","hali","halim","halinde","haline","halini","halk","halka","halkı","halkın","han","hangi","hangileri",
+"hangisi","hani","hanım","hanıma","hanımefendi","hanımın","harap","harcamalar","harcanan","hareket","harekete","hareketi","hareketim","hareketine","hareketini","hareketinin","hareketle","harekette","harikulade","hariç",
+"hasta","hasıla","hat","hatta","hatırladı","hava","havada","havalar","havanın","havası","havaya","havayı","hay","hayat","hayatta","hayatı","hayatında","haydi","hayli","hayran",
+"hayret","hayvan","hayvanlar","hayır","haziran","hazır","hazırlık","haçlı","hedefi","hediye","hem","hemen","hemi","hemşireler","henüz","hep","hepimiz","hepsi","hepsini","hepsinin",
+"herhalde","herhangi","herif","herifi","herkes","herkese","herkesin","hesabı","hesap","hesaplayın","hesaplayınız","hey","heyeti","heyri","his","hisar","hisarı","hizmetleri","hiçbir","hoca",
+"hocaya","hop","hoş","hristiyan","hukuk","hüküm","hükümdarı","hükümet","hükümeti","hükümetin","hümayun","hız","hızla","hızlı","hızı","hızını","ibaret","idare","iddia","idea",
+"idi","ifade","ihale","ihtimal","ihtimali","ihtiyar","iken","iki","ikide","ikili","ikimiz","ikinci","ikincisi","ikisi","ikiye","ikişer","iktidar","iktidara","iktidarı","iktisadi",
+"ilahi","ilan","ilave","ileri","ilerici","ilgi","ilgili","ilginç","ilim","ilişki","ilişkiler","ilişkileri","ilk","ilkbahar","ilkin","ille","ilmi","imiş","imkan","imparator",
+"imparatorluğu","ince","indi","insan","insana","insandır","insanlar","insanlara","insanları","insanların","insanı","insanın","inşaat","iri","isim","ismi","ispat","ispirto","istatistik","istedi",
+"istediği","istemem","istemez","istemiyordu","ister","isterse","istersen","isteyen","isteyenler","istihdam","istiklal","istiyor","istiyordu","istiyorsunuz","istiyorum","itibariyle","ivme","iyi","iyice","iyilik",
+"izin","iç","içeri","içeride","içerisinde","içeriye","içi","içimde","içimden","içinde","içindeki","içinden","içine","içini","içki","içtiğini","iş","işaret","işe","işgücü",
+"işgücünün","işi","işin","işine","işini","işkence","işlemi","işler","işleri","işlerine","işsizlik","işten","iştirak","işçi","işçiler","işçileri","işçilerin","i̇ngilizce","i̇slam","kabak",
+"kabul","kadro","kadın","kadına","kadınlar","kadını","kadının","kafa","kafir","kafirin","kahkaha","kahretsin","kahve","kahveye","kalabalık","kalan","kaldı","kaldırdı","kaldırıp","kalem",
+"kalktı","kalkınma","kalkıp","kalma","kalmadı","kalmak","kalmamış","kalmaz","kalmış","kalmıştı","kalsın","kalın","kalır","kamu","kan","kanun","kanunu","kanı","kanını","kapalı",
+"kapitalist","kapı","kapıdan","kapının","kapısı","kapısına","kapısından","kapıya","kapıyı","kar","kara","karakola","karakolda","karanlık","karanlıkta","karar","kardeş","kardeşim","karnı","karı",
+"karım","karısı","karısını","karıştı","karışık","karışım","karşı","karşılaştırın","karşılık","karşılıklı","karşılığı","karşıma","karşın","karşısına","karşısında","karşısındaki","karşıt","karşıya","kasabanın","kasap",
+"kasım","kat","katibi","katma","katsayısı","katta","katı","katılan","kavram","kavramın","kaya","kayda","kaymakam","kaynak","kaynama","kayserili","kaç","kaçar","kaçtı","kağıt",
+"kedi","kediler","kefeye","kelime","kelimeler","kelimeleri","kelimelerin","kelimenin","kelimesi","kenara","kenarda","kenarına","kendi","kendileri","kendilerine","kendilerini","kendiliğinden","kendime","kendimi","kendinden",
+"kendine","kendini","kendisi","kendisinden","kendisine","kendisini","kendisinin","kere","kereviz","kesin","keskin","kesti","kez","kibrit","kilo","kilogram","kilometre","kim","kime","kimi",
+"kimin","kimisi","kimler","kimse","kimseler","kimsenin","kimseye","kinetik","kip","kipi","kiplik","kiralık","kirli","kitabı","kitabın","kitap","kitaplar","kitapları","kişi","kişiler",
+"kişilerin","kişinin","kişisel","klasik","koca","kocaman","kocası","kocasına","koku","kokusu","kol","kolay","kolayca","kolağası","koleksiyon","koleksiyonu","kolları","koluna","kolunda","kolunu",
+"kolunun","komiser","komünist","komşu","konservatuarı","kontrol","konu","konuda","konur","konusu","konusunda","konut","konuşma","konuşmak","konuşturmalar","konuşuyor","koptu","korku","korkunç","korkusu",
+"korkuyordu","koskoca","koyarak","koydu","koyun","koyup","kralı","kredi","kuduz","kulak","kullanılan","kullanılır","kullanınız","kullar","kum","kural","kuralı","kurban","kurmak","kurmuş",
+"kurs","kursun","kurt","kurtuluş","kuru","kurulması","kurulu","kurumu","kuruş","kutsal","kutu","kuvvet","kuvveti","kuvvetin","kuvvetle","kuvvetleri","kuvvetli","kuzenim","kuzenimin","kuzey",
+"kuzu","kuş","kuşlar","köpek","kör","kötü","köy","köye","köylü","köyün","köşe","köşede","küb","kültür","küp","küplük","küre","kürk","kütle","kütleleri",
+"kütlenin","kütlesi","kütlesini","kütlesinin","küçük","kılcal","kılıksız","kırk","kırmızı","kırık","kısa","kısaca","kıskaç","kısmı","kısmını","kısım","kıyas","kıyaslar","kıyasın","kıymet",
+"kıymetli","kız","kıza","kızdı","kızlar","kızları","kızların","kızı","kızım","kızın","kızını","kış","kışa","kışın","la","laf","lakin","lambayı","lastik","layık",
+"laz","lazım","lazımdır","lira","liradan","liradır","liralık","lirası","liraya","lüzumlu","madde","maddeler","maddeleri","maddelerin","maddenin","maddeyi","maddi","madem","maden","mahalle",
+"mahalleli","makine","maksimum","mal","malum","mamafih","mana","manalı","manasız","mantık","mantıkçılar","mantığı","mantığın","mart","masa","masal","masanın","masaya","matematik","mavi",
+"mayıs","mayısta","mebus","meclis","meclisi","medeniyet","mektebe","mektep","mekteple","mektubu","mektup","memleket","memlekete","memleketin","memleketinizde","memlekette","memlük","memnun","memur","memuru",
+"merak","merdiven","merkezcil","merkezi","merkezkaç","mermi","mesela","mesele","meslek","mesut","metre","mevcut","mevlevi","meydan","meydana","meşgul","meşhur","miktar","miktara","miktarda",
+"miktarı","miktarının","millet","milletin","milletvekili","milli","milliyetçi","milyar","milyon","misafir","mister","modern","mor","motor","muavin","muazzam","muhakkak","muhalif","muhtar","muhtelif",
+"musiki","musikisi","musikisinin","musikiye","mutlak","mutlaka","mutlu","muzır","mösyö","mübarek","mücadele","müddet","müdür","müdürlüğü","müdürü","mühim","mülkiyet","mümkün","münasebet","müracaat",
+"müsaade","müslüman","müthiş","müzik","mırıldandı","namussuz","nasıl","nazaran","neden","nedeni","nedenle","nedense","nedir","nefes","neler","nelerdir","nerede","nereden","neredeyse","nereye",
+"nevi","neydi","neye","neyi","neyse","nice","nihayet","nisan","nitekim","nitelik","niteliği","niteliğinde","niteliğini","nitrat","niye","niçin","nişan","nokta","noktaları","noktaların",
+"noktanın","noktası","noktasının","nota","numara","nutuk","nüfus","nüfusun","ocağı","oda","odada","odadan","odama","odanın","odası","odasına","odasında","odaya","odayı","odun",
+"of","oh","okudu","okul","okula","okulda","okulumuzun","okuma","ol","olabilir","olacak","olacaktı","olacaktır","olacağı","olacağım","olamaz","olan","olanağı","olanlar","olarak",
+"olay","olaylar","oldu","oldukları","olduklarını","oldukça","oldum","olduğu","olduğum","olduğumuz","olduğuna","olduğundan","olduğunu","olduğunun","olmadı","olmadığı","olmadığını","olmak","olmakla","olmaktan",
+"olmalı","olmalıdır","olmasa","olması","olmasın","olmasına","olmasını","olmayan","olmaz","olmazsa","olmuyor","olmuş","olmuştu","olmuştur","olsa","olsaydı","olsun","olumlu","olumsuz","olunca",
+"olup","olur","olurdu","olursa","olurum","oluyor","oluyordu","oluşan","oluşturan","oluşu","omuzuna","on","ona","onda","ondan","onlar","onlara","onlarda","onlardan","onları",
+"onların","onu","onun","onuncu","onunla","orada","oradan","oran","oransal","oranı","oranında","oraya","ordu","orkestra","orman","orta","ortada","ortadan","ortak","ortalama",
+"ortalaması","ortalık","ortasında","ortaya","ortaçağ","osmanlı","ot","oturan","oturdu","oturup","oturuyordu","otuz","oy","oynanan","oynarken","oynarız","oysa","oyun","oyunlar","oyunu",
+"oğlan","oğlu","oğlum","oğluna","oğlunun","oğul","padişah","paket","pamuk","para","paranın","parası","parasını","parayla","parayı","parladı","parlak","parmak","parti","partili",
+"partinin","partisi","partisi'ne","partisi'ye","partisinin","partiye","parça","parçaları","parçası","payı","pazar","pazara","paşa","paşanın","pehlivan","pehlivanı","pencere","periyodu","periyot","piposunu",
+"pire","pis","piyasa","plan","planda","planlama","planlı","planı","polis","politik","politika","politikanın","potansiyel","potasyum","prensibi","problem","problemler","profesör","program","programı",
+"programında","protesto","pırıl","radyo","rahat","rahatsız","rakamları","rakı","razı","rağmen","re","reis","reisi","rengi","renk","renkli","resim","resmi","rica","ruh",
+"ruhu","ruhun","rönesans","rüzgar","saat","saati","saatlerce","saatte","sabah","sabaha","sabahleyin","sabit","sade","sadece","safi","sahibi","sahiden","sahip","salladı","salı",
+"samimi","san","sana","sanat","sanatçı","sanatı","sanayi","saniye","saniyede","sanki","santimetre","saray","sarhoş","sarkacın","sarkaç","sarışın","satın","satır","savaş","savaşı",
+"sayfa","sayı","sayıda","sayıları","sayılı","sayın","sayısı","sayısını","saz","saç","saçları","sağ","sağa","sağlamak","sağlayan","sağlık","sebebi","sebep","sebze","sefer",
+"sekiz","sekizinci","seksen","sektör","sektörler","sektörlerde","sektörü","sektöründe","selam","selamet","selzium","semai","sembolik","sen","sende","senden","sendika","sendikaları","sendikası","sene",
+"seni","senin","seninle","serbest","sergi","sergisi","sermaye","sert","sertçe","ses","sesi","sesini","sesle","sesler","sesleri","sesli","sessiz","sevdiğim","sever","severim",
+"sevgi","sevgili","seviyorum","sevmek","seçim","seçmeli","si","sigara","silah","silindir","simitçi","sinema","sinirli","sinüzoidal","sistemi","sistemin","siyah","siyaset","siyasi","siz",
+"sizden","size","sizi","sizin","sodyum","sokak","sokaklarda","sokakta","sokağa","sol","sola","soluk","somut","son","sona","sonbahar","sonbaharda","sonlarına","sonra","sonradan",
+"sonraki","sonraları","sonsuz","sonu","sonucu","sonucun","sonuna","sonunda","sonuç","sonuçlar","sonuçları","sordu","sordum","soru","soruları","sorunu","sosyal","sosyalist","sosyalizm","soğuk",
+"su","suda","sudan","sular","sulh","sultan","suret","sureti","suretiyle","suretle","sus","suya","suyu","suyun","söyle","söyledi","söyledim","söylediği","söylemek","söylemiş",
+"söylemiştir","söylendi","söyler","söyleyiniz","söz","sözcük","sözcükler","sözler","sözleri","sözlerini","sözü","sözünü","söğüt","süratle","sürdü","süre","sürekli","süren","sürer","süresi",
+"sürtünme","sürü","sürüp","sıcak","sıcaklık","sıcaklığa","sıfır","sık","sıkı","sınıf","sınıfların","sınıfta","sınıfı","sınıfının","sınırları","sıra","sırada","sıralarda","sırasında","sıvı",
+"sıvıların","sıvının","sıvıyı","ta","tabaka","tabi","tabiat","tabii","tablo","tabloda","tadın","tahmin","taht","tahta","tak","takip","takım","takımı","tam","tamam",
+"tamamen","tane","tanesi","tanrı","tanrının","tanrıya","tanım","tanımı","tanınmış","taraf","tarafa","taraftan","tarafı","tarafında","tarafından","tarih","tarihi","tarihinde","tarihsel","tarla",
+"tartım","tarım","tatil","tatilde","tatlı","tavla","tavırla","tayin","taş","taşıyan","te","tebeşir","tek","tekelci","teker","tekil","teklif","teknik","tekrar","tekstil",
+"telaffuz","telefon","televizyon","temel","teminatı","temiz","temmuz","temsil","teneke","tenekecinin","tepe","tepeden","terazi","terbiye","tercüme","terim","terimin","ters","tersine","terzi",
+"tesadüf","tesir","teslim","tespit","teyze","teyzem","teşekkür","teşkil","teşkilatı","ticaret","tikel","titreşim","tiyatro","top","toplam","toplanan","toplantı","toplantısında","toplu","topluluğu",
+"toplum","toplumda","toplumsal","toplumu","toplumun","toprak","topraklarına","toprağa","toprağı","toprağın","toz","tozu","tuhaf","tutan","tutarlı","tutarsız","tutmuş","tuttu","tutup","tuz",
+"tüketim","tüm","tümel","tümen","tümevarım","tüp","tüpte","tüpü","tüpün","tür","türk","türkler","türkmen","türkçe","türkçede","türlü","tıp","tıpa","tıpkı","ucu",
+"ucuna","ucunda","ufak","ulan","ulaştırma","ulusal","uluslararası","umumi","umut","usta","uygun","uyku","uzak","uzakta","uzaktan","uzama","uzattı","uzun","uzunluğu","uçak",
+"uçsuz","vah","vakit","vakti","vali","valinin","valiye","valiyi","vallahi","var","vardı","vardım","vardır","varlık","varlıklar","varlıkları","varlıkların","varlıktır","varlığa","varlığı",
+"varlığın","varlığını","varmış","varsa","vatan","vatandaş","vatanın","vay","vazife","vaziyet","vekil","velakin","ver","verdi","verdiler","verdim","verdiği","veren","vererek","vergi",
+"verilen","verilir","verilmiş","verilmiştir","verir","veriyor","veriyordu","vermedi","vermek","vermiş","vermiştir","versin","vezir","vilayet","vurdu","vücudu","yaah","yabancı","yahu","yahut",
+"yaklaşık","yaktı","yakın","yakından","yalan","yalnız","yan","yana","yandan","yangın","yanlış","yanlıştır","yanyana","yanına","yanında","yanındaki","yanından","yapacak","yapalım","yapamaz",
+"yapan","yapar","yaparak","yaparım","yapma","yapmak","yapmış","yapmıştır","yaptı","yaptım","yaptığı","yaptığımız","yapı","yapılacak","yapılan","yapılmış","yapılmıştır","yapılır","yapın","yapınız",
+"yapısı","yapıyor","yarar","yararlanarak","yararlı","yarayan","yardım","yardımcı","yargı","yarı","yarım","yarın","yatay","yatırım","yatırımlar","yatırımları","yatırımların","yavaş","yavaşça","yayın",
+"yayınları","yaz","yazar","yazmak","yazı","yazık","yazılabilir","yazılmış","yazılır","yazın","yazınız","yazısız","yağmur","yaş","yaşam","yaşamak","yaşlarında","yaşlı","yaşta","yaşında",
+"yedi","yedinci","yekta","yemek","yeni","yeniden","yenisi","yer","yerde","yerden","yere","yeri","yerin","yerinde","yerinden","yerine","yerini","yerlerde","yerlere","yerleri",
+"yerli","yeter","yeterli","yetmiş","yeşil","yirmi","yiyecek","yiğit","yok","yoksa","yoksul","yoktu","yoktur","yol","yola","yolda","yoldan","yollar","yolları","yolu",
+"yolun","yoluna","yolunda","yolunu","yorumlama","yorumlaması","yukarı","yukarıda","yukarıdaki","yukarıya","yunan","yurt","yurtiçi","yönde","yönetici","yönetimi","yönlü","yönünden","yüce","yüklem",
+"yüklemi","yüklemler","yüklemli","yüksek","yüksekliği","yürü","yürüdü","yüz","yüzde","yüzden","yüzyılda","yüzü","yüzüme","yüzümü","yüzünde","yüzünden","yüzüne","yüzünü","yüzünün","yıl",
+"yılda","yıldan","yıldır","yıldırım","yıllar","yıllarda","yılları","yıllarında","yıllık","yılı","yılın","yılına","yılında","zaferi","zaman","zamana","zamanda","zamanla","zamanlar","zamanlarda",
+"zamanı","zamanın","zamanında","zannederim","zarar","zaruri","zaten","zavallı","zayıf","zengin","zevk","zifiri","zihin","zincirleme","ziyade","zor","zorla","zorlu","zorunda","zorunlu",
+"zıt","çabucak","çabuk","çal","çalışan","çalışarak","çalışma","çalışmak","çalışmalar","çalışmaları","çalışın","çalışıyor","çalışıyordu","çamur","çamurlu","çare","çavuş","çay","çağ","çağdaş",
+"çeken","çekim","çekip","çekiç","çekti","çevirdi","çeviren","çevre","çevremizde","çeşit","çeşitleri","çeşitli","çift","çinko","çirkin","çizelge","çizelgesi","çizelgesinde","çizelgesiyle","çizgi",
+"çiçek","çoban","çocuk","çocuklar","çocuklara","çocukları","çocukların","çocuğu","çocuğun","çok","çoktan","çoğu","çoğul","çoğunluğu","çöp","çözelti","çözüm","çözümleme","çözümleyici","çözünen",
+"çözünmüş","çözünürlük","çıkan","çıkar","çıkarak","çıkardı","çıkarım","çıkarımın","çıkarıp","çıkmak","çıkması","çıkmaz","çıkmış","çıkmıştı","çıktı","çıktık","çıktılar","çıktım","çıktığı","çıkıp",
+"çıkıyor","çıkıyordu","çıkış","çıplak","çırılçıplak","öbür","öldü","ölen","ölmüş","ölçüde","ölçülmesi","ölü","ölüler","ölüm","ölümlüdür","ön","önce","önceden","önceki","öncül",
+"öncüllerde","önde","öne","önem","önemi","önemini","önemli","önerme","önermede","önermeler","önermelerden","önermelerdir","önermelere","önermeleri","önermenin","önermesi","önermesinde","önermesinin","önü","önüme",
+"önünde","önündeki","önünden","önüne","örnek","örneğin","öte","öteki","öyle","öyleyse","öz","özel","özellik","özellikle","özellikleri","özgü","özgül","özne","özü","öğle",
+"öğleden","öğrenci","öğrenciler","öğrendik","öğrenelim","öğrenmek","öğretmen","öğretmeni","ücret","ülke","ülkelerde","ülkelere","ülkelerin","üniversite","üniversiteye","ünlü","üretim","üretin","üst","üste",
+"üstelik","üstü","üstün","üstünde","üstündeki","üstünden","üstüne","üyesi","üzere","üzeri","üzerinde","üzerindeki","üzerinden","üzerine","üç","üçte","üçüncü","ısı","ısıtma","ışık",
+"ışığı","şahıs","şahıslara","şair","şarkı","şartlı","şaşkın","şehir","şehit","şehri","şehrin","şeker","şekil","şekilde","şeklinde","şeklini","şen","şey","şeyden","şeydi",
+"şeye","şeyi","şeyin","şeyler","şeyleri","şiddetli","şiir","şikayet","şimdi","şimdilik","şimdiye","şişe","şubat","şunlardır","şunları","şunu","şuurunu","şüphe","şüphesiz"
+]);
+}
+const TEMEL_SOZLUK = buildWordSet();
+
+function normalizeWord(w) {
+  return w.toLowerCase()
+    .replace(/[âÂ]/g,'a').replace(/[îÎ]/g,'i').replace(/[ûÛ]/g,'u');
+}
+
 const SESLI = /[aeıiouöüâîûAEIİOUÖÜÂÎÛ]/g;
 
 function heceHesapla(w) {
@@ -684,7 +870,7 @@ function hesapla() {
   const txt = document.getElementById('txt').value;
 
   if (!txt.trim()) {
-    ['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-yab'].forEach(id => {
+    ['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor'].forEach(id => {
       document.getElementById(id).textContent = '—';
     });
     ['sc-atesman','sc-cetinkaya','sc-bezirci','sc-sonmez'].forEach(id => {
@@ -697,21 +883,24 @@ function hesapla() {
     return;
   }
 
-  const cumler      = cumleBol(txt);
-  const sozler      = sozcukBol(txt);
-  const karSay      = txt.length;
-  const karSay2     = txt.replace(/\s/g, '').length;
-  const sozSay      = sozler.length;
-  const cumSay      = Math.max(cumler.length, 1);
-  const parSay      = paragrafSay(txt);
+  const cumler   = cumleBol(txt);
+  const sozler   = sozcukBol(txt);
+  const karSay   = txt.length;
+  const karSay2  = txt.replace(/\s/g, '').length;
+  const sozSay   = sozler.length;
+  const cumSay   = Math.max(cumler.length, 1);
+  const parSay   = paragrafSay(txt);
+
+  // Zor sözcük = 3000 listesi dışında kalanlar
+  const zorSozler = sozler.filter(w => !TEMEL_SOZLUK.has(normalizeWord(w)));
+  const zorSay    = zorSozler.length;
 
   document.getElementById('s-kar').textContent  = karSay.toLocaleString('tr-TR');
   document.getElementById('s-kar2').textContent = karSay2.toLocaleString('tr-TR');
   document.getElementById('s-soz').textContent  = sozSay.toLocaleString('tr-TR');
   document.getElementById('s-cum').textContent  = cumSay.toLocaleString('tr-TR');
   document.getElementById('s-par').textContent  = parSay.toLocaleString('tr-TR');
-  document.getElementById('s-zor').textContent  = '—';
-  document.getElementById('s-yab').textContent  = '—';
+  document.getElementById('s-zor').textContent  = zorSay.toLocaleString('tr-TR');
 
   if (sozSay === 0) return;
 
@@ -726,27 +915,26 @@ function hesapla() {
     else if (h >= 6) h6++;
   });
 
-  const x1      = toplamHece / sozSay;              // ort. hece/sözcük (sesli harf)
-  const x1a     = karSay2 / (sozSay * 2.46);        // ort. hece/sözcük (Ateşman, karakter tabanlı)
-  const x2      = sozSay / cumSay;                   // ort. sözcük/cümle
-  const OKS     = x2;
+  const x1   = toplamHece / sozSay;
+  const x1a  = karSay2 / (sozSay * 2.46);
+  const x2   = sozSay / cumSay;
+  const OKS  = x2;
 
   document.getElementById('s-x1').textContent  = x1.toFixed(2);
   document.getElementById('s-x1a').textContent = x1a.toFixed(2);
   document.getElementById('s-x2').textContent  = x2.toFixed(2);
 
-  // 1. ATEŞMAN (karakter tabanlı x1a kullanılır)
+  // 1. ATEŞMAN (karakter tabanlı x1a)
   const pAtesman = 198.825 - 40.175 * x1a - 2.610 * x2;
   document.getElementById('sc-atesman').textContent = Math.round(pAtesman);
   document.getElementById('lv-atesman').textContent = lvAtesman(pAtesman);
 
   // 2. ÇETİNKAYA-UZUN
-  const pCetinkaya = 118.823 - 25.987 * x1 - 0.971 * x2;
+  const pCetinkaya = 118.823 - 25.987 * x1a - 0.971 * x2;
   document.getElementById('sc-cetinkaya').textContent = Math.round(pCetinkaya);
   document.getElementById('lv-cetinkaya').textContent = lvCetinkaya(pCetinkaya);
 
   // 3. BEZİRCİ-YILMAZ
-  // H3, H4, H5, H6 are averages per sentence
   const H3 = h3 / cumSay;
   const H4 = h4 / cumSay;
   const H5 = h5 / cumSay;
@@ -756,14 +944,14 @@ function hesapla() {
   document.getElementById('sc-bezirci').textContent = pBezirci.toFixed(2);
   document.getElementById('lv-bezirci').textContent = lvBezirci(pBezirci);
 
-  // 4. SÖNMEZ
-  const yabanciSay   = parseInt(document.getElementById('yabanciSay').value) || 0;
-  const gucOrani     = sozSay > 0 ? yabanciSay / sozSay : 0;
-  const pSonmez      = gucOrani * gucOrani;                     // anlaşılırlık oranı = güçlük oranı²
+  // 4. SÖNMEZ — zor sözcük otomatik, manuel override mümkün
+  const manuelVal = document.getElementById('yabanciSay').value;
+  const yabanciSay = (manuelVal !== '' && !isNaN(manuelVal)) ? parseInt(manuelVal) : zorSay;
+  const gucOrani  = sozSay > 0 ? yabanciSay / sozSay : 0;
+  const pSonmez   = gucOrani * gucOrani;
   document.getElementById('sc-sonmez').textContent = pSonmez.toFixed(5);
   document.getElementById('lv-sonmez').textContent = lvSonmez(pSonmez);
 
-  // Frekans
   renderFreq(sozler);
 }
 
@@ -823,7 +1011,7 @@ function renderFreq(sozler) {
 function htmlSil() { const el = document.getElementById('txt'); el.value = el.value.replace(/<[^>]*>/g,''); hesapla(); }
 function buyukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleUpperCase('tr-TR'); hesapla(); }
 function kucukHarf() { const el = document.getElementById('txt'); el.value = el.value.toLocaleLowerCase('tr-TR'); hesapla(); }
-function temizle() { document.getElementById('txt').value = ''; document.getElementById('yabanciSay').value = 0; hesapla(); }
+function temizle() { document.getElementById('txt').value = ''; document.getElementById('yabanciSay').value = ''; hesapla(); }
 
 // ── UI TOGGLE ──
 function toggleDetail(id, chevId) {
