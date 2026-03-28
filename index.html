@@ -455,12 +455,16 @@
         </div>
         <div class="panel-body">
           <div class="stats-grid">
-            <div class="stat-card"><span class="stat-label">Karakter</span><span class="stat-val" id="s-kar">—</span></div>
+            <div class="stat-card"><span class="stat-label">Karakter (boşluklu)</span><span class="stat-val" id="s-kar">—</span></div>
+            <div class="stat-card"><span class="stat-label">Karakter (boşluksuz)</span><span class="stat-val" id="s-kar2">—</span></div>
             <div class="stat-card"><span class="stat-label">Sözcük</span><span class="stat-val" id="s-soz">—</span></div>
             <div class="stat-card"><span class="stat-label">Cümle</span><span class="stat-val" id="s-cum">—</span></div>
             <div class="stat-card"><span class="stat-label">Paragraf</span><span class="stat-val" id="s-par">—</span></div>
-            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
             <div class="stat-card"><span class="stat-label">Ort. Sözcük/Cümle</span><span class="stat-val small" id="s-x2">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük</span><span class="stat-val small" id="s-x1">—</span></div>
+            <div class="stat-card"><span class="stat-label">Ort. Hece/Sözcük (Ateşman)</span><span class="stat-val small" id="s-x1a">—</span></div>
+            <div class="stat-card"><span class="stat-label">Zor Sözcükler</span><span class="stat-val" id="s-zor">—</span></div>
+            <div class="stat-card"><span class="stat-label">Yabancı Sözcükler</span><span class="stat-val" id="s-yab">—</span></div>
           </div>
         </div>
       </div>
@@ -611,12 +615,20 @@
           <input type="number" id="yabanciSay" min="0" value="0" oninput="hesapla()">
         </div>
         <div class="formula-detail" id="det-sonmez">
-          <div class="formula-eq">Anlaşılırlık Oranı = ((N – Y) / N) × 100</div>
-          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: Bilinmeyen/yabancı sözcük sayısı</div>
+          <div class="formula-eq">G = Y / N &nbsp;→&nbsp; Anlaşılırlık Oranı = G²</div>
+          <div class="formula-vars">N: Toplam sözcük sayısı &nbsp;|&nbsp; Y: Yabancı/bilinmeyen sözcük, deyim, terim, kavram sayısı &nbsp;|&nbsp; G: Güçlük oranı</div>
+          <div style="font-size:0.73rem;color:#4A1F7A;background:#F3EEF9;border-radius:5px;padding:6px 8px;margin-top:6px;">
+            <strong>Not:</strong> Sonuç 0'a yaklaştıkça metin daha <em>kolay</em> anlaşılır.
+          </div>
           <table class="levels-table">
-            <tr><td>≥ 75%</td><td>Bağımsız Okuma</td></tr>
-            <tr><td>50–74%</td><td>Eğitsel Okuma</td></tr>
-            <tr><td>&lt; 50%</td><td>Yetersiz Okuma</td></tr>
+            <tr><td>1.00 – 0.99</td><td>Tümüyle anlamsız</td></tr>
+            <tr><td>0.98 – 0.26</td><td>Metin anlamsız</td></tr>
+            <tr><td>0.25 – 0.16</td><td>Metin bulanık</td></tr>
+            <tr><td>0.15 – 0.09</td><td>Zor anlaşılır</td></tr>
+            <tr><td>0.08 – 0.04</td><td>Yardım alınarak anlaşılabilir</td></tr>
+            <tr><td>0.03 – 0.001</td><td>Anlaşılabilir</td></tr>
+            <tr><td>0.00099 – 0.0001</td><td>Açık ve anlaşılır</td></tr>
+            <tr><td>0.00001 – 0</td><td>Tam iletişim sağlanır</td></tr>
           </table>
           <button class="about-toggle" onclick="toggleAbout('ab-sonmez','this')">Daha fazla bilgi ▾</button>
           <div class="about-box" id="ab-sonmez">
@@ -647,7 +659,7 @@
 
 <script>
 // ── TÜRKÇE YARDIMCI ──
-const SESLI = /[aeıiouöüAEIİOUÖÜ]/g;
+const SESLI = /[aeıiouöüâîûAEIİOUÖÜÂÎÛ]/g;
 
 function heceHesapla(w) {
   const m = w.match(SESLI);
@@ -655,7 +667,7 @@ function heceHesapla(w) {
 }
 
 function sozcukBol(t) {
-  return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇ']+/g) || [];
+  return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇâîûÂÎÛ']+/g) || [];
 }
 
 function cumleBol(t) {
@@ -672,7 +684,7 @@ function hesapla() {
   const txt = document.getElementById('txt').value;
 
   if (!txt.trim()) {
-    ['s-kar','s-soz','s-cum','s-par','s-x1','s-x2'].forEach(id => {
+    ['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-yab'].forEach(id => {
       document.getElementById(id).textContent = '—';
     });
     ['sc-atesman','sc-cetinkaya','sc-bezirci','sc-sonmez'].forEach(id => {
@@ -685,17 +697,21 @@ function hesapla() {
     return;
   }
 
-  const cumler  = cumleBol(txt);
-  const sozler  = sozcukBol(txt);
-  const karSay  = txt.length;
-  const sozSay  = sozler.length;
-  const cumSay  = Math.max(cumler.length, 1);
-  const parSay  = paragrafSay(txt);
+  const cumler      = cumleBol(txt);
+  const sozler      = sozcukBol(txt);
+  const karSay      = txt.length;
+  const karSay2     = txt.replace(/\s/g, '').length;
+  const sozSay      = sozler.length;
+  const cumSay      = Math.max(cumler.length, 1);
+  const parSay      = paragrafSay(txt);
 
-  document.getElementById('s-kar').textContent = karSay.toLocaleString('tr-TR');
-  document.getElementById('s-soz').textContent = sozSay.toLocaleString('tr-TR');
-  document.getElementById('s-cum').textContent = cumSay.toLocaleString('tr-TR');
-  document.getElementById('s-par').textContent = parSay.toLocaleString('tr-TR');
+  document.getElementById('s-kar').textContent  = karSay.toLocaleString('tr-TR');
+  document.getElementById('s-kar2').textContent = karSay2.toLocaleString('tr-TR');
+  document.getElementById('s-soz').textContent  = sozSay.toLocaleString('tr-TR');
+  document.getElementById('s-cum').textContent  = cumSay.toLocaleString('tr-TR');
+  document.getElementById('s-par').textContent  = parSay.toLocaleString('tr-TR');
+  document.getElementById('s-zor').textContent  = '—';
+  document.getElementById('s-yab').textContent  = '—';
 
   if (sozSay === 0) return;
 
@@ -710,15 +726,17 @@ function hesapla() {
     else if (h >= 6) h6++;
   });
 
-  const x1 = toplamHece / sozSay;         // ort. hece/sözcük
-  const x2 = sozSay / cumSay;             // ort. sözcük/cümle
-  const OKS = x2;                          // cümledeki ort. kelime = x2
+  const x1      = toplamHece / sozSay;              // ort. hece/sözcük (sesli harf)
+  const x1a     = karSay2 / (sozSay * 2.46);        // ort. hece/sözcük (Ateşman, karakter tabanlı)
+  const x2      = sozSay / cumSay;                   // ort. sözcük/cümle
+  const OKS     = x2;
 
-  document.getElementById('s-x1').textContent = x1.toFixed(2);
-  document.getElementById('s-x2').textContent = x2.toFixed(2);
+  document.getElementById('s-x1').textContent  = x1.toFixed(2);
+  document.getElementById('s-x1a').textContent = x1a.toFixed(2);
+  document.getElementById('s-x2').textContent  = x2.toFixed(2);
 
-  // 1. ATEŞMAN
-  const pAtesman = 198.825 - 40.175 * x1 - 2.610 * x2;
+  // 1. ATEŞMAN (karakter tabanlı x1a kullanılır)
+  const pAtesman = 198.825 - 40.175 * x1a - 2.610 * x2;
   document.getElementById('sc-atesman').textContent = Math.round(pAtesman);
   document.getElementById('lv-atesman').textContent = lvAtesman(pAtesman);
 
@@ -739,9 +757,10 @@ function hesapla() {
   document.getElementById('lv-bezirci').textContent = lvBezirci(pBezirci);
 
   // 4. SÖNMEZ
-  const yabanciSay = parseInt(document.getElementById('yabanciSay').value) || 0;
-  const pSonmez = ((sozSay - yabanciSay) / sozSay) * 100;
-  document.getElementById('sc-sonmez').textContent = Math.round(pSonmez) + '%';
+  const yabanciSay   = parseInt(document.getElementById('yabanciSay').value) || 0;
+  const gucOrani     = sozSay > 0 ? yabanciSay / sozSay : 0;
+  const pSonmez      = gucOrani * gucOrani;                     // anlaşılırlık oranı = güçlük oranı²
+  document.getElementById('sc-sonmez').textContent = pSonmez.toFixed(5);
   document.getElementById('lv-sonmez').textContent = lvSonmez(pSonmez);
 
   // Frekans
@@ -770,9 +789,14 @@ function lvBezirci(p) {
   return 'Akademik';
 }
 function lvSonmez(p) {
-  if (p >= 75) return 'Bağımsız Okuma';
-  if (p >= 50) return 'Eğitsel Okuma';
-  return 'Engelli Okuma';
+  if (p >= 0.99)   return 'Tümüyle anlamsız';
+  if (p >= 0.26)   return 'Metin anlamsız';
+  if (p >= 0.16)   return 'Metin bulanık';
+  if (p >= 0.09)   return 'Zor anlaşılır';
+  if (p >= 0.04)   return 'Yardımla anlaşılır';
+  if (p >= 0.001)  return 'Anlaşılabilir';
+  if (p >= 0.0001) return 'Açık ve anlaşılır';
+  return 'Tam iletişim';
 }
 
 // ── FREKANS ──
