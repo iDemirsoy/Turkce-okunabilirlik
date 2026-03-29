@@ -38,19 +38,13 @@ header p{font-size:.9rem;color:#B5A89A;margin-top:.4rem;position:relative;font-s
 .text-card-head h3{font-size:.95rem;font-weight:600;color:var(--ink);flex:1;}
 .level-tag{font-size:.7rem;padding:2px 10px;border-radius:20px;font-weight:600;white-space:nowrap;}
 .domain-tag{font-size:.68rem;padding:2px 8px;border-radius:20px;color:var(--ink-3);border:1px solid var(--border);white-space:nowrap;}
-.text-body{padding:1.25rem 1.5rem;}
+.text-body{padding:1.25rem 1.5rem;position:relative;}
 .text-para{font-size:.95rem;line-height:2.4;color:var(--ink-2);}
 .blank-wrap{display:inline-block;position:relative;margin:0 1px;vertical-align:baseline;}
 .blank-num{font-size:.6rem;color:var(--ink-3);position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-family:sans-serif;}
 .blank-input{display:inline-block;border:none;border-bottom:2px solid var(--accent-light);background:transparent;font-size:.93rem;font-family:"Source Serif 4",serif;color:var(--accent);width:110px;text-align:center;padding:0 4px;transition:border-color .2s;vertical-align:baseline;}
 .blank-input:focus{outline:none;border-bottom-color:var(--accent);}
 .submit-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem;box-shadow:var(--shadow);}
-.submit-area h3{font-family:"Playfair Display",serif;font-size:1rem;margin-bottom:1rem;color:var(--ink);}
-.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
-@media(min-width:500px){.score-grid{grid-template-columns:repeat(7,1fr);}}
-.score-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center;}
-.score-label{font-size:.63rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;}
-.score-val{font-size:1.05rem;font-family:"Playfair Display",serif;font-weight:600;color:var(--ink);}
 .btn-primary{display:block;width:100%;padding:13px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;font-size:15px;font-family:"Source Serif 4",serif;cursor:pointer;transition:all .15s;}
 .btn-primary:hover{background:var(--accent);}
 .btn-primary:active{transform:scale(.98);}
@@ -60,6 +54,8 @@ header p{font-size:.9rem;color:#B5A89A;margin-top:.4rem;position:relative;font-s
 .result-box{display:none;border-radius:10px;padding:1.1rem 1.25rem;margin-top:1rem;font-size:.88rem;line-height:1.7;}
 .result-box.ok{display:block;background:var(--green-bg);border:1px solid #9FE1CB;color:#085041;}
 .result-box.err{display:block;background:var(--red-bg);border:1px solid #F09595;color:var(--red);}
+.source-icon{cursor:help;color:var(--accent);font-size:1.4rem;margin-left:12px;vertical-align:middle;}
+.source-icon:hover{opacity:0.8;}
 footer{text-align:center;padding:1.5rem;font-size:.78rem;color:var(--ink-3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
 footer a{color:var(--accent);}
 </style>
@@ -102,27 +98,24 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:#FFF3E8;color:#8B4513;">Çok Kolay</span>
   </div>
   <div class="text-body"><p class="text-para">
-    Sabah erkenden kalktım. Yüzümü yıkayıp kahvaltı
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="yaptım" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Ekmek ve peynir
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="yedim" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Sonra dişlerimi
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="fırçaladım" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Çantamı alıp
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="okula" data-m="1" oninput="updateProgress()" placeholder="___"></span>
-    gittim. Hava çok
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="güzeldi" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Arkadaşlarımla oyun
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="oynadık" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Öğle yemeğini birlikte
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="yedik" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Akşam eve
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="döndüm" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Annem beni kapıda
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="bekliyordu" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-    Ödevimi yapıp
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="uyudum" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-  </p></div>
+    Karınca çok çalışkanmış; yazın sımsıcak günlerine aldırış etmeden kışa hazırlık yapıyor, hiç durmadan 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="çalışıyormuş" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Ağustosböceği ise bütün gün şarkı söylüyor, 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="eğleniyormuş" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Kış gelince karınca yiyeceklerini 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="paylaşıyordu" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Ağustosböceği ise aç ve üşümüş halde karıncaya 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="sordu" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Karınca ona “Yazın neden çalışmadın?” diye 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="sordu" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Ağustosböceği pişman oldu ama iş işten 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="geçti" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+    Bu masal bize çalışkanlığın 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="önemini" data-m="1" oninput="updateProgress()" placeholder="___"></span> anlatıyor. Herkes kendi geleceğini 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="planlamalı" data-m="1" oninput="updateProgress()" placeholder="___"></span>. Tembellik 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="kötüdür" data-m="1" oninput="updateProgress()" placeholder="___"></span>. Çalışkanlık ise 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="iyi getirir" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
+  </p><span class="source-icon" title="Kaynak: Aktivite Parkı – Masal, Hikaye ve Öykü Örnekleri&#10;https://aktiviteparki.com/masal-hikaye-ve-oyku-ornekleri/">ⓘ</span></div>
 </div>
 
 <!-- METİN 2: HABER -->
@@ -134,28 +127,18 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:var(--blue-bg);color:var(--blue);">Kolay</span>
   </div>
   <div class="text-body"><p class="text-para">
-    İstanbul'da dün büyük bir trafik
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="kazası" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    meydana geldi. İki araç çarpıştı ve üç kişi
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="yaralandı" data-m="2" oninput="updateProgress()" placeholder="___"></span>.
-    Yaralılar hemen
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="hastaneye" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    kaldırıldı. Polis olay yerine çok
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="geçmeden" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    ulaştı. Kazanın
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="sebebi" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    araştırılıyor. Sürücülerden biri kırmızı
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="ışıkta" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    geçmiş. Trafik akışı saatlerce
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="aksadı" data-m="2" oninput="updateProgress()" placeholder="___"></span>.
-    Yetkililer vatandaşları dikkatli
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="olmaya" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    davet etti. Bu ay benzer
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="kazalar" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    artış gösterdi. Uzmanlar önlem alınması
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="gerektiğini" data-m="2" oninput="updateProgress()" placeholder="___"></span>
-    vurguluyor.
-  </p></div>
+    Türkiye Basketbol Federasyonu Başkanı Hidayet Türkoğlu, FIBA Hall of Fame 2026 listesine giren ilk Türk sporcu oldu. Sporculuk kariyeri ve milli takım kimliğiyle basketbola büyük 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="katkı" data-m="2" oninput="updateProgress()" placeholder="___"></span> sağlayan Türkoğlu bu onura layık görüldü. Hidayet Türkoğlu, “Bu başarı sadece benim değil, Türk basketbolunun 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="zaferi" data-m="2" oninput="updateProgress()" placeholder="___"></span>” dedi. Türkiye Sigorta da yıllardır desteklediği Türk basketboluna bu mirasın ilham 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="verici" data-m="2" oninput="updateProgress()" placeholder="___"></span> olmasını temenni etti. Bu seçilme Türk spor tarihinde önemli bir 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="kilometre taşı" data-m="2" oninput="updateProgress()" placeholder="___"></span> olarak kaydedildi. Genç basketbolcularımız için büyük bir 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="motivasyon" data-m="2" oninput="updateProgress()" placeholder="___"></span> kaynağı oldu. Federasyon Başkanı’nın bu gururu tüm spor camiasını 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="sevindirdi" data-m="2" oninput="updateProgress()" placeholder="___"></span>. Türk basketbolu artık dünya 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="sıralamasında" data-m="2" oninput="updateProgress()" placeholder="___"></span> arasında yer alıyor. Bu tür başarılar sporun birleştirici 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="gücünü" data-m="2" oninput="updateProgress()" placeholder="___"></span> bir kez daha kanıtlıyor. Hidayet Türkoğlu gibi efsaneler sayesinde Türk sporu her geçen gün daha 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="iyi" data-m="2" oninput="updateProgress()" placeholder="___"></span> noktalara 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="ulaşıyor" data-m="2" oninput="updateProgress()" placeholder="___"></span>.
+  </p><span class="source-icon" title="Kaynak: Türkiye Basketbol Federasyonu – 2026&#10;https://www.instagram.com/reel/DSjsr7lDesN/">ⓘ</span></div>
 </div>
 
 <!-- METİN 3: TARİH -->
@@ -167,28 +150,18 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:var(--amber-bg);color:var(--amber);">Orta</span>
   </div>
   <div class="text-body"><p class="text-para">
-    Osmanlı İmparatorluğu, on dördüncü yüzyılda
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="kurulmuş" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    ve altı asır boyunca varlığını
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="sürdürmüştür" data-m="3" oninput="updateProgress()" placeholder="___"></span>.
-    Üç kıtaya yayılan bu devlet dönemin en
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="güçlü" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    siyasi yapılarından birini
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="oluşturmuştur" data-m="3" oninput="updateProgress()" placeholder="___"></span>.
-    İstanbul'un fethiyle birlikte imparatorluk yeni bir
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="döneme" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    girmiştir. Farklı din ve
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="kültürden" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    gelen halkları bir arada yönetmek büyük bir
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="beceri" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    gerektirmiştir. Tanzimat döneminde başlayan
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="modernleşme" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    süreci toplumsal yapıyı köklü biçimde
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değiştirmiştir" data-m="3" oninput="updateProgress()" placeholder="___"></span>.
-    İmparatorluk 1922 yılında resmen
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="sona" data-m="3" oninput="updateProgress()" placeholder="___"></span>
-    ermiştir.
-  </p></div>
+    Osmanlı İmparatorluğu, on dördüncü yüzyılda 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="kurulmuş" data-m="3" oninput="updateProgress()" placeholder="___"></span> ve altı asır boyunca varlığını 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="sürdürmüştür" data-m="3" oninput="updateProgress()" placeholder="___"></span>. Üç kıtaya yayılan bu devlet dönemin en 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="güçlü" data-m="3" oninput="updateProgress()" placeholder="___"></span> siyasi yapılarından birini 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="oluşturmuştur" data-m="3" oninput="updateProgress()" placeholder="___"></span>. İstanbul'un fethiyle birlikte imparatorluk yeni bir 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="döneme" data-m="3" oninput="updateProgress()" placeholder="___"></span> girmiştir. Farklı din ve 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="kültürden" data-m="3" oninput="updateProgress()" placeholder="___"></span> gelen halkları bir arada yönetmek büyük bir 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="beceri" data-m="3" oninput="updateProgress()" placeholder="___"></span> gerektirmiştir. Tanzimat döneminde başlayan 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="modernleşme" data-m="3" oninput="updateProgress()" placeholder="___"></span> süreci toplumsal yapıyı köklü biçimde 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değiştirmiştir" data-m="3" oninput="updateProgress()" placeholder="___"></span>. İmparatorluk 1922 yılında resmen 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="sona" data-m="3" oninput="updateProgress()" placeholder="___"></span> ermiştir.
+  </p><span class="source-icon" title="Kaynak: Türkçe Vikipedi – Osmanlı İmparatorluğu maddesi&#10;https://tr.wikipedia.org/wiki/Osmanlı_İmparatorluğu">ⓘ</span></div>
 </div>
 
 <!-- METİN 4: SAĞLIK -->
@@ -200,28 +173,18 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:var(--green-bg);color:var(--green);">Orta–Zor</span>
   </div>
   <div class="text-body"><p class="text-para">
-    Tip 2 diyabet, insülin direnciyle karakterize edilen kronik bir metabolik
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="hastalıktır" data-m="4" oninput="updateProgress()" placeholder="___"></span>.
-    Pankreas yeterli insülin üretse de hücreler buna yeterince
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="yanıt" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    veremez. Bu durum kan
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="şekerinin" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    yükselmesine neden olur. Düzenli fiziksel
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="aktivite" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    ve dengeli beslenme hastalığın ilerlemesini
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="yavaşlatabilir" data-m="4" oninput="updateProgress()" placeholder="___"></span>.
-    Tedavi edilmediğinde kalp,
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="böbrek" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    ve göz komplikasyonlarına yol açabilir. Erken
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="tanı" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    kritik önem taşımaktadır. Hastalığın
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="yönetiminde" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    ilaç tedavisinin yanı sıra yaşam tarzı
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değişikliği" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    de büyük rol oynar. Düzenli
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="kontrollerle" data-m="4" oninput="updateProgress()" placeholder="___"></span>
-    komplikasyonlar önlenebilir.
-  </p></div>
+    Tip 2 diyabet, insülin direnciyle karakterize edilen kronik bir metabolik 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="hastalıktır" data-m="4" oninput="updateProgress()" placeholder="___"></span>. Pankreas yeterli insülin üretse de hücreler buna yeterince 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="yanıt" data-m="4" oninput="updateProgress()" placeholder="___"></span> veremez. Bu durum kan 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="şekerinin" data-m="4" oninput="updateProgress()" placeholder="___"></span> yükselmesine neden olur. Düzenli fiziksel 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="aktivite" data-m="4" oninput="updateProgress()" placeholder="___"></span> ve dengeli beslenme hastalığın ilerlemesini 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="yavaşlatabilir" data-m="4" oninput="updateProgress()" placeholder="___"></span>. Tedavi edilmediğinde kalp, 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="böbrek" data-m="4" oninput="updateProgress()" placeholder="___"></span> ve göz komplikasyonlarına yol açabilir. Erken 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="tanı" data-m="4" oninput="updateProgress()" placeholder="___"></span> kritik önem taşımaktadır. Hastalığın 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="yönetiminde" data-m="4" oninput="updateProgress()" placeholder="___"></span> ilaç tedavisinin yanı sıra yaşam tarzı 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değişikliği" data-m="4" oninput="updateProgress()" placeholder="___"></span> de büyük rol oynar. Düzenli 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="kontrollerle" data-m="4" oninput="updateProgress()" placeholder="___"></span> komplikasyonlar önlenebilir.
+  </p><span class="source-icon" title="Kaynak: Memorial Hastanesi resmi sitesi – Tip 2 Diyabet Nedir?&#10;https://www.memorial.com.tr/hastaliklar/tip-2-diyabet-nedir">ⓘ</span></div>
 </div>
 
 <!-- METİN 5: HUKUK -->
@@ -233,28 +196,18 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:var(--purple-bg);color:var(--purple);">Zor</span>
   </div>
   <div class="text-body"><p class="text-para">
-    İş sözleşmesinin feshi hâlinde işçinin kıdem tazminatına hak kazanabilmesi için en az
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="bir" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    yıl çalışmış olması
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="gerekmektedir" data-m="5" oninput="updateProgress()" placeholder="___"></span>.
-    İşveren tarafından gerçekleştirilen haksız
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="fesihlerde" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    işçi hem kıdem hem de ihbar
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="tazminatı" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    talep edebilir. Söz konusu tazminatlar işçinin son brüt
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="ücreti" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    esas alınarak
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="hesaplanmaktadır" data-m="5" oninput="updateProgress()" placeholder="___"></span>.
-    Anlaşmazlık hâlinde iş
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="mahkemelerine" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    başvurulabilir. Dava açma
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="süresi" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    fesih tarihinden itibaren beş
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="yıldır" data-m="5" oninput="updateProgress()" placeholder="___"></span>.
-    Bu süre hak düşürücü nitelikte
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="olup" data-m="5" oninput="updateProgress()" placeholder="___"></span>
-    uzatılamaz.
-  </p></div>
+    İş sözleşmesinin feshi 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="hâlinde" data-m="5" oninput="updateProgress()" placeholder="___"></span> işçinin kıdem tazminatına hak kazanabilmesi için en az bir yıl çalışmış olması 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="gerekmektedir" data-m="5" oninput="updateProgress()" placeholder="___"></span>. İşveren tarafından gerçekleştirilen 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="haksız fesihlerde" data-m="5" oninput="updateProgress()" placeholder="___"></span> işçi hem kıdem hem de ihbar tazminatı talep 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="edebilir" data-m="5" oninput="updateProgress()" placeholder="___"></span>. Söz konusu tazminatlar işçinin son brüt 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="ücreti" data-m="5" oninput="updateProgress()" placeholder="___"></span> esas alınarak 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="hesaplanmaktadır" data-m="5" oninput="updateProgress()" placeholder="___"></span>. Anlaşmazlık hâlinde iş mahkemelerine 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="başvurulabilir" data-m="5" oninput="updateProgress()" placeholder="___"></span>. Dava açma süresi fesih tarihinden itibaren beş 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="yıldır" data-m="5" oninput="updateProgress()" placeholder="___"></span>. Bu süre hak düşürücü 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="nitelikte" data-m="5" oninput="updateProgress()" placeholder="___"></span> olup 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="uzatılamaz" data-m="5" oninput="updateProgress()" placeholder="___"></span>.
+  </p><span class="source-icon" title="Kaynak: 1475 sayılı Eski İş Kanunu Madde 14&#10;https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1475&MevzuatTur=1&MevzuatTertip=5">ⓘ</span></div>
 </div>
 
 <!-- METİN 6: AKADEMİK -->
@@ -266,41 +219,22 @@ footer a{color:var(--accent);}
     <span class="level-tag" style="background:var(--red-bg);color:var(--red);">Çok Zor</span>
   </div>
   <div class="text-body"><p class="text-para">
-    Sosyobiyolojik perspektiften değerlendirildiğinde altruistik davranışların evrimsel açıdan paradoksal bir
-    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="görünüm" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    sergilediği anlaşılmaktadır. Hamilton'ın akraba
-    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="seçilimi" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    kuramı bu paradoksu kapsayıcı uygunluk
-    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="kavramıyla" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    açıklamaya çalışmaktadır. Bireyin kendi üremesini
-    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="feda" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    etmesi ancak genetik aktarımını kolektif düzeyde
-    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="optimize" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    etmesi durumunda evrimsel süreçte seçilim
-    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="avantajı" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    sağlamaktadır. Bu çerçevede fedakârlık bireysel değil
-    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="genetik" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    düzeyde analiz
-    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="edilmelidir" data-m="6" oninput="updateProgress()" placeholder="___"></span>.
-    Grup seçilimi tartışması ise bu
-    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="kuramı" data-m="6" oninput="updateProgress()" placeholder="___"></span>
-    daha da karmaşık bir boyuta
-    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="taşımaktadır" data-m="6" oninput="updateProgress()" placeholder="___"></span>.
-  </p></div>
+    Alzheimer hastalığı, beta-amiloid ve tau proteinlerinin beyin hücrelerinde 
+    <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="birikmesi" data-m="6" oninput="updateProgress()" placeholder="___"></span> sonucu sinir hücrelerinin ölmesiyle karakterize 
+    <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="dejeneratif" data-m="6" oninput="updateProgress()" placeholder="___"></span> bir beyin hastalığıdır; bu protein birikimleri nöron fonksiyonlarını bozarak öğrenme, düşünme ve hatırlama yetisini 
+    <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="kaybettirir" data-m="6" oninput="updateProgress()" placeholder="___"></span>. Belirtileri arasında yeni öğrenilen bilgilerin 
+    <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="unutulması" data-m="6" oninput="updateProgress()" placeholder="___"></span>, kelime bulma 
+    <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="zorluğu" data-m="6" oninput="updateProgress()" placeholder="___"></span>, günlük görevleri yerine getirmede 
+    <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="güçlük" data-m="6" oninput="updateProgress()" placeholder="___"></span>, karar verme ve planlama 
+    <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="bozukluğu" data-m="6" oninput="updateProgress()" placeholder="___"></span> yer alır. Teşhis manyetik rezonans 
+    <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="görüntüleme" data-m="6" oninput="updateProgress()" placeholder="___"></span> ve bilişsel fonksiyon testleri ile 
+    <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="desteklenir" data-m="6" oninput="updateProgress()" placeholder="___"></span>. Tedavi kesin olmasa da semptomlar 
+    <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="semptomatik" data-m="6" oninput="updateProgress()" placeholder="___"></span> ilaçlar ve yaşam tarzı değişiklikleriyle hafifletilebilir.
+  </p><span class="source-icon" title="Kaynak: Memorial Hastaneleri – Alzheimer Nedir? (2025)&#10;https://www.memorial.com.tr/hastaliklar/alzheimer-nedir-belirtileri-ve-tedavi-yontemleri-nelerdir">ⓘ</span></div>
 </div>
 
 <!-- GÖNDER -->
 <div class="submit-area">
-  <!--  <h3>Sonuçlar</h3>
-  <div class="score-grid">
-  <div class="score-card"><span class="score-label">Metin 1</span><span class="score-val" id="sc-1">—</span></div>
-    <div class="score-card"><span class="score-label">Metin 2</span><span class="score-val" id="sc-2">—</span></div>
-    <div class="score-card"><span class="score-label">Metin 3</span><span class="score-val" id="sc-3">—</span></div>
-    <div class="score-card"><span class="score-label">Metin 4</span><span class="score-val" id="sc-4">—</span></div>
-    <div class="score-card"><span class="score-label">Metin 5</span><span class="score-val" id="sc-5">—</span></div>
-    <div class="score-card"><span class="score-label">Metin 6</span><span class="score-val" id="sc-6">—</span></div> 
-    <div class="score-card"><span class="score-label">Toplam</span><span class="score-val" id="sc-total">—</span></div> -->
-  </div>
   <button class="btn-primary" id="btn-gonder" onclick="gonder()">Tamamladım — Sonuçları Gönder</button>
   <div class="spinner" id="spinner">⏳ Gönderiliyor…</div>
   <div class="result-box" id="result-ok"></div>
@@ -318,16 +252,16 @@ footer a{color:var(--accent);}
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDe4Ucexkv-VQPgBJiJzZcPN8hzboJebqy9IrO1_xqLup7koXOlzJ4Nsiwj_zdIHRA/exec';
 
 const CEVAPLAR = {
-  1:['yaptım','yedim','fırçaladım','okula','güzeldi','oynadık','yedik','döndüm','bekliyordu','uyudum'],
-  2:['kazası','yaralandı','hastaneye','geçmeden','sebebi','ışıkta','aksadı','olmaya','kazalar','gerektiğini'],
+  1:['çalışıyormuş','eğleniyormuş','paylaşıyordu','sordu','sordu','geçti','önemini','planlamalı','kötüdür','iyi getirir'],
+  2:['katkı','zaferi','verici','kilometre taşı','motivasyon','sevindirdi','sıralamasında','gücünü','iyi','ulaşıyor'],
   3:['kurulmuş','sürdürmüştür','güçlü','oluşturmuştur','döneme','kültürden','beceri','modernleşme','değiştirmiştir','sona'],
   4:['hastalıktır','yanıt','şekerinin','aktivite','yavaşlatabilir','böbrek','tanı','yönetiminde','değişikliği','kontrollerle'],
-  5:['bir','gerekmektedir','fesihlerde','tazminatı','ücreti','hesaplanmaktadır','mahkemelerine','süresi','yıldır','olup'],
-  6:['görünüm','seçilimi','kavramıyla','feda','optimize','avantajı','genetik','edilmelidir','kuramı','taşımaktadır']
+  5:['hâlinde','gerekmektedir','haksız fesihlerde','edebilir','ücreti','hesaplanmaktadır','başvurulabilir','yıldır','nitelikte','uzatılamaz'],
+  6:['birikmesi','dejeneratif','kaybettirir','unutulması','zorluğu','güçlük','bozukluğu','görüntüleme','desteklenir','semptomatik']
 };
 
 function normCevap(s){
-  return s.trim().toLowerCase().replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u');
+  return s.trim().toLowerCase().replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u').replace(/ /g,'');
 }
 
 function updateProgress(){
@@ -338,7 +272,6 @@ function updateProgress(){
 }
 
 function gonder(){
-  const scores={};
   let toplam=0;
   const cevaplar=[];
 
@@ -352,11 +285,8 @@ function gonder(){
       if(esles)dogru++;
       cevaplar.push(inp.value.trim()||'');
     });
-    scores[m]=dogru;
     toplam+=dogru;
-    document.getElementById('sc-'+m).textContent=dogru+'/10';
   }
-  document.getElementById('sc-total').textContent=toplam+'/60';
 
   const isim=document.getElementById('katilimci').value.trim()||'Anonim';
   const tarih=new Date().toLocaleDateString('tr-TR')+' '+new Date().toLocaleTimeString('tr-TR');
@@ -380,11 +310,8 @@ function gonder(){
     else if(pct>=40)yorum='Orta düzeyde anlama.';
     else yorum='Zor metinlerde güçlük çekilmiştir — bu da değerli bir veri noktasıdır.';
     const box=document.getElementById('result-ok');
-    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için teşekkürler.<br>Toplam: <strong>'+toplam+'/60</strong> puan (%'+pct+') — '+yorum+'<br>Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
+    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için teşekkürler.<br>Toplam: <strong>'+toplam+'/60</strong> puan (%'+pct+') — '+yorum+'<br>Soru ve önerileriniz için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
     box.style.display='block';
-    box.style.background='var(--green-bg)';
-    box.style.border='1px solid #9FE1CB';
-    box.style.color='#085041';
   })
   .catch(()=>{
     document.getElementById('spinner').classList.remove('show');
@@ -392,9 +319,6 @@ function gonder(){
     const box=document.getElementById('result-err');
     box.innerHTML='<strong>Bağlantı hatası.</strong> Lütfen internet bağlantınızı kontrol edip tekrar deneyin.';
     box.style.display='block';
-    box.style.background='var(--red-bg)';
-    box.style.border='1px solid #F09595';
-    box.style.color='var(--red)';
   });
 }
 </script>
