@@ -54,8 +54,9 @@ header p{font-size:.9rem;color:#B5A89A;margin-top:.4rem;position:relative;font-s
 .result-box{display:none;border-radius:10px;padding:1.1rem 1.25rem;margin-top:1rem;font-size:.88rem;line-height:1.7;}
 .result-box.ok{display:block;background:var(--green-bg);border:1px solid #9FE1CB;color:#085041;}
 .result-box.err{display:block;background:var(--red-bg);border:1px solid #F09595;color:var(--red);}
-.source-icon{cursor:help;color:var(--accent);font-size:1.4rem;margin-left:12px;vertical-align:middle;}
-.source-icon:hover{opacity:0.8;}
+.source-icon{cursor:help;color:var(--accent);font-size:1.45rem;margin-left:12px;vertical-align:middle;position:relative;display:inline-block;}
+.source-icon:hover::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#2c2c2c;color:#fff;padding:10px 14px;border-radius:6px;font-size:0.86rem;white-space:pre-line;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,0.25);max-width:340px;text-align:left;line-height:1.45;pointer-events:none;margin-bottom:10px;}
+.source-icon:hover::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#2c2c2c;}
 footer{text-align:center;padding:1.5rem;font-size:.78rem;color:var(--ink-3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
 footer a{color:var(--accent);}
 </style>
@@ -115,7 +116,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="planlamalı" data-m="1" oninput="updateProgress()" placeholder="___"></span>. Tembellik 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="kötüdür" data-m="1" oninput="updateProgress()" placeholder="___"></span>. Çalışkanlık ise 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="iyi getirir" data-m="1" oninput="updateProgress()" placeholder="___"></span>.
-  </p><span class="source-icon" title="Kaynak: Aktivite Parkı – Masal, Hikaye ve Öykü Örnekleri&#10;https://aktiviteparki.com/masal-hikaye-ve-oyku-ornekleri/">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: Aktivite Parkı – Masal, Hikaye ve Öykü Örnekleri
+https://aktiviteparki.com/masal-hikaye-ve-oyku-ornekleri/">ⓘ</span></div>
 </div>
 
 <!-- METİN 2: HABER -->
@@ -138,7 +140,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="gücünü" data-m="2" oninput="updateProgress()" placeholder="___"></span> bir kez daha kanıtlıyor. Hidayet Türkoğlu gibi efsaneler sayesinde Türk sporu her geçen gün daha 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="iyi" data-m="2" oninput="updateProgress()" placeholder="___"></span> noktalara 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="ulaşıyor" data-m="2" oninput="updateProgress()" placeholder="___"></span>.
-  </p><span class="source-icon" title="Kaynak: Türkiye Basketbol Federasyonu – 2026&#10;https://www.instagram.com/reel/DSjsr7lDesN/">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: Türkiye Basketbol Federasyonu – 2026
+https://www.instagram.com/reel/DSjsr7lDesN/">ⓘ</span></div>
 </div>
 
 <!-- METİN 3: TARİH -->
@@ -161,7 +164,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="modernleşme" data-m="3" oninput="updateProgress()" placeholder="___"></span> süreci toplumsal yapıyı köklü biçimde 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değiştirmiştir" data-m="3" oninput="updateProgress()" placeholder="___"></span>. İmparatorluk 1922 yılında resmen 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="sona" data-m="3" oninput="updateProgress()" placeholder="___"></span> ermiştir.
-  </p><span class="source-icon" title="Kaynak: Türkçe Vikipedi – Osmanlı İmparatorluğu maddesi&#10;https://tr.wikipedia.org/wiki/Osmanlı_İmparatorluğu">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: Türkçe Vikipedi – Osmanlı İmparatorluğu maddesi
+https://tr.wikipedia.org/wiki/Osmanlı_İmparatorluğu">ⓘ</span></div>
 </div>
 
 <!-- METİN 4: SAĞLIK -->
@@ -184,7 +188,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="yönetiminde" data-m="4" oninput="updateProgress()" placeholder="___"></span> ilaç tedavisinin yanı sıra yaşam tarzı 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="değişikliği" data-m="4" oninput="updateProgress()" placeholder="___"></span> de büyük rol oynar. Düzenli 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="kontrollerle" data-m="4" oninput="updateProgress()" placeholder="___"></span> komplikasyonlar önlenebilir.
-  </p><span class="source-icon" title="Kaynak: Memorial Hastanesi resmi sitesi – Tip 2 Diyabet Nedir?&#10;https://www.memorial.com.tr/hastaliklar/tip-2-diyabet-nedir">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: Memorial Hastanesi resmi sitesi – Tip 2 Diyabet Nedir?
+https://www.memorial.com.tr/hastaliklar/tip-2-diyabet-nedir">ⓘ</span></div>
 </div>
 
 <!-- METİN 5: HUKUK -->
@@ -207,7 +212,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="yıldır" data-m="5" oninput="updateProgress()" placeholder="___"></span>. Bu süre hak düşürücü 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="nitelikte" data-m="5" oninput="updateProgress()" placeholder="___"></span> olup 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="uzatılamaz" data-m="5" oninput="updateProgress()" placeholder="___"></span>.
-  </p><span class="source-icon" title="Kaynak: 1475 sayılı Eski İş Kanunu Madde 14&#10;https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1475&MevzuatTur=1&MevzuatTertip=5">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: 1475 sayılı Eski İş Kanunu Madde 14
+https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1475&MevzuatTur=1&MevzuatTertip=5">ⓘ</span></div>
 </div>
 
 <!-- METİN 6: AKADEMİK -->
@@ -230,7 +236,8 @@ footer a{color:var(--accent);}
     <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="görüntüleme" data-m="6" oninput="updateProgress()" placeholder="___"></span> ve bilişsel fonksiyon testleri ile 
     <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="desteklenir" data-m="6" oninput="updateProgress()" placeholder="___"></span>. Tedavi kesin olmasa da semptomlar 
     <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="semptomatik" data-m="6" oninput="updateProgress()" placeholder="___"></span> ilaçlar ve yaşam tarzı değişiklikleriyle hafifletilebilir.
-  </p><span class="source-icon" title="Kaynak: Memorial Hastaneleri – Alzheimer Nedir? (2025)&#10;https://www.memorial.com.tr/hastaliklar/alzheimer-nedir-belirtileri-ve-tedavi-yontemleri-nelerdir">ⓘ</span></div>
+  </p><span class="source-icon" data-tooltip="Kaynak: Memorial Hastaneleri – Alzheimer Nedir? (2025)
+https://www.memorial.com.tr/hastaliklar/alzheimer-nedir-belirtileri-ve-tedavi-yontemleri-nelerdir">ⓘ</span></div>
 </div>
 
 <!-- GÖNDER -->
@@ -310,7 +317,7 @@ function gonder(){
     else if(pct>=40)yorum='Orta düzeyde anlama.';
     else yorum='Zor metinlerde güçlük çekilmiştir — bu da değerli bir veri noktasıdır.';
     const box=document.getElementById('result-ok');
-    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için teşekkürler.<br>Toplam: <strong>'+toplam+'/60</strong> puan (%'+pct+') — '+yorum+'<br>Soru ve önerileriniz için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
+    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için teşekkürler.<br>Toplam: <strong>'+toplam+'/60</strong> puan (%'+pct+') — '+yorum+'<br>Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
     box.style.display='block';
   })
   .catch(()=>{
