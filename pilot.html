@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TROİ Pilot Çalışması — Boşluk Doldurma Testi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F5EE;--surface:#FFFFFF;--ink:#1A1208;--ink-2:#4A3F2F;--ink-3:#8A7B68;
+  --accent:#8B4513;--accent-light:#D4956A;--accent-bg:#FFF3E8;--border:#D8CFC4;
+  --green:#2D6A4F;--green-bg:#EDF7F1;--teal:#0F6E56;--teal-bg:#E1F5EE;
+  --shadow:0 1px 3px rgba(26,18,8,.08),0 4px 16px rgba(26,18,8,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.8;font-size:16px;}
+
+header{background:var(--ink);color:var(--bg);padding:2rem;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;position:relative;}
+header h1 span{color:#D4956A;}
+header p{font-size:.9rem;color:#B5A89A;margin-top:.4rem;position:relative;font-style:italic;}
+
+.back-link{display:block;text-align:center;padding:.6rem;background:var(--accent-bg);font-size:.82rem;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--border);}
+.back-link:hover{background:#FFE8CC;}
+
+.container{max-width:800px;margin:0 auto;padding:2rem 1.5rem;}
+
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:2rem;box-shadow:var(--shadow);}
+.info-box h2{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.75rem;color:var(--accent);}
+.info-box p{font-size:.9rem;color:var(--ink-2);margin-bottom:.5rem;}
+.info-box ul{font-size:.88rem;color:var(--ink-2);padding-left:1.2rem;}
+.info-box ul li{margin-bottom:.3rem;}
+
+.field-group{margin-bottom:1rem;}
+.field-group label{display:block;font-size:.85rem;color:var(--ink-2);margin-bottom:5px;font-weight:400;}
+.field-group input[type=text]{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'Source Serif 4',serif;color:var(--ink);background:var(--bg);transition:border-color .2s;}
+.field-group input[type=text]:focus{outline:none;border-color:var(--accent);}
+
+/* METIN KARTLARI */
+.text-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.text-card-head{padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;}
+.text-badge{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;flex-shrink:0;}
+.text-card-head h3{font-size:.95rem;font-weight:600;color:var(--ink);}
+.text-card-head .level-tag{font-size:.72rem;padding:2px 10px;border-radius:20px;font-weight:600;margin-left:auto;}
+.text-body{padding:1.25rem;}
+.text-para{font-size:.95rem;line-height:2;color:var(--ink-2);}
+.blank-wrap{display:inline-block;position:relative;margin:0 2px;}
+.blank-num{font-size:.65rem;color:var(--ink-3);position:absolute;top:-10px;left:2px;font-family:sans-serif;}
+.blank-input{
+  display:inline-block;
+  border:none;border-bottom:2px solid var(--accent-light);
+  background:transparent;
+  font-size:.95rem;font-family:'Source Serif 4',serif;
+  color:var(--accent);
+  width:90px;text-align:center;
+  padding:0 4px;
+  transition:border-color .2s;
+}
+.blank-input:focus{outline:none;border-bottom-color:var(--accent);}
+.blank-input.correct{border-bottom-color:var(--green);color:var(--green);}
+.blank-input.wrong{border-bottom-color:#C0392B;color:#C0392B;}
+
+/* SUBMIT */
+.submit-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem;box-shadow:var(--shadow);}
+.submit-area h3{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:1rem;color:var(--ink);}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.score-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.score-label{font-size:.7rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px;}
+.score-val{font-size:1.3rem;font-family:'Playfair Display',serif;font-weight:600;color:var(--ink);}
+
+.btn-primary{display:block;width:100%;padding:12px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;font-size:15px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all .15s;text-align:center;text-decoration:none;}
+.btn-primary:hover{background:var(--accent);}
+.btn-primary:active{transform:scale(.98);}
+.btn-secondary{display:block;width:100%;padding:10px;background:var(--surface);color:var(--ink-2);border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;margin-top:8px;transition:all .15s;}
+.btn-secondary:hover{background:var(--accent-bg);border-color:var(--accent-light);}
+
+.result-box{display:none;background:var(--teal-bg);border:1px solid #9FE1CB;border-radius:10px;padding:1.25rem;margin-top:1rem;}
+.result-box.show{display:block;}
+.result-box p{font-size:.88rem;color:#085041;line-height:1.7;}
+
+.progress-bar{background:var(--border);border-radius:10px;height:6px;margin:1rem 0;}
+.progress-fill{height:6px;border-radius:10px;background:var(--accent);transition:width .3s;}
+
+footer{text-align:center;padding:1.5rem;font-size:.78rem;color:var(--ink-3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
+footer a{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>TROİ <span>Pilot Çalışması</span></h1>
+  <p>Türkçe Okunabilirlik İndeksi · Boşluk Doldurma Testi</p>
+</header>
+
+<a href="index.html" class="back-link">← Ana sayfaya dön</a>
+
+<div class="container">
+
+  <div class="info-box">
+    <h2>Bu çalışma hakkında</h2>
+    <p>Bu test, Türkçe metinlerin okunabilirliğini ölçmek için geliştirilen <strong>TROİ (Türkçe Okunabilirlik İndeksi)</strong> formülünün katsayılarını bilimsel olarak belirlemek amacıyla yapılmaktadır.</p>
+    <ul>
+      <li>Üç farklı zorluk düzeyinde metin sunulacaktır.</li>
+      <li>Her metinde <strong>bazı sözcükler boşluk bırakılmıştır</strong> — bunları bağlamdan tahmin ederek doldurun.</li>
+      <li>Katılım gönüllülük esasına dayalıdır, kişisel veri toplanmamaktadır.</li>
+      <li>Sonuçlarınız e-posta ile araştırmacıya iletilecektir.</li>
+    </ul>
+  </div>
+
+  <!-- İSİM -->
+  <div class="field-group">
+    <label for="katilimci">Adınız (isteğe bağlı):</label>
+    <input type="text" id="katilimci" placeholder="Adınız Soyadınız">
+  </div>
+
+  <!-- İLERLEME -->
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <!-- METİN 1: KOLAY -->
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#FFF3E8;border:1.5px solid #8B4513;color:#8B4513;">1</div>
+      <h3>Metin 1</h3>
+      <span class="level-tag" style="background:#FFF3E8;color:#8B4513;">Kolay</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Çocuklar her gün okula
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="gider" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Öğretmenleri onlara yeni şeyler
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="öğretir" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Dersler sabah başlar, öğleden
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="sonra" data-text="1" oninput="updateProgress()" placeholder="___"></span>
+        biter. Teneffüslerde arkadaşlarıyla oynar, koşar
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="ve" data-text="1" oninput="updateProgress()" placeholder="___"></span>
+        gülerler. Öğleden sonra eve
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="dönerler" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Anneleri onları kapıda
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="bekler" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Yemek yedikten sonra ödev
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="yaparlar" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Akşam babalarıyla birlikte televizyon
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="seyrederler" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Gece olunca kitap
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="okurlar" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+        Uyumadan önce dişlerini
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="fırçalarlar" data-text="1" oninput="updateProgress()" placeholder="___"></span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- METİN 2: ORTA -->
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#EEF4FB;border:1.5px solid #1A4A7A;color:#1A4A7A;">2</div>
+      <h3>Metin 2</h3>
+      <span class="level-tag" style="background:#EEF4FB;color:#1A4A7A;">Orta</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Türkiye'de kentleşme son yıllarda hızla
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="artmıştır" data-text="2" oninput="updateProgress()" placeholder="___"></span>.
+        Büyük şehirlere göç eden nüfus, ciddi
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="sorunlara" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        yol açmaktadır. Barınma, ulaşım ve
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="istihdam" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        alanlarındaki baskı sürekli yoğunlaşmaktadır. Belediyeler bu
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="sorunları" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        çözmek için yeni politikalar geliştirmek
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="zorundadır" data-text="2" oninput="updateProgress()" placeholder="___"></span>.
+        Gecekondulaşma ve plansız kentsel
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="büyüme" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        giderek azalmakla birlikte yeni
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="sorunlar" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        ortaya çıkmaktadır. Kültürel ve toplumsal uyum
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="giderek" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        daha karmaşık bir boyut
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="kazanmaktadır" data-text="2" oninput="updateProgress()" placeholder="___"></span>.
+        Planlama yapılmayan kentler yaşanması
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="güç" data-text="2" oninput="updateProgress()" placeholder="___"></span>
+        hale gelmektedir.
+      </p>
+    </div>
+  </div>
+
+  <!-- METİN 3: ZOR -->
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#F3EEF9;border:1.5px solid #4A1F7A;color:#4A1F7A;">3</div>
+      <h3>Metin 3</h3>
+      <span class="level-tag" style="background:#F3EEF9;color:#4A1F7A;">Zor</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Sosyolinguistik perspektiften değerlendirildiğinde dil
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="edinimi" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        sürecindeki bireysel farklılıklar yalnızca
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="bilişsel" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        kapasiteyle açıklanamaz. Sosyokültürel bağlamın
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="belirleyici" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        işlevi, Vygotsky'nin yakınsak gelişim
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="alanı" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        kavramıyla teorize edilmiştir. Bu çerçevede öğrenen öznenin dilsel
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="yetkinliğinin" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        gelişimi, toplumsal etkileşimin ayrılmaz bir
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="bileşeni" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        olarak konumlandırılmaktadır. Dolayısıyla dil
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="öğrenimi" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        bireysel bir eylem değil,
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="toplumsal" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        olarak gerçekleşen bir
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="süreçtir" data-text="3" oninput="updateProgress()" placeholder="___"></span>.
+        Bu boyutun göz ardı edilmesi dil öğretimini
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="olumsuz" data-text="3" oninput="updateProgress()" placeholder="___"></span>
+        etkilemektedir.
+      </p>
+    </div>
+  </div>
+
+  <!-- SONUÇLAR + GÖNDER -->
+  <div class="submit-area">
+    <h3>Sonuçlarınız</h3>
+    <div class="score-grid">
+      <div class="score-card"><span class="score-label">Metin 1</span><span class="score-val" id="sc-1">—/10</span></div>
+      <div class="score-card"><span class="score-label">Metin 2</span><span class="score-val" id="sc-2">—/10</span></div>
+      <div class="score-card"><span class="score-label">Metin 3</span><span class="score-val" id="sc-3">—/10</span></div>
+      <div class="score-card"><span class="score-label">Toplam</span><span class="score-val" id="sc-total">—/30</span></div>
+    </div>
+    <button class="btn-primary" onclick="hesaplaVeGonder()">Sonuçları Hesapla ve Gönder</button>
+    <button class="btn-secondary" onclick="cevapGoster()">Cevapları Göster</button>
+
+    <div class="result-box" id="result-box">
+      <p id="result-text"></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  TROİ Pilot Çalışması &nbsp;·&nbsp;
+  <a href="index.html">Ana Sayfa</a> &nbsp;·&nbsp;
+  İletişim: <a href="mailto:idris.demirsoy@usak.edu.tr">idris.demirsoy@usak.edu.tr</a>
+  <br>
+  <a href="https://github.com/iDemirsoy/Turkce-okunabilirlik" target="_blank">GitHub</a>
+</footer>
+
+<script>
+const CEVAPLAR = {
+  '1': ['gider','öğretir','sonra','ve','dönerler','bekler','yaparlar','seyrederler','okurlar','fırçalarlar'],
+  '2': ['artmıştır','sorunlara','istihdam','sorunları','zorundadır','büyüme','sorunlar','giderek','kazanmaktadır','güç'],
+  '3': ['edinimi','bilişsel','belirleyici','alanı','yetkinliğinin','bileşeni','öğrenimi','toplumsal','süreçtir','olumsuz']
+};
+
+function normCevap(s){
+  return s.trim().toLowerCase()
+    .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u');
+}
+
+function updateProgress(){
+  const inputs=document.querySelectorAll('.blank-input');
+  const dolu=Array.from(inputs).filter(i=>i.value.trim()!=='').length;
+  document.getElementById('progress').style.width=Math.round(dolu/inputs.length*100)+'%';
+}
+
+function hesaplaVeGonder(){
+  const scores={1:0,2:0,3:0};
+  const satirlar=[];
+
+  [1,2,3].forEach(t=>{
+    const inputs=document.querySelectorAll(`.blank-input[data-text="${t}"]`);
+    const cevaplar=CEVAPLAR[t+''];
+    inputs.forEach((inp,i)=>{
+      const dogru=normCevap(cevaplar[i]||'');
+      const verilen=normCevap(inp.value);
+      // kabul: tam eşleşme veya kök eşleşmesi (ilk 5 karakter)
+      const esles=verilen===dogru||(verilen.length>=4&&dogru.startsWith(verilen.slice(0,5)));
+      if(esles){scores[t]++;inp.classList.add('correct');inp.classList.remove('wrong');}
+      else if(verilen!==''){inp.classList.add('wrong');inp.classList.remove('correct');}
+      satirlar.push(`M${t}-B${i+1}: ${inp.value||'(boş)'} [${esles?'✓':'✗'} doğru: ${cevaplar[i]}]`);
+    });
+    document.getElementById('sc-'+t).textContent=scores[t]+'/10';
+  });
+
+  const toplam=scores[1]+scores[2]+scores[3];
+  document.getElementById('sc-total').textContent=toplam+'/30';
+
+  // E-posta gövdesi
+  const isim=document.getElementById('katilimci').value||'Anonim';
+  const tarih=new Date().toLocaleDateString('tr-TR');
+  const yuzde=Math.round(toplam/30*100);
+  const govde=[
+    `TROİ Pilot Çalışması — Katılımcı Yanıtları`,
+    `Tarih: ${tarih}`,
+    `Katılımcı: ${isim}`,
+    ``,
+    `Metin 1 (Kolay): ${scores[1]}/10`,
+    `Metin 2 (Orta): ${scores[2]}/10`,
+    `Metin 3 (Zor): ${scores[3]}/10`,
+    `Toplam: ${toplam}/30 (%${yuzde})`,
+    ``,
+    `--- Detaylı Yanıtlar ---`,
+    ...satirlar
+  ].join('\n');
+
+  const mailto=`mailto:idris.demirsoy@usak.edu.tr?subject=${encodeURIComponent('TROİ Pilot - '+isim+' - '+tarih)}&body=${encodeURIComponent(govde)}`;
+  window.location.href=mailto;
+
+  // Sonuç mesajı
+  const box=document.getElementById('result-box');
+  box.classList.add('show');
+  let yorum='';
+  if(yuzde>=80)yorum='Mükemmel! Okuma anlama düzeyiniz çok yüksek.';
+  else if(yuzde>=60)yorum='İyi sonuç! Metinleri büyük ölçüde doğru anladınız.';
+  else if(yuzde>=40)yorum='Orta düzeyde bir anlama sergilenmiştir.';
+  else yorum='Zor metinlerle karşılaşıldığında anlama güçlüğü yaşanmaktadır.';
+
+  document.getElementById('result-text').innerHTML=`
+    <strong>Sonuç:</strong> ${toplam}/30 puan (%${yuzde})<br>
+    ${yorum}<br><br>
+    E-posta programınız açıldıysa "Gönder" butonuna basarak sonuçlarınızı iletebilirsiniz.
+    Açılmadıysa aşağıdaki butonu deneyin.
+  `;
+}
+
+function cevapGoster(){
+  [1,2,3].forEach(t=>{
+    const inputs=document.querySelectorAll(`.blank-input[data-text="${t}"]`);
+    const cevaplar=CEVAPLAR[t+''];
+    inputs.forEach((inp,i)=>{
+      if(inp.value.trim()===''){
+        inp.value=cevaplar[i];
+        inp.style.color='var(--ink-3)';
+      }
+    });
+  });
+  updateProgress();
+}
+</script>
+</body>
+</html>
