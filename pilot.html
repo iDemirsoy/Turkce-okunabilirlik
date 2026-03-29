@@ -310,7 +310,8 @@ function gonder(){
   })
   .then(()=>{
     document.getElementById('spinner').classList.remove('show');
-    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için teşekkürler.<br>Toplam: <strong>'+toplam+'/60</strong> puan (%'+pct+') — '+yorum+'<br>Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
+    const box=document.getElementById('result-ok');
+    box.innerHTML='<strong>✓ Yanıtlarınız kaydedildi!</strong><br>Katılımınız için teşekkürler.<br>Toplam puanınız: <strong>'+toplam+'/60</strong><br>Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>';
     box.style.display='block';
   })
   .catch(()=>{
