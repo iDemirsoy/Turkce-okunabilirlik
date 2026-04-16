@@ -588,7 +588,7 @@ function normSoz(w){
 // ── TÜRKÇE YARDIMCI ──
 const SESLI=/[aeıiouöüâîûAEIİOUÖÜÂÎÛ]/g;
 function heceHesapla(w){const m=w.match(SESLI);return m?m.length:1;}
-function sozcukBol(t){return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇâîûÂÎÛ\']+/g)||[];}
+function sozcukBol(t){return t.match(/[a-zA-ZğüşıöçĞÜŞİÖÇâîûÂÎÛ0-9']+/g)||[];}
 function cumleBol(t){return t.split(/(?<=[.!?…])\s+/).map(s=>s.trim()).filter(s=>sozcukBol(s).length>0);}
 function paragrafSay(t){return t.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>0).length;}
 
