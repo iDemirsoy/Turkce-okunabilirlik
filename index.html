@@ -189,10 +189,10 @@ footer a:hover{text-decoration:underline;}
         <div style="margin-top:1rem;">
           <div style="font-size:.72rem;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Çok Heceli Sözcük Dağılımı</div>
           <div class="hece-grid">
+            <div class="hece-card"><span class="hece-label">3 Heceli</span><span class="hece-val" id="s-h3">—</span></div>
             <div class="hece-card"><span class="hece-label">4 Heceli</span><span class="hece-val" id="s-h4">—</span></div>
             <div class="hece-card"><span class="hece-label">5 Heceli</span><span class="hece-val" id="s-h5">—</span></div>
-            <div class="hece-card"><span class="hece-label">6 Heceli</span><span class="hece-val" id="s-h6">—</span></div>
-            <div class="hece-card"><span class="hece-label">7+ Heceli</span><span class="hece-val" id="s-h7">—</span></div>
+            <div class="hece-card"><span class="hece-label">6+ Heceli</span><span class="hece-val" id="s-h6">—</span></div>
           </div>
           <div class="longest-word" id="s-longest" style="display:none;"></div>
         </div>
@@ -547,7 +547,7 @@ function hesapla(txt){
   const parSay  = paragrafSay(txt);
 
   // Hece sayıları — h6 artık sadece 6, h7 7+ için
-  let topHece=0, h3=0, h4=0, h5=0, h6=0, h7=0;
+  let topHece=0, h3=0, h4=0, h5=0, h6=0;
   let maxHece=0, maxSoz='';
   sozler.forEach(w=>{
     const h=heceHesapla(w);
@@ -555,8 +555,7 @@ function hesapla(txt){
     if(h===3)h3++;
     else if(h===4)h4++;
     else if(h===5)h5++;
-    else if(h===6)h6++;
-    else if(h>=7)h7++;
+    else if(h>=6)h6++;
     if(h>maxHece){maxHece=h;maxSoz=w;}
   });
 
@@ -579,10 +578,10 @@ function hesapla(txt){
   document.getElementById('s-nbr').textContent  = '%'+NBR.toFixed(1);
 
   // Hece dağılımı
+  document.getElementById('s-h3').textContent = h3;
   document.getElementById('s-h4').textContent = h4;
   document.getElementById('s-h5').textContent = h5;
   document.getElementById('s-h6').textContent = h6;
-  document.getElementById('s-h7').textContent = h7;
 
   const lw = document.getElementById('s-longest');
   if(maxHece>=4){
@@ -605,7 +604,7 @@ function hesapla(txt){
   document.getElementById('lv-c').textContent = lvCetinkaya(pC);
 
   // 3. BEZİRCİ-YILMAZ — h6 artık 6+7+ toplamı olarak (formüle sadık)
-  const H3=(h3)/cumSay, H4=h4/cumSay, H5=h5/cumSay, H6=(h6+h7)/cumSay;
+  const H3=(h3)/cumSay, H4=h4/cumSay, H5=h5/cumSay, H6=(h6)/cumSay;
   const inner = x2*(H3*0.84+H4*1.5+H5*3.5+H6*26.25);
   const pB = inner>0 ? Math.sqrt(inner) : 0;
   document.getElementById('sc-b').textContent = pB.toFixed(2);
@@ -720,7 +719,7 @@ function renderFreq(sozler){
 function htmlSil(){const e=document.getElementById('txt');e.value=e.value.replace(/<[^>]*>/g,'');}
 function buyukHarf(){const e=document.getElementById('txt');e.value=e.value.toLocaleUpperCase('tr-TR');}
 function kucukHarf(){const e=document.getElementById('txt');e.value=e.value.toLocaleLowerCase('tr-TR');}
-function temizle(){document.getElementById('txt').value='';document.getElementById('yabanciSay').value='';['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-nbr','s-h4','s-h5','s-h6','s-h7'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('s-longest').style.display='none';['sc-a','sc-c','sc-b','sc-s','sc-t','lv-a','lv-c','lv-b','lv-s','lv-t'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('freq-area').innerHTML='<div class="empty">Metni girin ve "Hesapla" butonuna basın.</div>';document.getElementById('send-status').style.display='none';}
+function temizle(){document.getElementById('txt').value='';document.getElementById('yabanciSay').value='';['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-nbr','s-h4','s-h5','s-h6'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('s-longest').style.display='none';['sc-a','sc-c','sc-b','sc-s','sc-t','lv-a','lv-c','lv-b','lv-s','lv-t'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('freq-area').innerHTML='<div class="empty">Metni girin ve "Hesapla" butonuna basın.</div>';document.getElementById('send-status').style.display='none';}
 
 // ── UI ──
 function toggleDetail(id,chId){document.getElementById(id).classList.toggle('open');document.getElementById(chId).classList.toggle('open');}
