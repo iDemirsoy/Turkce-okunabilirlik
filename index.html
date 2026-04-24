@@ -521,7 +521,7 @@ const TEMEL = new Set([
 ]);
 
 function normSoz(w){
-  return w.toLowerCase().replace(/[âÂ]/g,'a').replace(/[îÎ]/g,'i').replace(/[ûÛ]/g,'u');
+  return w.toLocaleLowerCase('tr-TR').replace(/[â]/g,'a').replace(/[î]/g,'i').replace(/[û]/g,'u');
 }
 
 // ── YARDIMCI ──
