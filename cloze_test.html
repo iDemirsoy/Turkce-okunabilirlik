@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demirsoy Okunabilirlik — Metin Anlama Çalışması</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3PQL5QN3JD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3PQL5QN3JD');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F5EE;--surface:#FFF;--ink:#1A1208;--ink-2:#4A3F2F;--ink-3:#8A7B68;
+  --accent:#8B4513;--accent-light:#D4956A;--accent-bg:#FFF3E8;--border:#D8CFC4;
+  --green:#2D6A4F;--green-bg:#EDF7F1;--blue:#1A4A7A;--blue-bg:#EEF4FB;
+  --shadow:0 1px 3px rgba(26,18,8,.08),0 4px 16px rgba(26,18,8,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.8;font-size:16px;}
+
+header{background:var(--ink);color:var(--bg);padding:2rem;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;position:relative;}
+header h1 span{color:#D4956A;}
+header p{font-size:.88rem;color:#B5A89A;margin-top:.4rem;position:relative;font-style:italic;}
+.back-link{display:block;text-align:center;padding:.55rem;background:var(--accent-bg);font-size:.8rem;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--border);}
+.back-link:hover{background:#FFE8CC;}
+.container{max-width:820px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* ADIMLAR */
+.step{display:none;}
+.step.active{display:block;}
+
+/* BİLGİ KUTUSU */
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.info-box h2{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:.65rem;color:var(--accent);}
+.info-box p,.info-box ul{font-size:.87rem;color:var(--ink-2);line-height:1.7;}
+.info-box ul{padding-left:1.2rem;}
+.info-box ul li{margin-bottom:.3rem;}
+
+/* FORM */
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);}
+.form-section h3{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--ink-2);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+.form-grid.full{grid-template-columns:1fr;}
+.field{margin-bottom:0;}
+.field label{display:block;font-size:.81rem;color:var(--ink-2);margin-bottom:4px;}
+.field input,.field select{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;
+  font-size:14px;font-family:'Source Serif 4',serif;color:var(--ink);background:var(--bg);
+  transition:border-color .2s;appearance:none;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
+.field select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A7B68' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.conditional-field{display:none;}
+.conditional-field.show{display:block;}
+
+/* İLERLEME */
+.progress-wrap{margin-bottom:1.5rem;}
+.progress-label{font-size:.77rem;color:var(--ink-3);margin-bottom:5px;display:flex;justify-content:space-between;}
+.progress-bar{background:var(--border);border-radius:10px;height:5px;}
+.progress-fill{height:5px;border-radius:10px;background:var(--accent);transition:width .3s;width:0%;}
+
+/* METİN KARTI */
+.text-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:1.25rem;box-shadow:var(--shadow);overflow:visible;}
+.text-card-head{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem;}
+.text-badge{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;flex-shrink:0;}
+.text-card-head h3{font-size:.92rem;font-weight:600;color:var(--ink);flex:1;}
+.text-card-head .level-tag{font-size:.68rem;padding:2px 9px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.text-body{padding:1.25rem 1.5rem;}
+.text-para{font-size:.94rem;line-height:2.5;color:var(--ink-2);text-align:justify;}
+.text-para + .text-para{margin-top:.75rem;}
+
+/* BOŞLUKLAR */
+.blank-wrap{display:inline-block;position:relative;margin:0 1px;vertical-align:baseline;}
+.blank-num{font-size:.58rem;color:var(--ink-3);position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-family:sans-serif;white-space:nowrap;}
+.blank-input{
+  display:inline-block;border:none;border-bottom:2px solid var(--accent-light);
+  background:transparent;font-size:.93rem;font-family:'Source Serif 4',serif;
+  color:var(--accent);width:110px;text-align:center;padding:0 3px;
+  transition:border-color .2s;vertical-align:baseline;
+}
+.blank-input:focus{outline:none;border-bottom-color:var(--accent);}
+
+/* GÖNDER */
+.submit-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-top:1.5rem;box-shadow:var(--shadow);}
+.btn-primary{display:block;width:100%;padding:13px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;font-size:15px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all .15s;}
+.btn-primary:hover{background:var(--accent);}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{background:var(--ink-3);cursor:not-allowed;}
+.btn-secondary{display:block;width:100%;padding:11px;background:var(--surface);color:var(--ink-2);border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;margin-top:8px;transition:all .15s;}
+.btn-secondary:hover{background:var(--accent-bg);border-color:var(--accent-light);}
+.spinner{display:none;text-align:center;padding:.75rem;font-size:.84rem;color:var(--ink-3);}
+.spinner.show{display:block;}
+.result-ok{display:none;background:var(--green-bg);border:1px solid #9FE1CB;color:#085041;border-radius:9px;padding:1rem 1.2rem;margin-top:1rem;font-size:.87rem;line-height:1.7;}
+.result-err{display:none;background:#FEF0F0;border:1px solid #F09595;color:#8B2020;border-radius:9px;padding:1rem 1.2rem;margin-top:1rem;font-size:.87rem;}
+
+footer{text-align:center;padding:1.5rem;font-size:.77rem;color:var(--ink-3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
+footer a{color:var(--accent);}
+</style>
+</head>
+<body>
+<header>
+  <h1>Demirsoy <span>Okunabilirlik</span> Çalışması</h1>
+  <p>Türkçe Okunabilirlik İndeksi · Metin Anlama Araştırması</p>
+</header>
+<a href="index.html" class="back-link">← Okunabilirlik Analizine Dön</a>
+<div class="container">
+
+<!-- ════════════════════════════════════════════ ADIM 1: DEMOGRAFİK -->
+<div class="step active" id="step1">
+
+  <div class="info-box">
+    <h2>Çalışma Hakkında</h2>
+    <p style="margin-bottom:.5rem;">Bu çalışma, Türkçe metinlerin okunabilirliğini ölçen yeni bir formülün geliştirilmesi amacıyla yapılmaktadır.</p>
+    <ul>
+      <li>Size eğitim düzeyinize uygun bir metin sunulacak; bazı sözcükler boş bırakılmıştır.</li>
+      <li>Her boşluğa metne göre uygun gördüğünüz sözcüğü yazın.</li>
+      <li>Katılım gönüllülük esasına dayalıdır; veriler yalnızca akademik amaçla kullanılacaktır.</li>
+      <li>Tamamladıktan sonra "Gönder" butonuna basın.</li>
+    </ul>
+  </div>
+
+  <div class="form-section">
+    <h3>Kişisel Bilgiler <span style="font-weight:400;font-size:.78rem;color:var(--ink-3)">(isteğe bağlı)</span></h3>
+    <div class="form-grid full" style="margin-bottom:12px;">
+      <div class="field">
+        <label>Ad Soyad</label>
+        <input type="text" id="isim" placeholder="Adınız Soyadınız">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Doğum Yılı</label>
+        <input type="number" id="dogumYili" placeholder="ör. 1995" min="1930" max="2018">
+      </div>
+      <div class="field">
+        <label>Cinsiyet</label>
+        <select id="cinsiyet">
+          <option value="">Seçiniz</option>
+          <option>Kadın</option>
+          <option>Erkek</option>
+          <option>Belirtmek istemiyorum</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Doğum Yeri</label>
+        <input type="text" id="dogumYeri" placeholder="ör. Trabzon">
+      </div>
+      <div class="field">
+        <label>Şu An Yaşadığınız Şehir</label>
+        <input type="text" id="sehir" placeholder="ör. İzmir">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3>Eğitim Bilgileri</h3>
+    <div class="form-grid">
+      <div class="field">
+        <label>Eğitim Düzeyi <span style="color:#8B4513">*</span></label>
+        <select id="egitim" onchange="egitimDegisti()">
+          <option value="">Seçiniz</option>
+          <option value="ilkokul">İlkokul (1–4. Sınıf)</option>
+          <option value="ortaokul">Ortaokul (5–8. Sınıf)</option>
+          <option value="lise">Lise (9–12. Sınıf)</option>
+          <option value="universite">Üniversite / Lisans</option>
+          <option value="lisansustu">Lisansüstü (Yüksek Lisans / Doktora)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Okul / Kurum Adı</label>
+        <input type="text" id="okulAdi" placeholder="Okulunuzun adı">
+      </div>
+
+      <!-- İlkokul / Ortaokul / Lise için: sınıf -->
+      <div class="field conditional-field" id="field-sinif">
+        <label>Sınıf</label>
+        <select id="sinif">
+          <option value="">Seçiniz</option>
+          <option>1. Sınıf</option><option>2. Sınıf</option><option>3. Sınıf</option>
+          <option>4. Sınıf</option><option>5. Sınıf</option><option>6. Sınıf</option>
+          <option>7. Sınıf</option><option>8. Sınıf</option><option>9. Sınıf</option>
+          <option>10. Sınıf</option><option>11. Sınıf</option><option>12. Sınıf</option>
+        </select>
+      </div>
+
+      <!-- Üniversite / Lisansüstü için: bölüm -->
+      <div class="field conditional-field" id="field-bolum">
+        <label>Bölüm / Anabilim Dalı</label>
+        <input type="text" id="bolum" placeholder="ör. Türk Dili ve Edebiyatı">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="adim1Ileri()">Devam — Metni Görüntüle →</button>
+</div>
+
+<!-- ════════════════════════════════════════════ ADIM 2: METİNLER -->
+
+<!-- ── İLKOKUL ── -->
+<div class="step" id="step-ilkokul">
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Tamamlanan boşluklar</span><span id="prog-ilk-text">0 / 20</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-ilk"></div></div>
+  </div>
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#FFF3E8;border:1.5px solid #8B4513;color:#8B4513;">İ</div>
+      <h3>YILIN BABASI</h3>
+      <span class="level-tag" style="background:#FFF3E8;color:#8B4513;">İlkokul Düzeyi</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Ömrümde, babamın hiçbir mektuba bu kadar sevindiğini görmedim. Tekrar tekrar
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="okuyordu" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Sevinç gözyaşları dökecek kadar onu
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="duygulandıran" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        bu mektup kimden gelmişti acaba?
+      </p>
+      <p class="text-para">
+        Babamın gözlerinin içi
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="gülüyordu" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        sanki. Yanına yaklaşınca, beni bağrına basıp gözlerimden
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="öptü" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Daha sonra kollarımdan yakalayıp beni havaya
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="kaldırdı" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Tıpkı altı aylık bir bebekmişim gibi, tavana doğru
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="atıp" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        tutmaya başladı.
+      </p>
+      <p class="text-para">
+        Mektubu masanın üzerine koyarken şöyle dedi: "Adamın biri, beni yılın babası
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="seçmiş" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>…"
+        "Bu zamanda, böylesi bir evlat yetiştirmek gerçekten çok
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="güç" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>…"
+      </p>
+      <p class="text-para">
+        Bir Çarşamba günüydü. Okuldan dönüyordum. Otobüs tıklım tıklım
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="doluydu" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Buna rağmen küçük bir yer
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="bulabilmiştim" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Doğumevi durağında yaşlı bir adam
+        <span class="blank-wrap"><span class="blank-num">11</span><input class="blank-input" data-ans="bindi" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Her iki elinde de kocaman paketler vardı. Güçlükle
+        <span class="blank-wrap"><span class="blank-num">12</span><input class="blank-input" data-ans="taşıyordu" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Yüzünün rengi
+        <span class="blank-wrap"><span class="blank-num">13</span><input class="blank-input" data-ans="kaçmıştı" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Benim önümdeki koltukta iki genç
+        <span class="blank-wrap"><span class="blank-num">14</span><input class="blank-input" data-ans="oturuyordu" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Yaşlı amcanın yalvaran gözlerine rağmen, kalkıp yer
+        <span class="blank-wrap"><span class="blank-num">15</span><input class="blank-input" data-ans="vermediler" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+        Artık dayanamadım. Kalkıp yer
+        <span class="blank-wrap"><span class="blank-num">16</span><input class="blank-input" data-ans="gösterdim" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Adamın gözlerindeki
+        <span class="blank-wrap"><span class="blank-num">17</span><input class="blank-input" data-ans="sevinci" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        bir görmeliydiniz. "İsterseniz öbürünü de ben
+        <span class="blank-wrap"><span class="blank-num">18</span><input class="blank-input" data-ans="tutayım" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>,
+        dedim." "Kalp var evlat. Uzun yol
+        <span class="blank-wrap"><span class="blank-num">19</span><input class="blank-input" data-ans="yürümeye" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        hiç gücüm yok." Otobüsten indikten sonra, paketleri taşımasına
+        <span class="blank-wrap"><span class="blank-num">20</span><input class="blank-input" data-ans="yardım" data-m="ilk" oninput="updateProg('ilk')" placeholder="___"></span>
+        ettim.
+      </p>
+      <p style="font-size:.75rem;color:var(--ink-3);margin-top:.75rem;font-style:italic;">Üzeyir Gündüz, Bayram Şenliği (kısaltılmıştır)</p>
+    </div>
+  </div>
+  <div class="submit-area">
+    <button class="btn-primary" id="btn-ilk" onclick="gonder('ilkokul')">Tamamladım — Gönder</button>
+    <div class="spinner" id="spin-ilk">⏳ Gönderiliyor…</div>
+    <div class="result-ok" id="ok-ilk"></div>
+    <div class="result-err" id="err-ilk"></div>
+  </div>
+</div>
+
+<!-- ── ORTAOKUL ── -->
+<div class="step" id="step-ortaokul">
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Tamamlanan boşluklar</span><span id="prog-ort-text">0 / 20</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-ort"></div></div>
+  </div>
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:var(--blue-bg);border:1.5px solid var(--blue);color:var(--blue);">O</div>
+      <h3>BİR İP BUL, OYUNA BAŞLA!</h3>
+      <span class="level-tag" style="background:var(--blue-bg);color:var(--blue);">Ortaokul Düzeyi</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Kimi zaman sizin de içiniz kıpır kıpır oluyor mu? Belki de oyunlar oynamak, hoplayıp
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="zıplamak" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        istiyorsunuz. Böyle durumlarda size yardımcı olacak birkaç oyun fikriyle geldik. Üstelik bahsedeceğimiz oyunların tümü için gerekli tek bir
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="malzeme" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        var: ip.
+      </p>
+      <p class="text-para">
+        Bu oyunları oynayıp
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="eğlenceli" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        zaman geçirmenin de hoşunuza gittiğini düşünüyoruz. Halat çekme oyununu pek çoğunuz biliyorsunuzdur. Bu oyunu kalabalık bir ortamda oynamak oldukça
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="keyifli" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        olabilir.
+      </p>
+      <p class="text-para">
+        Oyun için sağlam bir halata gereksinim var. Öncelikle iki takım
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="kurulur" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        ve takımlar ipin iki ucuna ayrılır. Amaç, takımların ipi kendi tarafına
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="çekip" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        rakip takımın tüm oyuncularının bu sınırı
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="geçmesini" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        sağlamak.
+      </p>
+      <p class="text-para">
+        İp çevirme oyununda, ortada ipi çevirecek bir oyuncu
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="belirlenir" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+        Diğer oyuncular ipin yetişebileceği uzaklıkta bir çember
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="oluşturur" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        ve çember üzerinde yerleri
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="işaretlenir" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+        Oyuncular, çevrilen ipe
+        <span class="blank-wrap"><span class="blank-num">11</span><input class="blank-input" data-ans="değmemek" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        için olduğu yerde zıplar.
+      </p>
+      <p class="text-para">
+        Daha fazla hareket etmek, rekabeti biraz daha
+        <span class="blank-wrap"><span class="blank-num">12</span><input class="blank-input" data-ans="artırmak" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        istiyorsanız ip atlamalı bayrak koşusunu deneyebilirsiniz. Bu oyunda birbirinize bayrak yerine atlama ipi
+        <span class="blank-wrap"><span class="blank-num">13</span><input class="blank-input" data-ans="teslim" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        edeceksiniz.
+      </p>
+      <p class="text-para">
+        Önce eşit sayıda oyuncudan oluşan takımlar
+        <span class="blank-wrap"><span class="blank-num">14</span><input class="blank-input" data-ans="oluşturulur" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+        İşaretle birlikte ilk sıradaki oyuncular koşar adımlarla ip
+        <span class="blank-wrap"><span class="blank-num">15</span><input class="blank-input" data-ans="atlayarak" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        yarış alanının diğer ucuna gidip başlangıca geri
+        <span class="blank-wrap"><span class="blank-num">16</span><input class="blank-input" data-ans="döner" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Lazer oyununda ağaçlara ipler karmaşık bir biçimde
+        <span class="blank-wrap"><span class="blank-num">17</span><input class="blank-input" data-ans="bağlanır" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+        İplerin sonuna bir hedef konulur ve iplere değmeden aralarından
+        <span class="blank-wrap"><span class="blank-num">18</span><input class="blank-input" data-ans="geçerek" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        hedefe ulaşmaya çalışılır. Bu oyunu bir arkadaşınızla oynarken süre tutup hedefe kimin daha kısa sürede ulaştığını
+        <span class="blank-wrap"><span class="blank-num">19</span><input class="blank-input" data-ans="ölçebilirsiniz" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>.
+        Kedi beşiği oyununda iplere
+        <span class="blank-wrap"><span class="blank-num">20</span><input class="blank-input" data-ans="dolanacağınız" data-m="ort" oninput="updateProg('ort')" placeholder="___"></span>
+        kesin!
+      </p>
+      <p style="font-size:.75rem;color:var(--ink-3);margin-top:.75rem;font-style:italic;">Merve Çelik (kısaltılmıştır)</p>
+    </div>
+  </div>
+  <div class="submit-area">
+    <button class="btn-primary" id="btn-ort" onclick="gonder('ortaokul')">Tamamladım — Gönder</button>
+    <div class="spinner" id="spin-ort">⏳ Gönderiliyor…</div>
+    <div class="result-ok" id="ok-ort"></div>
+    <div class="result-err" id="err-ort"></div>
+  </div>
+</div>
+
+<!-- ── LİSE ── -->
+<div class="step" id="step-lise">
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Tamamlanan boşluklar</span><span id="prog-lise-text">0 / 20</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-lise"></div></div>
+  </div>
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#FFF8E6;border:1.5px solid #92600A;color:#92600A;">L</div>
+      <h3>ERZURUM</h3>
+      <span class="level-tag" style="background:#FFF8E6;color:#92600A;">Lise Düzeyi</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        Erzurum Türk tarihine, Türk coğrafyasına 1945 metreden
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="bakar" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Şehrin macerası
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="düşünülürse" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>,
+        bu yükseklik daima göz önünde tutulması gereken bir şey olur. Tarihimizin ikinci dönüm yerinde, Millî Mücadele'nin ilk temeli gene Erzurum'da
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="atılır" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Her şeye rağmen hür, müstakil yaşamak iradesi ilkin bu kartal yuvasında
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="kanatlanır" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Bu çok güzel bir gündü. İlk önce camileri, başıboş
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="dolaşmıştık" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Yolda karşılaştığımız tanıdıklarla durup
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="konuşuyor" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>,
+        her açık dükkâna bir kere
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="uğruyorduk" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Nihayet Kale'ye
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="çıktık" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Destânî şehri seyre
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="başladık" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Önümüzde henüz sararmaya yüz tutmuş ekinleriyle emsalsiz bir panorama
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="dalgalanıyordu" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Daha uzakta, küçük köyleriyle, ağaçlık su başlarıyla ova
+        <span class="blank-wrap"><span class="blank-num">11</span><input class="blank-input" data-ans="başlıyordu" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Günün büyük kısmını orada
+        <span class="blank-wrap"><span class="blank-num">12</span><input class="blank-input" data-ans="geçirdik" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Erzurum taşı dururken çimentonun kullanılmasını bir türlü aklım
+        <span class="blank-wrap"><span class="blank-num">13</span><input class="blank-input" data-ans="almaz" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Bu kolaylıklar bazen de mimarînin aleyhinde oluyor, hele mahallî rengi
+        <span class="blank-wrap"><span class="blank-num">14</span><input class="blank-input" data-ans="bozuyor" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        İlkokul yirmi yıl önce gördüğüm yapıların hiçbirine
+        <span class="blank-wrap"><span class="blank-num">15</span><input class="blank-input" data-ans="benzemiyor" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Emsalsiz bir gurup karşısında çaylarımızı
+        <span class="blank-wrap"><span class="blank-num">16</span><input class="blank-input" data-ans="içtik" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Güneş, dağların arasına inmeye
+        <span class="blank-wrap"><span class="blank-num">17</span><input class="blank-input" data-ans="hazırlanıyordu" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Bendi yıkılmış bir su gibi, bütün ovayı
+        <span class="blank-wrap"><span class="blank-num">18</span><input class="blank-input" data-ans="kapladı" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>,
+        toprağın, ekinin rengini
+        <span class="blank-wrap"><span class="blank-num">19</span><input class="blank-input" data-ans="sildi" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+        Bütün ova billûr döşenmiş gibi
+        <span class="blank-wrap"><span class="blank-num">20</span><input class="blank-input" data-ans="parlıyordu" data-m="lise" oninput="updateProg('lise')" placeholder="___"></span>.
+      </p>
+      <p style="font-size:.75rem;color:var(--ink-3);margin-top:.75rem;font-style:italic;">Ahmet Hamdi Tanpınar, Beş Şehir (kısaltılmıştır)</p>
+    </div>
+  </div>
+  <div class="submit-area">
+    <button class="btn-primary" id="btn-lise" onclick="gonder('lise')">Tamamladım — Gönder</button>
+    <div class="spinner" id="spin-lise">⏳ Gönderiliyor…</div>
+    <div class="result-ok" id="ok-lise"></div>
+    <div class="result-err" id="err-lise"></div>
+  </div>
+</div>
+
+<!-- ── ÜNİVERSİTE ── -->
+<div class="step" id="step-universite">
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Tamamlanan boşluklar</span><span id="prog-uni-text">0 / 20</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-uni"></div></div>
+  </div>
+  <div class="text-card">
+    <div class="text-card-head">
+      <div class="text-badge" style="background:#F3EEF9;border:1.5px solid #4A1F7A;color:#4A1F7A;">Ü</div>
+      <h3>DİJİTAL OYUN, E-SPOR VE GELENEKSEL SPORLAR</h3>
+      <span class="level-tag" style="background:#F3EEF9;color:#4A1F7A;">Üniversite Düzeyi</span>
+    </div>
+    <div class="text-body">
+      <p class="text-para">
+        2000'li yıllarla birlikte internetin, bilgisayarların ve mobil cihazların
+        <span class="blank-wrap"><span class="blank-num">1</span><input class="blank-input" data-ans="yaygınlaşmasıyla" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>,
+        dijital oyunlar her kuşaktan insanların vakit geçirdiği bir eylem haline
+        <span class="blank-wrap"><span class="blank-num">2</span><input class="blank-input" data-ans="dönüşmüştür" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Teknolojinin getirdiği bu değişiklikler eğitim, spor, sağlık gibi alanlarda da etkili
+        <span class="blank-wrap"><span class="blank-num">3</span><input class="blank-input" data-ans="olmuştur" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>;
+        oyun aktiviteleri de bu değişimden paylarını
+        <span class="blank-wrap"><span class="blank-num">4</span><input class="blank-input" data-ans="almıştır" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Dijitalleşme ile çocuklar fiziksel aktiviteye dayalı oyunları gerçekleştirmekten
+        <span class="blank-wrap"><span class="blank-num">5</span><input class="blank-input" data-ans="kaçınmakta" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>,
+        vücut sağlığı açısından yararlı görülmeyen duruş pozisyonlarıyla dijital oyunlar oynamaktadırlar. Bu durum sağlıksız bir yaşam tarzı için zemin
+        <span class="blank-wrap"><span class="blank-num">6</span><input class="blank-input" data-ans="oluşturmaktadır" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Teknolojik araç ve gereçlerin hayatımızda yaygınlaşması yaşam tarzımızı giderek daha hareketsiz hale
+        <span class="blank-wrap"><span class="blank-num">7</span><input class="blank-input" data-ans="getirmektedir" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+      </p>
+      <p class="text-para">
+        Dijital oyun; dijital yazılım üzerinde bir veya birden fazla kişinin yapay zekâ ile fiziksel olarak
+        <span class="blank-wrap"><span class="blank-num">8</span><input class="blank-input" data-ans="mücadele" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>
+        etmek için kullanılabilen bir tür serbest zaman
+        <span class="blank-wrap"><span class="blank-num">9</span><input class="blank-input" data-ans="aktivite" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>
+        yazılımıdır. Dijital oyun dünyası, sürekli
+        <span class="blank-wrap"><span class="blank-num">10</span><input class="blank-input" data-ans="genişleyen" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>
+        ekonomik yapısı nedeniyle geniş bir alan olarak kabul edilmektedir.
+      </p>
+      <p class="text-para">
+        Benzersiz bir kitleye sahip olan oyunlar, e-spor kategorisine de başarıyla
+        <span class="blank-wrap"><span class="blank-num">11</span><input class="blank-input" data-ans="girmişlerdir" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Sanal ortamların önemi Covid-19 pandemi sürecinin etkisiyle
+        <span class="blank-wrap"><span class="blank-num">12</span><input class="blank-input" data-ans="başlamıştır" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        E-Spor, dünyanın her yerinden iki kişinin internet üzerinden insanlarla
+        <span class="blank-wrap"><span class="blank-num">13</span><input class="blank-input" data-ans="tanışıp" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>
+        oyun oynayabileceği bir spor türüdür.
+      </p>
+      <p class="text-para">
+        Gerek dijital oyunların gerek e-sporun gerekse geleneksel sporların ayrıldıkları bazı temel noktalar
+        <span class="blank-wrap"><span class="blank-num">14</span><input class="blank-input" data-ans="bulunmaktadır" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Elektronik ve spor kelimelerinin birleşimi olarak e-spor terimi
+        <span class="blank-wrap"><span class="blank-num">15</span><input class="blank-input" data-ans="kullanılmaktadır" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        E-spor, bilgi ve iletişim teknolojilerinin kullanıldığı
+        <span class="blank-wrap"><span class="blank-num">16</span><input class="blank-input" data-ans="rekabetçi" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>
+        bir spordur.
+      </p>
+      <p class="text-para">
+        Bugün Uluslararası e-Spor Federasyonu'nun 61 ülkede ulusal federasyonunun olduğunu
+        <span class="blank-wrap"><span class="blank-num">17</span><input class="blank-input" data-ans="görmekteyiz" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Milyonlarca sporcusu ve milyarlarca izleyicisiyle e-spor büyük bir camiaya
+        <span class="blank-wrap"><span class="blank-num">18</span><input class="blank-input" data-ans="sahiptir" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        Pandemi süreci için teknolojik aygıtlarla oynanan oyunlar güvenli bir spor ortamı
+        <span class="blank-wrap"><span class="blank-num">19</span><input class="blank-input" data-ans="oluşturmuştur" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+        TESFED'e göre e-spor, her türlü aktiveyi
+        <span class="blank-wrap"><span class="blank-num">20</span><input class="blank-input" data-ans="kapsar" data-m="uni" oninput="updateProg('uni')" placeholder="___"></span>.
+      </p>
+      <p style="font-size:.75rem;color:var(--ink-3);margin-top:.75rem;font-style:italic;">Kaynak: Dijital Oyun, E-Spor ve Geleneksel Sporların Karşılaştırılması (kısaltılmıştır)</p>
+    </div>
+  </div>
+  <div class="submit-area">
+    <button class="btn-primary" id="btn-uni" onclick="gonder('universite')">Tamamladım — Gönder</button>
+    <div class="spinner" id="spin-uni">⏳ Gönderiliyor…</div>
+    <div class="result-ok" id="ok-uni"></div>
+    <div class="result-err" id="err-uni"></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  Demirsoy Okunabilirlik Çalışması &nbsp;·&nbsp; <a href="index.html">Ana Sayfa</a> &nbsp;·&nbsp;
+  İletişim: <a href="mailto:idris.demirsoy@usak.edu.tr">idris.demirsoy@usak.edu.tr</a>
+  &nbsp;·&nbsp; <a href="https://github.com/iDemirsoy/Turkce-okunabilirlik" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// ── APPS SCRIPT URL — buraya kendi URL'nizi girin ──
+const SHEETS_URL = 'APPS_SCRIPT_URL_BURAYA';
+
+// ── EĞİTİM SEÇİMİ ──
+function egitimDegisti(){
+  const v = document.getElementById('egitim').value;
+  const fs = document.getElementById('field-sinif');
+  const fb = document.getElementById('field-bolum');
+  fs.classList.toggle('show', ['ilkokul','ortaokul','lise'].includes(v));
+  fb.classList.toggle('show', ['universite','lisansustu'].includes(v));
+}
+
+// ── ADIM 1 → 2 ──
+function adim1Ileri(){
+  const egitim = document.getElementById('egitim').value;
+  if(!egitim){ alert('Lütfen eğitim düzeyinizi seçin.'); return; }
+
+  document.getElementById('step1').classList.remove('active');
+
+  const map = {
+    'ilkokul':    'step-ilkokul',
+    'ortaokul':   'step-ortaokul',
+    'lise':       'step-lise',
+    'universite': 'step-universite',
+    'lisansustu': 'step-universite'
+  };
+  document.getElementById(map[egitim]).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── PROGRESS ──
+const progMap = {
+  'ilk':  {bar:'prog-ilk', text:'prog-ilk-text'},
+  'ort':  {bar:'prog-ort', text:'prog-ort-text'},
+  'lise': {bar:'prog-lise',text:'prog-lise-text'},
+  'uni':  {bar:'prog-uni', text:'prog-uni-text'},
+};
+function updateProg(m){
+  const inputs = document.querySelectorAll(`.blank-input[data-m="${m}"]`);
+  const dolu = Array.from(inputs).filter(i=>i.value.trim()!=='').length;
+  document.getElementById(progMap[m].bar).style.width = Math.round(dolu/20*100)+'%';
+  document.getElementById(progMap[m].text).textContent = dolu+' / 20';
+}
+
+// ── NORMALIZE ──
+function norm(s){
+  return s.trim().toLocaleLowerCase('tr-TR')
+    .replace(/[â]/g,'a').replace(/[î]/g,'i').replace(/[û]/g,'u');
+}
+
+// ── GÖNDER ──
+function gonder(seviye){
+  const mMap = {ilkokul:'ilk',ortaokul:'ort',lise:'lise',universite:'uni'};
+  const egitim = document.getElementById('egitim').value;
+  const mKey = mMap[egitim==='lisansustu'?'universite':egitim];
+
+  const inputs = document.querySelectorAll(`.blank-input[data-m="${mKey}"]`);
+  let toplam = 0;
+  const cevaplar = [];
+
+  inputs.forEach((inp,i)=>{
+    const beklenen = norm(inp.dataset.ans||'');
+    const verilen  = norm(inp.value);
+    const esles = verilen!=='' && (
+      verilen===beklenen ||
+      (verilen.length>=4 && beklenen.length>=4 && verilen.slice(0,5)===beklenen.slice(0,5))
+    );
+    if(esles) toplam++;
+    cevaplar.push(inp.value.trim()||'');
+  });
+
+  const payload = {
+    tarih:     new Date().toLocaleDateString('tr-TR')+' '+new Date().toLocaleTimeString('tr-TR'),
+    isim:      document.getElementById('isim').value.trim()||'Anonim',
+    dogumYili: document.getElementById('dogumYili').value.trim()||'',
+    cinsiyet:  document.getElementById('cinsiyet').value||'',
+    dogumYeri: document.getElementById('dogumYeri').value.trim()||'',
+    sehir:     document.getElementById('sehir').value.trim()||'',
+    egitim:    document.getElementById('egitim').value||'',
+    okulAdi:   document.getElementById('okulAdi').value.trim()||'',
+    sinif:     document.getElementById('sinif').value||'',
+    bolum:     document.getElementById('bolum').value.trim()||'',
+    metin:     seviye,
+    cevaplar,
+    toplam
+  };
+
+  const sfx = mKey==='ilk'?'ilk':mKey==='ort'?'ort':mKey==='lise'?'lise':'uni';
+  document.getElementById('btn-'+sfx).disabled = true;
+  document.getElementById('spin-'+sfx).classList.add('show');
+
+  fetch(SHEETS_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(()=>{
+    document.getElementById('spin-'+sfx).classList.remove('show');
+    const box = document.getElementById('ok-'+sfx);
+    box.innerHTML = '<strong>✓ Yanıtlarınız kaydedildi!</strong> Katılımınız için çok teşekkür ederiz.<br>Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:#0F6E56">idris.demirsoy@usak.edu.tr</a>';
+    box.style.display = 'block';
+  })
+  .catch(()=>{
+    document.getElementById('spin-'+sfx).classList.remove('show');
+    document.getElementById('btn-'+sfx).disabled = false;
+    const box = document.getElementById('err-'+sfx);
+    box.innerHTML = '<strong>Bağlantı hatası.</strong> İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    box.style.display = 'block';
+  });
+}
+</script>
+</body>
+</html>
