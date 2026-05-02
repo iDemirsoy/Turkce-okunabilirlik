@@ -613,8 +613,8 @@ const progMap = {
 function updateProg(m){
   const inputs = document.querySelectorAll(`.blank-input[data-m="${m}"]`);
   const dolu = Array.from(inputs).filter(i=>i.value.trim()!=='').length;
-  document.getElementById(progMap[m].bar).style.width = Math.round(dolu/20*100)+'%';
-  document.getElementById(progMap[m].text).textContent = dolu+' / 20';
+  document.getElementById(progMap[m].bar).style.width = Math.round(dolu/16*100)+'%';
+  document.getElementById(progMap[m].text).textContent = dolu+' / 16';
 }
 
 // ── NORMALIZE ──
