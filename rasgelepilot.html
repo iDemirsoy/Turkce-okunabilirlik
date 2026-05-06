@@ -676,6 +676,10 @@ function gonder(){
     }
   });
 
+  // 🔥 YENİ: metinBosluklari dizisini oluştur (her metnin boşluk sayısı)
+  const metinBosluklari = selectedTexts.map(txt => blankCount(txt));
+  const totalBlanks = metinBosluklari.reduce((a,b) => a + b, 0); // toplam boşluk
+
   const payload = {
     tarih:      new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR'),
     isim:       document.getElementById('isim').value.trim() || 'Anonim',
@@ -687,16 +691,19 @@ function gonder(){
     okul:       document.getElementById('okul').value.trim() || '',
     sinif:      document.getElementById('sinif').value.trim() || '',
     metinler:   textIds.join(','),
+    metinBosluklari: metinBosluklari,
     cevaplar:   answers,
-    toplam,
+    toplam:     toplam,
     toplamBosluk: totalBlanks
   };
 
+  // Gönder butonunu devre dışı bırak, spinner'ı göster
   document.getElementById('btn-gonder').disabled = true;
   document.getElementById('spinner').classList.add('show');
 
   fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
+    method:'POST',
+    mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   })
