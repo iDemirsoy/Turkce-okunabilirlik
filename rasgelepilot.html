@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demirsoy Okunabilirlik — Rastgele Pilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&display=swap" rel="stylesheet">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3PQL5QN3JD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3PQL5QN3JD');
+</script>
+
+<style>
+:root{
+  --bg:#F8F5EE; --surface:#FFF; --ink:#1A1208; --ink2:#4A3F2F; --ink3:#8A7B68;
+  --accent:#8B4513; --acl:#D4956A; --acbg:#FFF3E8; --border:#D8CFC4;
+  --green:#2D6A4F; --gbg:#EDF7F1;
+  --blue:#1A4A7A; --bbg:#EEF4FB;
+  --amber:#92600A; --abg:#FFF8E6;
+  --purple:#4A1F7A; --pbg:#F3EEF9;
+  --red:#8B2020; --rbg:#FEF0F0;
+  --teal:#0F6E56; --tbg:#E1F5EE;
+  --shadow:0 1px 3px rgba(26,18,8,.08),0 4px 16px rgba(26,18,8,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px;}
+
+header{background:var(--ink);color:var(--bg);padding:2.25rem 2rem 1.75rem;text-align:center;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px);}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:700;position:relative;}
+header h1 span{color:var(--acl);}
+header p{font-size:.88rem;color:#B5A89A;margin-top:.4rem;position:relative;font-style:italic;}
+.back{display:block;text-align:center;padding:.55rem;background:var(--acbg);font-size:.8rem;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--border);}
+.back:hover{background:#FFE8CC;}
+
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* INFO BOX */
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.info-box h2{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:.65rem;color:var(--accent);}
+.info-box p,.info-box ul{font-size:.87rem;color:var(--ink2);line-height:1.7;}
+.info-box ul{padding-left:1.2rem;}
+.info-box ul li{margin-bottom:.28rem;}
+
+/* DEMO */
+.demo-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);}
+.demo-section h3{font-family:'Playfair Display',serif;font-size:.93rem;color:var(--ink2);margin-bottom:.9rem;padding-bottom:.45rem;border-bottom:1px solid var(--border);}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.demo-grid.wide{grid-template-columns:1fr;}
+@media(max-width:540px){.demo-grid{grid-template-columns:1fr;}}
+.field-group label{display:block;font-size:.8rem;color:var(--ink2);margin-bottom:3px;}
+.field-group input,.field-group select{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;font-family:'Source Serif 4',serif;color:var(--ink);background:var(--bg);appearance:none;}
+.field-group input:focus,.field-group select:focus{outline:none;border-color:var(--accent);}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:1.4rem;}
+.progress-label{font-size:.77rem;color:var(--ink3);margin-bottom:4px;display:flex;justify-content:space-between;}
+.progress-bar{background:var(--border);border-radius:10px;height:5px;}
+.progress-fill{height:5px;border-radius:10px;background:var(--accent);transition:width .3s;width:0%;}
+
+/* TEXT CARD */
+.text-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:visible;margin-bottom:1.2rem;box-shadow:var(--shadow);}
+.text-card-head{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;}
+.text-badge{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;flex-shrink:0;}
+.text-card-head h3{font-size:.93rem;font-weight:600;flex:1;min-width:120px;}
+.level-tag{font-size:.68rem;padding:2px 9px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.domain-tag{font-size:.66rem;padding:2px 7px;border-radius:20px;color:var(--ink3);border:1px solid var(--border);white-space:nowrap;}
+.src-tag{font-size:.64rem;color:var(--ink3);font-style:italic;flex-basis:100%;}
+
+.text-body{padding:1.1rem 1.4rem 1.2rem;}
+.text-para{font-size:.94rem;line-height:2.15;color:var(--ink2);}
+
+/* BLANK WRAP */
+.blank-wrap{display:inline;position:relative;}
+.blank-num{font-size:.58rem;color:var(--ink3);vertical-align:super;font-family:sans-serif;margin-right:1px;}
+.blank-input{
+  display:inline-block;
+  border:none;
+  border-bottom:2px solid var(--acl);
+  background:transparent;
+  font-size:.92rem;
+  font-family:'Source Serif 4',serif;
+  color:var(--accent);
+  width:110px;
+  text-align:center;
+  padding:0 3px;
+  transition:border-color .2s;
+  vertical-align:baseline;
+}
+.blank-input:focus{outline:none;border-bottom-color:var(--accent);}
+/* BOLD hint word (answer shown, will be replaced later) */
+.ans-word{
+  font-weight:700;
+  color:var(--accent);
+  background:var(--acbg);
+  border-radius:4px;
+  padding:1px 5px;
+  border-bottom:2px dashed var(--acl);
+  font-size:.92rem;
+  cursor:default;
+}
+
+/* SUBMIT */
+.submit-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.5rem;margin-top:1.4rem;box-shadow:var(--shadow);}
+.btn-primary{display:block;width:100%;padding:12px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;font-size:14.5px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all .15s;text-align:center;}
+.btn-primary:hover{background:var(--accent);}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{background:var(--ink3);cursor:not-allowed;}
+.spinner{display:none;text-align:center;padding:.65rem;font-size:.83rem;color:var(--ink3);}
+.spinner.show{display:block;}
+.result-ok{display:none;background:var(--gbg);border:1px solid #9FE1CB;color:#085041;border-radius:10px;padding:1rem 1.2rem;margin-top:.9rem;font-size:.87rem;line-height:1.7;}
+.result-err{display:none;background:var(--rbg);border:1px solid #F09595;color:var(--red);border-radius:10px;padding:1rem 1.2rem;margin-top:.9rem;font-size:.87rem;line-height:1.7;}
+
+footer{text-align:center;padding:1.4rem;font-size:.77rem;color:var(--ink3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
+footer a{color:var(--accent);}
+
+/* shuffle button */
+.shuffle-bar{display:flex;justify-content:flex-end;margin-bottom:1rem;}
+.btn-shuffle{padding:7px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-family:'Source Serif 4',serif;color:var(--ink2);cursor:pointer;transition:all .15s;}
+.btn-shuffle:hover{border-color:var(--accent);color:var(--accent);}
+</style>
+</head>
+<body>
+<header>
+  <h1>Demirsoy Türkçe Okunabilirlik <span>Rastgele Pilot</span></h1>
+  <p>Her oturumda 7 farklı kategoriden rastgele birer metin · Boşluk Doldurma Testi</p>
+</header>
+<a href="index.html" class="back">← Ana sayfaya dön</a>
+
+<div class="container">
+
+<div class="info-box">
+  <h2>Bu çalışma hakkında</h2>
+  <p style="margin-bottom:.55rem;">Türkçe Okunabilirlik İndeksi (Demirsoy) formülünün katsayılarını bilimsel olarak belirlemek amacıyla yapılmaktadır.</p>
+  <ul>
+    <li>Her oturumda 7 farklı alan/seviyeden <strong>rastgele birer metin</strong> gösterilir.</li>
+    <li>Altı çizili ve kalın yazılan sözcükleri <strong>bağlamdan tahmin ederek</strong> kutucuklara yazın.</li>
+    <li>Demografik bilgiler isteğe bağlıdır; yalnızca bilimsel analiz için kullanılır.</li>
+    <li>Tamamladığınızda <strong>Gönder</strong> butonuna basın.</li>
+  </ul>
+</div>
+
+<!-- DEMOGRAFİK -->
+<div class="demo-section">
+  <h3>Katılımcı Bilgileri <span style="font-weight:400;font-size:.78rem;color:var(--ink3)">(isteğe bağlı)</span></h3>
+  <div class="demo-grid wide" style="margin-bottom:10px;">
+    <div class="field-group"><label>Ad Soyad</label><input id="isim" type="text" placeholder="Adınız Soyadınız"></div>
+  </div>
+  <div class="demo-grid">
+    <div class="field-group"><label>Doğum Yılı</label><input id="dogumYili" type="number" placeholder="ör. 1995" min="1930" max="2015"></div>
+    <div class="field-group"><label>Cinsiyet</label>
+      <select id="cinsiyet"><option value="">Seçiniz</option><option>Kadın</option><option>Erkek</option><option>Belirtmek istemiyorum</option></select></div>
+    <div class="field-group"><label>Eğitim Düzeyi</label>
+      <select id="egitim"><option value="">Seçiniz</option><option>İlköğretim</option><option>Ortaöğretim (Lise)</option><option>Ön Lisans</option><option>Lisans</option><option>Yüksek Lisans</option><option>Doktora</option></select></div>
+    <div class="field-group"><label>Yaşadığınız Şehir</label><input id="sehir" type="text" placeholder="ör. Uşak"></div>
+    <div class="field-group"><label>Doğum Yeri</label><input id="dogumYeri" type="text" placeholder="ör. İzmir"></div>
+    <div class="field-group"><label>Okul Adı</label><input id="okul" type="text" placeholder="Okul/Üniversite adı"></div>
+    <div class="field-group"><label>Sınıf / Bölüm</label><input id="sinif" type="text" placeholder="ör. 4. Sınıf / Türk Dili"></div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label"><span>Tamamlanan boşluklar</span><span id="prog-text">0 / 70</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+</div>
+
+<div class="shuffle-bar">
+  <button class="btn-shuffle" onclick="shuffle()">⟳ Yeni set oluştur</button>
+</div>
+
+<div id="texts-container"></div>
+
+<div class="submit-area">
+  <button class="btn-primary" id="btn-gonder" onclick="gonder()">Tamamladım — Yanıtları Gönder</button>
+  <div class="spinner" id="spinner">⏳ Gönderiliyor…</div>
+  <div class="result-ok" id="result-ok"></div>
+  <div class="result-err" id="result-err"></div>
+</div>
+
+</div>
+<footer>
+  Demirsoy Rastgele Pilot &nbsp;·&nbsp; <a href="index.html">Ana Sayfa</a> &nbsp;·&nbsp;
+  <a href="pilot.html">Standart Pilot</a> &nbsp;·&nbsp;
+  İletişim: <a href="mailto:idris.demirsoy@usak.edu.tr">idris.demirsoy@usak.edu.tr</a>
+  &nbsp;·&nbsp; <a href="https://github.com/iDemirsoy/Turkce-okunabilirlik" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// GOOGLE SHEETS ENDPOINT
+// ─────────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyl4DqZVM9Kd9b8xpR0XpVoghDwSXSuEXGt87QBnx4unsfVTyP9tVCEoNMXq4fNqQ/exec';
+
+// ─────────────────────────────────────────────────────────────
+// CATEGORY STYLES
+// ─────────────────────────────────────────────────────────────
+const CAT = {
+  A:{ bg:'#FFF3E8', accent:'#8B4513', label:'Masal / Çocuk Hikâyesi',    level:'Çok Kolay'  },
+  B:{ bg:'#EEF4FB', accent:'#1A4A7A', label:'Ortaokul Ders Metni',       level:'Kolay'      },
+  C:{ bg:'#FFF8E6', accent:'#92600A', label:'Haber Metni',               level:'Orta'       },
+  D:{ bg:'#EDF7F1', accent:'#2D6A4F', label:'Tarih / Edebiyat',          level:'Orta'       },
+  E:{ bg:'#FEF0F0', accent:'#8B2020', label:'Sağlık',                    level:'Orta–Zor'   },
+  F:{ bg:'#F3EEF9', accent:'#4A1F7A', label:'Hukuk / Resmî',             level:'Zor'        },
+  G:{ bg:'#E1F5EE', accent:'#0F6E56', label:'Akademik',                  level:'Çok Zor'    },
+};
+
+// ─────────────────────────────────────────────────────────────
+// 35 TEXTS  — each has: id, cat, title, ohu, ocu, source, url,
+//   segments: array of {type:'text'|'blank', text, ans?}
+// ─────────────────────────────────────────────────────────────
+// Helper used below: t = plain text segment, b(word,ans) = blank
+function t(s){ return {type:'text',text:s}; }
+function b(word,ans){ return {type:'blank',word,ans}; }
+
+const ALL_TEXTS = [
+
+// ═══════════════ CAT A ═══════════════
+{ id:'A1', cat:'A', ohu:2.22, ocu:6.7,
+  title:'Yılın Babası',
+  source:'Üzeyir Gündüz · MEB 4. Sınıf Türkçe Ders Kitabı',
+  url:'https://tymm.meb.gov.tr/ders-kitaplari/temel-egitim',
+  segments:[
+    t('Ömrümde, babamın hiçbir mektuba bu kadar '),b('sevindiğini','sevindiğini'),t(' görmedim. Tekrar tekrar okuyordu. Babamın gözlerinin içi gülüyordu sanki. Yanına yaklaşınca beni bağrına '),b('basıp','basıp'),t(' gözlerimden öptü. Mektubu masanın üzerine koyarken şöyle dedi: "Adamın biri beni yılın babası '),b('seçmiş','seçmiş'),t('…" Mektup şöyle başlıyordu: "Saygıdeğer Beyefendi; küçük yavrunuzla ne kadar '),b('övünseniz','övünseniz'),t(' azdır. Belediye otobüsündeki gösterdiği ilgi ve saygı beni çok mutlu etti." Olayı hemen hatırladım. Bir Çarşamba günüydü. Otobüs tıklım tıklım '),b('doluydu','doluydu'),t('. Doğumevi durağında yaşlı bir adam bindi. Artık dayanamadım. Kalkıp yer '),b('gösterdim','gösterdim'),t('. Meğer babamı tanıyormuş. Sınıfımı doğrudan geçip '),b('takdirname','takdirname'),t(' getirdiğim günlerde bile babam bu kadar sevinmemişti. Meğer onları sevindirmek ne kadar '),b('kolaymış','kolaymış'),t('.')
+  ]
+},
+
+{ id:'A2', cat:'A', ohu:2.28, ocu:5.4,
+  title:'Pembe İncili Kaftan',
+  source:'Ömer Seyfettin · Yeni Mecmua 1917 (Kamuya Açık)',
+  url:'https://tr.wikisource.org/wiki/Pembe_%C4%B0ncili_Kaftan',
+  segments:[
+    t('Büyük kubbeli serin Divan, bugün daha sakin, daha gölgeliydi. Yüksek ipek şiltelere diz çökmüş yorgun '),b('vezirler','vezirler'),t(' önlerindeki halının renkli nakışlarına bakıyorlardı. Yaşlı sadrazam uzun beyaz sakalını zayıf eliyle tutuyordu. "Cesur bir adam '),b('lazım','lazım'),t(', paşalar" dedi. Bir gün sonra Muhsin Çelebi, sadrazamın huzuruna çıktı. Sadrazam ona elçilik '),b('teklifini','teklifini'),t(' sundu. Muhsin Çelebi başını eğmeden cevap verdi: "Kabul ettim. Fakat tek bir '),b('şartım','şartım'),t(' var. Bütün masrafları kendim karşılayacağım." Eski zengin Muhsin Çelebi, bu kaftan için girdiği '),b('borçları','borçları'),t(' ödeyemedi. Kuzguncuk\'ta küçük bir bahçe aldı. Onu ekip biçti, çoluğunun çocuğunun ekmeğini '),b('çıkardı','çıkardı'),t('. Ne kimseye boyun eğdi ne de '),b('fedakârlığına','fedakârlığına'),t(' dair övünme yaptı.')
+  ]
+},
+
+{ id:'A3', cat:'A', ohu:2.15, ocu:5.0,
+  title:'Kaplumbağa Terbiyecisi',
+  source:'Haldun Taner · MEB 6. Sınıf Türkçe Ders Kitabı',
+  url:'https://tymm.meb.gov.tr/ders-kitaplari/temel-egitim',
+  segments:[
+    t('Adam geldi. Kapıyı çaldı. "Kim o?" diye '),b('bağırdım','bağırdım'),t('. "Benim" dedi. Kapıyı açtım. Yaşlı bir '),b('adamdı','adamdı'),t('. Elinde büyük bir torba vardı. "Ne istiyorsunuz?" dedim. "Kaplumbağa '),b('satıyorum','satıyorum'),t('" dedi. İçeri aldım. Torbayı açtı. Küçük yeşil bir kaplumbağa '),b('çıktı','çıktı'),t('. "Kaç para?" dedim. "On lira" dedi. "Neden bu kadar pahalı? Küçük bir kaplumbağa." Adam '),b('güldü','güldü'),t('. "Bu kaplumbağa özel" dedi, "çok şey biliyor, '),b('eğitimli','eğitimli'),t('." İlk gün kaplumbağa köşede durdu. Dördüncü gün benim yanıma geldi. Ayağımın yanında '),b('oturdu','oturdu'),t('. O gün arkadaş olduk.')
+  ]
+},
+
+{ id:'A4', cat:'A', ohu:2.19, ocu:4.8,
+  title:'Forsa',
+  source:'Ömer Seyfettin · Yeni Mecmua (Kamuya Açık)',
+  url:'https://tr.wikisource.org/wiki/Forsa',
+  segments:[
+    t('Kaptan Musa, o sabah güverteye çıktı. Deniz '),b('sakindi','sakindi'),t('. Aralarında yaşlı bir adam vardı. Saçları bembeyazdı. Yüzü yıllarca güneşte yanmıştı. Ama gözleri hâlâ '),b('parlıyordu','parlıyordu'),t('. Kaptan Musa ona yaklaştı: "Sen kimsin?" diye sordu. Yaşlı adam başını kaldırdı. "Ben Türküm" dedi, "donanmada çalışırdım. Yıllarca denizde '),b('dövüştüm','dövüştüm'),t('. Sonra esir düştüm." Kaptan o gece uyuyamadı. Yaşlı adamın sözleri '),b('aklından','aklından'),t(' çıkmıyordu. Ertesi sabah üstlerine gitti: "Bu adamı serbest '),b('bırakın','bırakın'),t('" dedi. Yaşlı Hamza zincirlerinden kurtuldu. Güneş parlıyordu. Gözleri '),b('doldu','doldu'),t('. Ama ağlamadı. Sadece yürüdü.')
+  ]
+},
+
+{ id:'A5', cat:'A', ohu:2.06, ocu:4.5,
+  title:'Nasreddin Hoca: Kazın Kokusu',
+  source:'Türk Halk Anlatısı · Millî Kütüphane Dijital Arşivi',
+  url:'https://www.mkutup.gov.tr',
+  segments:[
+    t('Bir gün fakir bir adam Nasreddin Hoca\'ya geldi. Elinde büyük bir kaz '),b('vardı','vardı'),t('. "Hocam, sana bu kazı getirdim. Ama çok fakir bir komşum var. Ona yardım et" dedi. Birkaç gün sonra komşunun iki oğlu geldi: "Babamız senden '),b('yardım','yardım'),t(' istedi." Hoca onlara yemek verdi, '),b('ağırladı','ağırladı'),t('. Onlar gittikten sonra bir başkası geldi: "Ben o çocukların komşusunun yeğeniyim." Hoca büyük bir tencere '),b('getirdi','getirdi'),t('. İçinde su vardı. "Buyurun '),b('yiyin','yiyin'),t('" dedi. Adam şaşırdı: "Bu ne? Suda ne var?" Hoca '),b('güldü','güldü'),t(': "Kazın kokusu. Siz de uzak '),b('akrabasısınız','akrabasısınız'),t('. O adamın getirdiği kazın kokusu size yetti!"')
+  ]
+},
+
+// ═══════════════ CAT B ═══════════════
+{ id:'B1', cat:'B', ohu:2.45, ocu:9.8,
+  title:'Bir İp Bul, Oyuna Başla!',
+  source:'Merve Çelik · MEB 5. Sınıf Türkçe Ders Kitabı',
+  url:'https://tymm.meb.gov.tr/ders-kitaplari/temel-egitim',
+  segments:[
+    t('Belki oyunlar oynamak, hoplayıp zıplamak '),b('istiyorsunuz','istiyorsunuz'),t('. Bahsedeceğimiz oyunların tümü için gerekli tek malzeme var: ip. Halat çekme oyununu pek çoğunuz '),b('biliyorsunuzdur','biliyorsunuzdur'),t('. Önce iki takım kurulur ve takımlar ipin iki ucuna '),b('geçerler','geçerler'),t('. Amaç ipi kendi tarafına çekip rakip takımın sınırı geçmesini '),b('sağlamak','sağlamak'),t('. Kedi beşiği oyununda ise amaç ipi sırayla farklı '),b('biçimlere','biçimlere'),t(' sokmak. Hamlelerinizi önceden '),b('düşünmeniz','düşünmeniz'),t(' gerekir. Yalnızca birkaç iple bile güzel zaman geçirilebiliyor, '),b('değil','değil'),t(' mi?')
+  ]
+},
+
+{ id:'B2', cat:'B', ohu:2.65, ocu:12.1,
+  title:'Köy Odaları Geleneği',
+  source:'Türk Halk Kültüründen Örnekler · TDV Yayınları',
+  url:'https://islamansiklopedisi.org.tr/',
+  segments:[
+    t('Yakın zamana kadar köylerde yaşamış kişilerin '),b('anılarında','anılarında'),t(' dün gibi yaşayan köy odaları geleneği, Türk konukseverliğinin en iyi '),b('örnekleri','örnekleri'),t(' arasındadır. Köylerdeki köy odalarının konukları, bir yerden bir yere gitmekte olan '),b('yolcular','yolcular'),t(' olduğu kadar, köye ticaret amacı ile gelen insanlar da olabilmekteydi. Çerçiler, testi bardak satanlar, halatçılar, gezici '),b('kalaycılar','kalaycılar'),t(' olmak üzere köye bir nedenle gelenler istediği kadar bu köy odalarında konuk olarak '),b('kalabiliyorlardı','kalabiliyorlardı'),t('. Anadolu\'nun birçok köyünde neredeyse her sülalenin köy odası '),b('vardı','vardı'),t('. Bu odalar ya o sülalelerin ya da önde gelen büyüğünün adıyla '),b('anılıyordu','anılıyordu'),t('.')
+  ]
+},
+
+{ id:'B3', cat:'B', ohu:2.52, ocu:8.9,
+  title:'Sağlıklı Beslenme Rehberi',
+  source:'T.C. Sağlık Bakanlığı · Sağlıklı Beslenme Programı',
+  url:'https://hsgm.saglik.gov.tr/tr/beslenme/saglikli-beslenme.html',
+  segments:[
+    t('Sağlıklı beslenme, vücudumuzun ihtiyaç duyduğu besinleri doğru '),b('miktarlarda','miktarlarda'),t(' almak demektir. Her öğünde sebze ve meyveye yer vermek '),b('gerekir','gerekir'),t('. Günde en az beş porsiyon sebze ve meyve tüketmek '),b('önerilmektedir','önerilmektedir'),t('. Tam tahıllı ürünler '),b('tercih','tercih'),t(' edilmelidir. Şekerli içeceklerden uzak durmak '),b('gerekir','gerekir'),t('. Hazır gıda ve fast food tüketimi '),b('azaltılmalıdır','azaltılmalıdır'),t('. Düzenli öğün atlamamak '),b('önemlidir','önemlidir'),t('. Sağlıklı beslenme '),b('alışkanlıkları','alışkanlıkları'),t(' küçük yaşta kazanılmalıdır.')
+  ]
+},
+
+{ id:'B4', cat:'B', ohu:2.48, ocu:8.3,
+  title:'Geri Dönüşüm Neden Önemlidir?',
+  source:'Çevre ve Şehircilik Bakanlığı · Atık Yönetimi Rehberi',
+  url:'https://csb.gov.tr/geri-donusum',
+  segments:[
+    t('Geri dönüşüm, kullanılmış malzemelerin yeniden işlenerek yeni ürünler hâline '),b('getirilmesidir','getirilmesidir'),t('. Kâğıt, cam, metal ve plastik geri dönüştürülebilir '),b('malzemelerin','malzemelerin'),t(' başında gelir. Her ton geri dönüştürülen kâğıt on yedi '),b('ağacı','ağacı'),t(' kurtarır. Metal geri dönüşümü '),b('maden','maden'),t(' çıkarımını azaltır. Türkiye\'de geri dönüşüm oranı her yıl '),b('artmaktadır','artmaktadır'),t('. Çocuklar bu konuda iyi bir '),b('örnek','örnek'),t(' olabilir. Küçük adımlar büyük '),b('değişimler','değişimler'),t(' yaratır.')
+  ]
+},
+
+{ id:'B5', cat:'B', ohu:2.68, ocu:12.8,
+  title:'Kitap Okuma ve Beyin Gelişimi',
+  source:'TÜBİTAK Bilim ve Teknik Dergisi · Ekim 2023',
+  url:'https://www.tubitak.gov.tr/tr/yayin/bilim-ve-teknik-dergisi',
+  segments:[
+    t('Kitap okumak yalnızca bilgi edinmekle '),b('sınırlı','sınırlı'),t(' kalmaz; beynin yapısını da olumlu yönde '),b('etkiler','etkiler'),t('. Araştırmalar, düzenli kitap okuyan kişilerin dil '),b('becerilerinin','becerilerinin'),t(' geliştiğini ortaya koymaktadır. Özellikle kurgu eserler okunduğunda okuyucu karakterlerin bakış açısına '),b('girebilmekte','girebilmekte'),t(' ve bu süreç sosyal zekânın gelişimine katkı '),b('sağlamaktadır','sağlamaktadır'),t('. Türkiye\'de kişi başına düşen yıllık kitap okuma sayısı '),b('altının','altının'),t(' altındadır. Uzmanlar her gün en az otuz dakika kitap '),b('okunmasını','okunmasını'),t(' tavsiye etmektedir.')
+  ]
+},
+
+// ═══════════════ CAT C ═══════════════
+{ id:'C1', cat:'C', ohu:2.72, ocu:19.0,
+  title:"Trump'tan İran Açıklamaları",
+  source:"Habertürk Haber · 3 Mayıs 2026",
+  url:'https://www.haberturk.com/iran-in-teklifinin-tam-metni-iletilecek-3881900',
+  segments:[
+    t('ABD Başkanı Donald Trump, İran\'ın yaptığı son teklifin genel '),b('hatları','hatları'),t(' hakkında bilgi sahibi olduğunu söylerken, tam metnin kendisine '),b('iletileceğini','iletileceğini'),t(' belirtti. Trump, sosyal medya üzerinden yaptığı açıklamada İran\'ın planını inceleyeceğini ancak kabul edilebilir olacağını '),b('hayal','hayal'),t(' edemediğini ifade etti. Truth Social\'da şunları söyledi: "Son 47 yılda insanlığa ve dünyaya yaptıkları için henüz yeterince büyük bir bedel ödemediklerinden dolayı bunun kabul edilebilir olabileceğini '),b('hayal','hayal'),t(' edemiyorum." Trump, İran limanlarına yönelik ablukanın '),b('dostane','dostane'),t(' olduğunu belirtti. Almanya\'dan çekecekleri asker sayısının beş bini '),b('aşacağını','aşacağını'),t(' işaret etti. Uzmanlar, İran\'ın sunduğu teklifin müzakere sürecini nasıl etkileyeceğini yakından '),b('takip','takip'),t(' etmektedir.')
+  ]
+},
+
+{ id:'C2', cat:'C', ohu:2.61, ocu:10.4,
+  title:"Türkoğlu FIBA Hall of Fame'de",
+  source:"Türkiye Basketbol Federasyonu · Nisan 2026",
+  url:'https://www.tbf.org.tr/',
+  segments:[
+    t('Türkiye Basketbol Federasyonu Başkanı Hidayet Türkoğlu, FIBA Hall of Fame 2026 listesine giren ilk Türk '),b('sporcu','sporcu'),t(' oldu. Sporculuk kariyeri ve milli takım kimliğiyle basketbola büyük katkı '),b('sağlayan','sağlayan'),t(' Türkoğlu bu onura layık görüldü. Türkoğlu şöyle dedi: "Bu başarı sadece benim değil, Türk basketbolunun '),b('zaferidir','zaferidir'),t('." Bu seçilme Türk spor tarihinde önemli bir '),b('dönüm','dönüm'),t(' noktası olarak kaydedildi. Türk basketbolu artık dünya sıralamasında söz '),b('sahibi','sahibi'),t(' oluyor. Efsaneler sayesinde Türk sporu her geçen gün daha güçlü noktalara '),b('ulaşıyor','ulaşıyor'),t('.')
+  ]
+},
+
+{ id:'C3', cat:'C', ohu:2.65, ocu:14.2,
+  title:'Enflasyon ve Alım Gücü',
+  source:'Anadolu Ajansı · Ekonomi Bülteni, Nisan 2026',
+  url:'https://www.aa.com.tr/tr/ekonomi',
+  segments:[
+    t('Türkiye İstatistik Kurumu verilerine göre yıllık enflasyon oranı son iki yılın en düşük '),b('seviyesine','seviyesine'),t(' geriledi. Gıda fiyatlarındaki artışın yavaşlaması bu gelişmede belirleyici rol '),b('oynadı','oynadı'),t('. Merkez Bankası\'nın sıkı para politikası uygulaması da enflasyonun düşürülmesine katkı '),b('sağladı','sağladı'),t('. Ancak ekonomistler, reel ücretlerin hâlâ satın alma gücünü telafi edecek düzeyde artmadığına '),b('dikkat','dikkat'),t(' çekiyor. Maaşların enflasyonun gerisinde kaldığı dönemler uzadıkça hanehalkı '),b('tasarrufları','tasarrufları'),t(' eriyor. Ekonomistler bu tablonun sürdürülebilir büyüme için bir '),b('risk','risk'),t(' oluşturduğunu vurgulamaktadır.')
+  ]
+},
+
+{ id:'C4', cat:'C', ohu:2.68, ocu:11.7,
+  title:'İklim Değişikliği ve Kuraklık',
+  source:'Anadolu Ajansı / TRT Haber · Mayıs 2026',
+  url:'https://www.trt.net.tr/turkce/haber',
+  segments:[
+    t('Meteoroloji Genel Müdürlüğü\'nün açıkladığı verilere göre Türkiye\'nin ortalama sıcaklığı son elli yılda yaklaşık 1,5 '),b('derece','derece'),t(' arttı. Yaz kuraklıkları hem süresi hem şiddeti bakımından tarihsel ortalamaların '),b('üzerine','üzerine'),t(' çıkıyor. Su kaynaklarındaki azalma tarımı doğrudan '),b('etkiliyor','etkiliyor'),t('. Konya ve Ankara\'da baraj doluluk oranları geçen yılın aynı dönemine göre belirgin biçimde '),b('düşük','düşük'),t(' seyrediyor. Çiftçiler ürün kayıplarını azaltmak için damla sulama sistemlerine '),b('geçişi','geçişi'),t(' hızlandırıyor.')
+  ]
+},
+
+{ id:'C5', cat:'C', ohu:2.52, ocu:8.3,
+  title:'Sporda Gençlik Başarıları',
+  source:'NTV Spor · Mayıs 2026',
+  url:'https://www.ntvspor.net/',
+  segments:[
+    t('Türk gençleri sporda başarıdan başarıya '),b('koşuyor','koşuyor'),t('. Avrupa Gençlik Şampiyonası\'nda milli atletler altın '),b('madalya','madalya'),t(' kazandı. Sporcular büyük bir '),b('sevinç','sevinç'),t(' yaşadı. Aileleri ve antrenörleri gurur '),b('duydu','duydu'),t('. Genç milli yüzücülerimiz de uluslararası arenada '),b('boy','boy'),t(' gösterdi. Spor Bakanlığı gençlere verilen desteği '),b('artıracağını','artıracağını'),t(' açıkladı. Yeni tesisler '),b('yapılacak','yapılacak'),t('. Türk sporu her geçen gün '),b('büyüyor','büyüyor'),t('.')
+  ]
+},
+
+// ═══════════════ CAT D ═══════════════
+{ id:'D1', cat:'D', ohu:2.95, ocu:16.3,
+  title:'Erzurum',
+  source:'Ahmet Hamdi Tanpınar · Beş Şehir (Dergâh Yayınları, 2010)',
+  url:'https://tr.wikipedia.org/wiki/Be%C5%9F_%C5%9Eehir',
+  segments:[
+    t('Erzurum Türk tarihine, Türk coğrafyasına 1945 metreden bakar. Malazgirt Zaferi\'nin açtığı gedikten yeni vatana giren cedlerimizin ilk '),b('fethettikleri','fethettikleri'),t(' büyük merkezî şehirlerden biridir. Tarihimizin ikinci dönüm yerinde, Millî Mücadele\'nin ilk temeli gene Erzurum\'da '),b('atılır','atılır'),t('. Atatürk, Erzurum\'dan işe '),b('başlar','başlar'),t('. Nihayet Kale\'ye çıktık. Önümüzde henüz sararmaya yüz tutmuş ekinleriyle emsalsiz bir '),b('panorama','panorama'),t(' dalgalanıyordu. İlkin dağların etekleri gümüş bir zırha benzeyen bir çizgiyle ovadan '),b('ayrıldı','ayrıldı'),t('. Toprağın, ekinin rengini '),b('sildi','sildi'),t('. Gözümün önünde sadece ışıktan bir göl meydana '),b('gelmişti','gelmişti'),t('.')
+  ]
+},
+
+{ id:'D2', cat:'D', ohu:2.72, ocu:10.2,
+  title:'Osmanlı İmparatorluğu',
+  source:'Vikipedi Türkçe · Osmanlı İmparatorluğu',
+  url:'https://tr.wikipedia.org/wiki/Osmanl%C4%B1_%C4%B0mparatorlu%C4%9Fu',
+  segments:[
+    t('Osmanlı İmparatorluğu, on dördüncü yüzyılda '),b('kurulmuş','kurulmuş'),t(' ve altı asır boyunca varlığını '),b('sürdürmüştür','sürdürmüştür'),t('. Üç kıtaya yayılan bu devlet dönemin en '),b('güçlü','güçlü'),t(' siyasi yapılarından birini oluşturmuştur. İstanbul\'un fethiyle birlikte imparatorluk yeni bir '),b('döneme','döneme'),t(' girmiştir. Farklı din ve kültürden gelen halkları bir arada yönetmek büyük bir '),b('beceri','beceri'),t(' gerektirmiştir. Tanzimat döneminde başlayan '),b('modernleşme','modernleşme'),t(' süreci toplumsal yapıyı köklü biçimde '),b('değiştirmiştir','değiştirmiştir'),t('. İmparatorluk 1922 yılında resmen '),b('sona','sona'),t(' ermiştir.')
+  ]
+},
+
+{ id:'D3', cat:'D', ohu:2.82, ocu:13.6,
+  title:'Çanakkale Savaşları',
+  source:'MEB 8. Sınıf T.C. İnkılap Tarihi Ders Kitabı',
+  url:'https://tymm.meb.gov.tr/ders-kitaplari/temel-egitim',
+  segments:[
+    t('Çanakkale Savaşları, Birinci Dünya Savaşı\'nın en kritik '),b('cephelerinden','cephelerinden'),t(' birini oluşturur. İtilaf kuvvetleri, Osmanlı\'yı savaş dışı bırakmak amacıyla Çanakkale Boğazı\'nı geçmeye '),b('teşebbüs','teşebbüs'),t(' etti. Türk askerleri ise ağır koşullara rağmen kahramanca '),b('direndi','direndi'),t('. Bu savaş yaklaşık dokuz ay '),b('sürdü','sürdü'),t('. Mustafa Kemal Anafartalar cephesinde sergilediği '),b('liderlikle','liderlikle'),t(' tarihe geçti. "Size taarruz emretmiyorum, '),b('ölmeyi','ölmeyi'),t(' emrediyorum" sözü bu kahramanlığın simgesi oldu. Çanakkale zaferi yalnızca askeri bir başarı değil, aynı zamanda yeni bir milletin '),b('doğuşunun','doğuşunun'),t(' habercisiydi.')
+  ]
+},
+
+{ id:'D4', cat:'D', ohu:2.85, ocu:14.1,
+  title:'Kurtuluş Savaşı',
+  source:'Atatürk Araştırma Merkezi · Cumhuriyet Tarihi Serisi',
+  url:'https://atam.gov.tr/',
+  segments:[
+    t('Mondros Mütarekesi\'nin ardından Türk halkı büyük bir '),b('tehlikeyle','tehlikeyle'),t(' yüz yüze geldi. Mustafa Kemal, 19 Mayıs 1919\'da Samsun\'a ayak basarak Millî Mücadele\'nin '),b('fitilini','fitilini'),t(' ateşledi. Büyük Taarruz 26 Ağustos 1922\'de '),b('başladı','başladı'),t('. Türk ordusu birkaç günde düşman hatlarını yara yara '),b('zafer','zafer'),t(' kazandı. 30 Ağustos\'ta Dumlupınar\'da elde edilen kesin zafer işgalin '),b('sonunu','sonunu'),t(' simgeledi. 29 Ekim 1923\'te Türkiye '),b('Cumhuriyeti','Cumhuriyeti'),t(' ilan edildi. Mustafa Kemal Atatürk, '),b('cumhurbaşkanlığına','cumhurbaşkanlığına'),t(' seçildi.')
+  ]
+},
+
+{ id:'D5', cat:'D', ohu:2.78, ocu:11.3,
+  title:'Türk El Sanatları',
+  source:'Kültür Varlıkları ve Müzeler Genel Müdürlüğü · Kültür Bakanlığı',
+  url:'https://kvmgm.ktb.gov.tr/',
+  segments:[
+    t('Türk el sanatları, yüzyıllar boyunca süregelen köklü bir '),b('geleneğe','geleneğe'),t(' dayanmaktadır. Halıcılık, çinicilik, minyatür, tezhip ve ebru bu sanatların '),b('başında','başında'),t(' gelir. Hereke ipeği, Kayseri dokumacılığı ve Uşak halıları uluslararası alanda '),b('tanınmaktadır','tanınmaktadır'),t('. Çini sanatı Kütahya ve İznik\'te asırlık ustalar tarafından '),b('sürdürülmektedir','sürdürülmektedir'),t('. Bu kaplar ve karolar İstanbul\'daki tarihi camileri '),b('süslemektedir','süslemektedir'),t('. Günümüzde el sanatları ekonomik bir değer de '),b('kazanmıştır','kazanmıştır'),t('.')
+  ]
+},
+
+// ═══════════════ CAT E ═══════════════
+{ id:'E1', cat:'E', ohu:2.90, ocu:8.5,
+  title:'Tip 2 Diyabet',
+  source:'Memorial Hastanesi · "Tip 2 Diyabet Nedir?"',
+  url:'https://www.memorial.com.tr/hastaliklar/tip-2-diyabet-nedir',
+  segments:[
+    t('Tip 2 diyabet, insülin direnciyle karakterize edilen kronik bir metabolik '),b('hastalıktır','hastalıktır'),t('. Pankreas yeterli insülin üretse de hücreler buna yeterince '),b('yanıt','yanıt'),t(' veremez. Bu durum kan '),b('şekerinin','şekerinin'),t(' yükselmesine neden olur. Düzenli fiziksel '),b('aktivite','aktivite'),t(' ve dengeli beslenme hastalığın ilerlemesini '),b('yavaşlatabilir','yavaşlatabilir'),t('. Tedavi edilmediğinde kalp, '),b('böbrek','böbrek'),t(' ve göz komplikasyonlarına yol açabilir. Erken '),b('tanı','tanı'),t(' kritik önem taşımaktadır. Hastalığın '),b('yönetiminde','yönetiminde'),t(' ilaç tedavisinin yanı sıra yaşam tarzı '),b('değişikliği','değişikliği'),t(' de büyük rol oynar.')
+  ]
+},
+
+{ id:'E2', cat:'E', ohu:3.11, ocu:17.3,
+  title:'Alzheimer Hastalığı',
+  source:'Memorial Hastaneleri · "Alzheimer Nedir?" 2025',
+  url:'https://www.memorial.com.tr/hastaliklar/alzheimer-nedir-belirtileri-ve-tedavi-yontemleri-nelerdir',
+  segments:[
+    t('Alzheimer hastalığı, beta-amiloid ve tau proteinlerinin beyin hücrelerinde '),b('birikmesi','birikmesi'),t(' sonucu sinir hücrelerinin ölmesiyle karakterize '),b('dejeneratif','dejeneratif'),t(' bir beyin hastalığıdır; bu protein birikimler nöron fonksiyonlarını bozarak öğrenme, düşünme ve hatırlama yetisini '),b('kaybettirir','kaybettirir'),t('. Belirtileri arasında yeni öğrenilen bilgilerin '),b('unutulması','unutulması'),t(', kelime bulma '),b('zorluğu','zorluğu'),t(' ve karar verme '),b('bozukluğu','bozukluğu'),t(' yer alır. Teşhis manyetik rezonans '),b('görüntüleme','görüntüleme'),t(' ile desteklenir. Tedavi kesin olmasa da semptomlar '),b('ilaçlarla','ilaçlarla'),t(' hafifletilebilir.')
+  ]
+},
+
+{ id:'E3', cat:'E', ohu:2.98, ocu:14.8,
+  title:'Obezite ve Metabolik Sendrom',
+  source:'Türkiye Obezite Araştırmaları Derneği · TOBAD 2024',
+  url:'https://www.tobad.org.tr/',
+  segments:[
+    t('Obezite, vücutta aşırı yağ '),b('birikmesini','birikmesini'),t(' ifade eden kronik bir '),b('hastalıktır','hastalıktır'),t('. Dünya Sağlık Örgütü obeziteyi beden kitle indeksinin 30\'un üzerinde olması şeklinde '),b('tanımlamaktadır','tanımlamaktadır'),t('. Küresel ölçekte obezite '),b('prevalansı','prevalansı'),t(' son kırk yılda üç katına çıkmıştır. Metabolik sendrom; abdominal '),b('obezite','obezite'),t(', insülin direnci ve hipertansiyon bileşenlerinin bir arada bulunduğu klinik bir '),b('tablodur','tablodur'),t('. Bu sendromun varlığı tip 2 diyabet ve kardiyovasküler hastalık riskini '),b('artırmaktadır','artırmaktadır'),t('. Tedavide yaşam tarzı '),b('değişiklikleri','değişiklikleri'),t(' birinci basamak yaklaşım olarak önerilmektedir.')
+  ]
+},
+
+{ id:'E4', cat:'E', ohu:2.85, ocu:11.5,
+  title:'Bağışıklık Sistemi',
+  source:'T.C. Türkiye Halk Sağlığı Genel Müdürlüğü · Korunma Rehberi',
+  url:'https://hsgm.saglik.gov.tr/',
+  segments:[
+    t('Bağışıklık sistemi, vücudumuzu zararlı mikroorganizmalara karşı koruyan karmaşık bir savunma '),b('ağıdır','ağıdır'),t('. Bu sistemin güçlü kalması için dengeli beslenme, düzenli uyku ve fiziksel '),b('egzersiz','egzersiz'),t(' büyük önem taşır. C vitamini, çinko ve D vitamini bağışıklık işlevini '),b('destekleyen','destekleyen'),t(' başlıca besin öğeleridir. Aşılanma, bağışıklık sisteminin enfeksiyonlara karşı '),b('hazırlıklı','hazırlıklı'),t(' olmasını sağlar. Sigara ve alkol tüketimi bağışıklık sistemini '),b('zayıflattığından','zayıflattığından'),t(' bu alışkanlıklardan kaçınılması '),b('gerekmektedir','gerekmektedir'),t('.')
+  ]
+},
+
+{ id:'E5', cat:'E', ohu:2.87, ocu:12.9,
+  title:'Depresyon ve Ruh Sağlığı',
+  source:'Türkiye Psikiyatri Derneği · Depresyon Bilgilendirme Kitapçığı',
+  url:'https://www.psikiyatri.org.tr/',
+  segments:[
+    t('Depresyon, dünyada en sık görülen ruh sağlığı bozukluklarından '),b('biridir','biridir'),t('. Dünya Sağlık Örgütü\'nün verilerine göre küresel ölçekte 280 milyondan fazla insan depresyondan '),b('etkilenmektedir','etkilenmektedir'),t('. Türkiye\'de her on kişiden birinin yaşamının bir döneminde depresyon '),b('yaşadığı','yaşadığı'),t(' tahmin edilmektedir. Belirtilerin iki haftadan uzun sürmesi durumunda profesyonel '),b('yardım','yardım'),t(' alınması önerilmektedir. Antidepresanlar ve '),b('psikoterapi','psikoterapi'),t(', tek başına ya da birlikte uygulandığında hastalığın seyrini olumlu yönde '),b('değiştirmektedir','değiştirmektedir'),t('.')
+  ]
+},
+
+// ═══════════════ CAT F ═══════════════
+{ id:'F1', cat:'F', ohu:2.91, ocu:20.4,
+  title:'YKS Başvuru Koşulları',
+  source:'ÖSYM 2025-YKS Kılavuzu',
+  url:'https://www.osym.gov.tr/TR,33008/2025-yuksekogretim-kurumlari-sinavi-yks-kilavuzu.html',
+  segments:[
+    t('2025-YKS\'ye başvurabilmek için adayların; lise ya da lise dengi okul mezunu ya da son sınıf '),b('öğrencisi','öğrencisi'),t(' olması, herhangi bir yükseköğretim kurumuna kayıtlı '),b('bulunmaması','bulunmaması'),t(' gerekmektedir. Ayrıca sınava girecek adayların kimlik bilgilerinin '),b('doğrulanmış','doğrulanmış'),t(' olması, başvuru ücretinin eksiksiz '),b('yatırılmış','yatırılmış'),t(' bulunması, engel durumu varsa engel '),b('belgesinin','belgesinin'),t(' sisteme yüklenmiş olması zorunludur. Bu şartları taşımayan adayların başvurusu '),b('geçersiz','geçersiz'),t(' sayılacak ve ücret '),b('iadesi','iadesi'),t(' yapılmayacaktır.')
+  ]
+},
+
+{ id:'F2', cat:'F', ohu:2.79, ocu:10.2,
+  title:'Kıdem Tazminatı Hakkı',
+  source:'1475 Sayılı Eski İş Kanunu Madde 14',
+  url:'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1475&MevzuatTur=1&MevzuatTertip=5',
+  segments:[
+    t('İş sözleşmesinin feshi '),b('hâlinde','hâlinde'),t(' işçinin kıdem tazminatına hak kazanabilmesi için en az bir yıl çalışmış olması '),b('gerekmektedir','gerekmektedir'),t('. İşveren tarafından gerçekleştirilen haksız '),b('fesihlerde','fesihlerde'),t(' işçi hem kıdem hem de ihbar tazminatı talep '),b('edebilir','edebilir'),t('. Söz konusu tazminatlar işçinin son brüt '),b('ücreti','ücreti'),t(' esas alınarak '),b('hesaplanmaktadır','hesaplanmaktadır'),t('. Anlaşmazlık hâlinde iş mahkemelerine '),b('başvurulabilir','başvurulabilir'),t('. Dava açma süresi fesih tarihinden itibaren beş '),b('yıldır','yıldır'),t('. Bu süre hak düşürücü nitelikte olup '),b('uzatılamaz','uzatılamaz'),t('.')
+  ]
+},
+
+{ id:'F3', cat:'F', ohu:2.97, ocu:22.1,
+  title:'Tüketici Hakları',
+  source:'6502 Sayılı Tüketicinin Korunması Hakkında Kanun',
+  url:'https://www.mevzuat.gov.tr/MevzuatMetin/1.5.6502.pdf',
+  segments:[
+    t('Satın alınan mal veya hizmetin ayıplı çıkması durumunda tüketici; malın ayıpsız misliyle '),b('değiştirilmesini','değiştirilmesini'),t(', ayıp oranında '),b('indirim','indirim'),t(' yapılmasını, ayıbın ücretsiz olarak '),b('giderilmesini','giderilmesini'),t(' ya da sözleşmeden dönülerek ödenen bedelin '),b('iadesini','iadesini'),t(' talep etme haklarından birini kullanma konusunda seçim '),b('hakkına','hakkına'),t(' sahip olup satıcı bu seçimi '),b('reddedemez','reddedemez'),t('. Tüketici bu taleplerini malı teslim aldığı tarihten itibaren iki yıl içinde '),b('iletmek','iletmek'),t(' zorundadır.')
+  ]
+},
+
+{ id:'F4', cat:'F', ohu:3.05, ocu:21.7,
+  title:'Kişisel Verilerin Korunması',
+  source:'6698 Sayılı KVKK · Kişisel Verileri Koruma Kurumu',
+  url:'https://www.kvkk.gov.tr/Icerik/6649/6698-Sayili-Kanun',
+  segments:[
+    t('Kişisel verilerin ilgili kişinin açık rızası alınmaksızın işlenmesi kural olarak '),b('yasaktır','yasaktır'),t('; ancak kanunlarda açıkça öngörülmesi veya veri sorumlusunun hukuki '),b('yükümlülüğünü','yükümlülüğünü'),t(' yerine getirebilmesi için zorunlu olması, ilgili kişinin kendisi tarafından '),b('alenileştirilmiş','alenileştirilmiş'),t(' olması ya da bir hakkın '),b('tesisi','tesisi'),t(', kullanılması veya korunması için veri işlemenin zorunlu olması hâllerinde açık rıza '),b('aranmaksızın','aranmaksızın'),t(' işlenebilir. Ihlali hâlinde Kurul tarafından idari '),b('yaptırım','yaptırım'),t(' uygulanması söz konusu olabilir.')
+  ]
+},
+
+{ id:'F5', cat:'F', ohu:3.01, ocu:24.8,
+  title:'Türk Medeni Kanunu: Velayet',
+  source:'Türk Medeni Kanunu (4721 Sayılı), Madde 182-185',
+  url:'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=4721&MevzuatTur=1&MevzuatTertip=5',
+  segments:[
+    t('Mahkeme boşanmaya karar verirken ana ve babayı dinledikten, uzman '),b('görüşü','görüşü'),t(' alındıktan ve mümkün olduğu takdirde çocuğun da beyanı dikkate alındıktan sonra velayet '),b('hakkının','hakkının'),t(' kime verileceğine ilişkin kararını gerekçeli biçimde '),b('açıklayacaktır','açıklayacaktır'),t('. Velayetin kullanılması kendisine bırakılmayan eşin çocukla kişisel ilişki kurma hakkı '),b('saklıdır','saklıdır'),t('. Çocuğun bakımı için belirlenen iştirak '),b('nafakası','nafakası'),t(' mahkeme tarafından re\'sen '),b('takdir','takdir'),t(' edilecek olup talep '),b('aranmaksızın','aranmaksızın'),t(' hükme bağlanacaktır.')
+  ]
+},
+
+// ═══════════════ CAT G ═══════════════
+{ id:'G1', cat:'G', ohu:2.99, ocu:10.9,
+  title:'Dijital Oyun, E-Spor ve Geleneksel Sporlar',
+  source:'Demirsoy ve ark. · Beden Eğitimi ve Spor Bilimleri Dergisi',
+  url:'https://dergipark.org.tr/',
+  segments:[
+    t('2000\'li yıllarla birlikte dijital oyunlar her kuşaktan insanların vakit geçirdiği bir eylem hâline '),b('dönüşmüştür','dönüşmüştür'),t('. Uluslararası e-Spor Federasyonu\'nun tanımına göre e-spor, bilgi ve iletişim teknolojilerinin kullanıldığı rekabetçi bir '),b('spordur','spordur'),t(' ve bugün 61 ülkede ulusal '),b('federasyonu','federasyonu'),t(' bulunmaktadır. Geleneksel sporlarla kıyaslandığında e-sporun en temel farkı fiziksel '),b('temas','temas'),t(' gerektirmemesidir. Bu özellik salgın döneminde e-sporun güvenli bir '),b('alternatif','alternatif'),t(' olarak öne çıkmasına zemin '),b('hazırlamıştır','hazırlamıştır'),t('. Refleks ve hızlı karar verme '),b('becerileri','becerileri'),t(' iki spor türünün ortak paydalarını oluşturmaktadır.')
+  ]
+},
+
+{ id:'G2', cat:'G', ohu:3.01, ocu:18.2,
+  title:'Türkçe Okunabilirlik Formülleri Üzerine',
+  source:'Hasanyılmaz · Eğitimde Kuram ve Uygulama Dergisi, Cilt 18',
+  url:'https://dergipark.org.tr/tr/pub/eku',
+  segments:[
+    t('Okunabilirlik formüllerinin geliştirilmesinde başvurulan temel değişkenlerin başında ortalama cümle uzunluğu ve ortalama sözcük uzunluğu '),b('gelmektedir','gelmektedir'),t('; ancak söz konusu değişkenlerin Türkçe gibi eklemeli dillerde gerçek anlama güçlüğünü ne ölçüde '),b('temsil','temsil'),t(' ettiği tartışmalıdır. Türkçe\'de aynı kök üzerine art arda eklenen biçimbirimler sözcük uzunluğunu artırırken anlama yükünü zorunlu olarak '),b('artırmamakta','artırmamakta'),t('; öte yandan ekin bilinmesi durumunda okuyucu çok heceli sözcüğü bile kolayca '),b('çözümleyebilmektedir','çözümleyebilmektedir'),t('. Bu nedenle mevcut Türkçe okunabilirlik formüllerinin sözcük bilinirliği bileşenini içermemesinin ciddi bir metodolojik '),b('sınırlılık','sınırlılık'),t(' oluşturduğu değerlendirilmektedir.')
+  ]
+},
+
+{ id:'G3', cat:'G', ohu:3.08, ocu:19.6,
+  title:'Eğitimde Dijital Dönüşüm',
+  source:'Ankara Üniversitesi Eğitim Bilimleri Dergisi, Cilt 55, 2022',
+  url:'https://dergipark.org.tr/tr/pub/auebfd',
+  segments:[
+    t('Dijital dönüşüm süreci, yalnızca teknolojik araç ve gereçlerin sınıf ortamına taşınmasıyla '),b('sınırlı','sınırlı'),t(' kalmayıp müfredat tasarımı ve pedagojik yaklaşım açısından köklü bir '),b('paradigma','paradigma'),t(' dönüşümünü de beraberinde getirmektedir. Öğrenme '),b('analitiği','analitiği'),t(', uyarlanabilir öğrenme sistemleri ve yapay zekâ destekli içerik önerme '),b('mekanizmaları','mekanizmaları'),t(' bireyselleştirilmiş öğrenme deneyimlerinin sunulmasına olanak '),b('tanısa','tanısa'),t(' da bu sistemlerin etkinliği büyük ölçüde öğretmenlerin teknolojik pedagojik içerik bilgisi '),b('yeterliliğine','yeterliliğine'),t(' bağlıdır.')
+  ]
+},
+
+{ id:'G4', cat:'G', ohu:3.15, ocu:22.3,
+  title:'Sosyal Medya Kullanımı ve Kimlik',
+  source:'Türk Psikoloji Dergisi, Cilt 38, Sayı 91, 2023',
+  url:'https://www.turkpsikoloji.org.tr/',
+  segments:[
+    t('Sosyal medya platformlarının gündelik hayata derinden '),b('nüfuz','nüfuz'),t(' etmesiyle birlikte kimlik oluşturma süreçleri büyük ölçüde '),b('çevrimiçi','çevrimiçi'),t(' ortama taşınmış ve bireyler özgün benliklerini kısmen dijital '),b('performatif','performatif'),t(' kimliklerle ikame etmeye başlamıştır. Gerçek zamanlı geri bildirim '),b('mekanizmaları','mekanizmaları'),t(' ve algoritmik görünürlük yapıları bireylerin öz değer '),b('algısını','algısını'),t(' dışsal onay mekanizmalarına bağlı hâle '),b('getirmektedir','getirmektedir'),t('. Bu durumun uzun vadeli psikolojik sağlık sonuçları üzerindeki etkisi henüz yeterince '),b('araştırılmamıştır','araştırılmamıştır'),t('.')
+  ]
+},
+
+{ id:'G5', cat:'G', ohu:3.08, ocu:16.4,
+  title:'Sürdürülebilir Kalkınma ve Çevre',
+  source:'Ankara Üniversitesi Sosyal Bilimler Enstitüsü · Çevre Politikaları',
+  url:'https://www.ankara.edu.tr/',
+  segments:[
+    t('Sürdürülebilir kalkınma hedefleri çerçevesinde çevre politikalarının tasarlanması, ekonomik büyüme ile ekolojik '),b('denge','denge'),t(' arasındaki gerilimin yönetilmesini zorunlu kılmaktadır. Karbon salımı azaltma '),b('taahhütleri','taahhütleri'),t(', yenilenebilir enerji yatırımları ve döngüsel ekonomi '),b('modelleri','modelleri'),t(' bu politika setinin temel bileşenlerini oluşturmaktadır. Bu politikaların uygulanması sektörler arasında farklı uyum '),b('maliyetleri','maliyetleri'),t(' ve rekabet gücü '),b('kayıplarına','kayıplarına'),t(' yol açabilmektedir. Çevre politikalarının etkinliği hem piyasa '),b('mekanizmalarıyla','mekanizmalarıyla'),t(' uyumlu teşvik yapılarına hem de güçlü kurumsal denetim '),b('altyapısına','altyapısına'),t(' bağlıdır.')
+  ]
+},
+
+]; // end ALL_TEXTS
+
+// ─────────────────────────────────────────────────────────────
+// RANDOMISATION & RENDER
+// ─────────────────────────────────────────────────────────────
+const CATS = ['A','B','C','D','E','F','G'];
+let selectedTexts = [];
+let totalBlanks = 0;
+
+function pickRandom(){
+  return CATS.map(cat => {
+    const pool = ALL_TEXTS.filter(t => t.cat === cat);
+    return pool[Math.floor(Math.random() * pool.length)];
+  });
+}
+
+function blankCount(txt){
+  return txt.segments.filter(s => s.type === 'blank').length;
+}
+
+function shuffle(){
+  selectedTexts = pickRandom();
+  totalBlanks = selectedTexts.reduce((acc, t) => acc + blankCount(t), 0);
+  renderTexts();
+  updateProgress();
+  // scroll to top of texts
+  document.getElementById('texts-container').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderTexts(){
+  const container = document.getElementById('texts-container');
+  container.innerHTML = '';
+
+  selectedTexts.forEach((txt, ti) => {
+    const c = CAT[txt.cat];
+    let blankIdx = 0;
+
+    // Build paragraph HTML
+    let paraHTML = '';
+    txt.segments.forEach(seg => {
+      if(seg.type === 'text'){
+        paraHTML += escHtml(seg.text);
+      } else {
+        blankIdx++;
+        const gidx = `${txt.id}-${blankIdx}`;
+        paraHTML += `<span class="blank-wrap">
+          <sup class="blank-num">${blankIdx}</sup>
+          <input class="blank-input" id="inp-${gidx}"
+            data-ans="${escHtml(seg.ans)}"
+            data-word="${escHtml(seg.word)}"
+            data-textid="${txt.id}"
+            data-bidx="${blankIdx}"
+            oninput="updateProgress()"
+            placeholder="${escHtml(seg.word)}"
+            title="İpucu (geliştirme): ${escHtml(seg.ans)}">
+        </span>`;
+      }
+    });
+
+    const card = document.createElement('div');
+    card.className = 'text-card';
+    card.innerHTML = `
+      <div class="text-card-head">
+        <div class="text-badge" style="background:${c.bg};border:1.5px solid ${c.accent};color:${c.accent};">${ti+1}</div>
+        <h3>${escHtml(txt.title)}</h3>
+        <span class="domain-tag">${escHtml(c.label)}</span>
+        <span class="level-tag" style="background:${c.bg};color:${c.accent};">${c.level}</span>
+        <span class="src-tag">📚 <a href="${escHtml(txt.url)}" target="_blank" style="color:var(--ink3);">${escHtml(txt.source)}</a>
+          &nbsp;·&nbsp; OHU≈${txt.ohu} | OCU≈${txt.ocu}
+        </span>
+      </div>
+      <div class="text-body">
+        <p class="text-para">${paraHTML}</p>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  document.getElementById('prog-text').textContent = `0 / ${totalBlanks}`;
+}
+
+function escHtml(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function updateProgress(){
+  const inputs = document.querySelectorAll('.blank-input');
+  const filled = Array.from(inputs).filter(i => i.value.trim() !== '').length;
+  const pct = totalBlanks > 0 ? Math.round(filled / totalBlanks * 100) : 0;
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = filled + ' / ' + totalBlanks;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SCORING
+// ─────────────────────────────────────────────────────────────
+function norm(s){
+  return s.trim().toLocaleLowerCase('tr-TR')
+    .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+    .replace(/\s+/g,'');
+}
+
+function score(given, answer){
+  const g = norm(given);
+  const a = norm(answer);
+  if(!g) return 0;
+  if(g === a) return 1;
+  // stem match: first 5 chars
+  if(g.length >= 4 && a.length >= 4 && g.slice(0,5) === a.slice(0,5)) return 1;
+  return 0;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SUBMIT
+// ─────────────────────────────────────────────────────────────
+function gonder(){
+  const answers = [];
+  const textIds = [];
+  let toplam = 0;
+
+  selectedTexts.forEach(txt => {
+    textIds.push(txt.id);
+    const bCount = blankCount(txt);
+    for(let bi = 1; bi <= bCount; bi++){
+      const inp = document.getElementById(`inp-${txt.id}-${bi}`);
+      const val = inp ? inp.value.trim() : '';
+      const ans = inp ? inp.dataset.ans : '';
+      const sc = score(val, ans);
+      toplam += sc;
+      answers.push(val);
+    }
+  });
+
+  const payload = {
+    tarih:      new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR'),
+    isim:       document.getElementById('isim').value.trim() || 'Anonim',
+    dogumYili:  document.getElementById('dogumYili').value.trim() || '',
+    cinsiyet:   document.getElementById('cinsiyet').value || '',
+    egitim:     document.getElementById('egitim').value || '',
+    sehir:      document.getElementById('sehir').value.trim() || '',
+    dogumYeri:  document.getElementById('dogumYeri').value.trim() || '',
+    okul:       document.getElementById('okul').value.trim() || '',
+    sinif:      document.getElementById('sinif').value.trim() || '',
+    metinler:   textIds.join(','),
+    cevaplar:   answers,
+    toplam,
+    toplamBosluk: totalBlanks
+  };
+
+  document.getElementById('btn-gonder').disabled = true;
+  document.getElementById('spinner').classList.add('show');
+
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    document.getElementById('spinner').classList.remove('show');
+    const ok = document.getElementById('result-ok');
+    ok.innerHTML = `<strong>✓ Yanıtlarınız kaydedildi!</strong> Katkınız için çok teşekkür ederiz.<br>
+      Sorularınız için: <a href="mailto:idris.demirsoy@usak.edu.tr" style="color:var(--teal)">idris.demirsoy@usak.edu.tr</a>`;
+    ok.style.display = 'block';
+  })
+  .catch(() => {
+    document.getElementById('spinner').classList.remove('show');
+    document.getElementById('btn-gonder').disabled = false;
+    const err = document.getElementById('result-err');
+    err.innerHTML = '<strong>Bağlantı hatası.</strong> İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    err.style.display = 'block';
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+shuffle();
+</script>
+</body>
+</html>
