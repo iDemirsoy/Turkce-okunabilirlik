@@ -659,37 +659,46 @@ function score(given, answer){
 // SUBMIT
 // ─────────────────────────────────────────────────────────────
 function gonder(){
-  const answers = [];
-  const textIds = [];
   let toplam = 0;
 
-  selectedTexts.forEach(txt => {
-    textIds.push(txt.id);
+  // Her metin için {id, puan, maxPuan, cevaplar:[]} objesi oluştur
+  const metinVerisi = selectedTexts.map(txt => {
     const bCount = blankCount(txt);
+    const cevaplar = [];
+    let txtPuan = 0;
+
     for(let bi = 1; bi <= bCount; bi++){
       const inp = document.getElementById(`inp-${txt.id}-${bi}`);
       const val = inp ? inp.value.trim() : '';
       const ans = inp ? inp.dataset.ans : '';
       const sc = score(val, ans);
       toplam += sc;
-      answers.push(val);
+      txtPuan += sc;
+      cevaplar.push(val);
     }
+
+    return {
+      id:      txt.id,           // ör. "A3"
+      cat:     txt.cat,          // ör. "A"
+      puan:    txtPuan,
+      maxPuan: bCount,
+      cevaplar                   // ör. ["yürüdü","güldü",...]
+    };
   });
 
   const payload = {
-    tarih:      new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR'),
-    isim:       document.getElementById('isim').value.trim() || 'Anonim',
-    dogumYili:  document.getElementById('dogumYili').value.trim() || '',
-    cinsiyet:   document.getElementById('cinsiyet').value || '',
-    egitim:     document.getElementById('egitim').value || '',
-    sehir:      document.getElementById('sehir').value.trim() || '',
-    dogumYeri:  document.getElementById('dogumYeri').value.trim() || '',
-    okul:       document.getElementById('okul').value.trim() || '',
-    sinif:      document.getElementById('sinif').value.trim() || '',
-    metinler:   textIds.join(','),
-    cevaplar:   answers,
+    tarih:        new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR'),
+    isim:         document.getElementById('isim').value.trim() || 'Anonim',
+    dogumYili:    document.getElementById('dogumYili').value.trim() || '',
+    cinsiyet:     document.getElementById('cinsiyet').value || '',
+    egitim:       document.getElementById('egitim').value || '',
+    sehir:        document.getElementById('sehir').value.trim() || '',
+    dogumYeri:    document.getElementById('dogumYeri').value.trim() || '',
+    okul:         document.getElementById('okul').value.trim() || '',
+    sinif:        document.getElementById('sinif').value.trim() || '',
     toplam,
-    toplamBosluk: totalBlanks
+    toplamBosluk: totalBlanks,
+    metinVerisi                  // yapılandırılmış veri
   };
 
   document.getElementById('btn-gonder').disabled = true;
