@@ -196,7 +196,7 @@ footer a{color:var(--accent);}
 // ─────────────────────────────────────────────────────────────
 // GOOGLE SHEETS ENDPOINT
 // ─────────────────────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8lL9QdmTtHcSDB0Oy6IzFYs-Lr0yLFaUzF8w_yJv2sGWoLRAmcKftbQ6DIUnFtEwo/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyl4DqZVM9Kd9b8xpR0XpVoghDwSXSuEXGt87QBnx4unsfVTyP9tVCEoNMXq4fNqQ/exec';
 
 // ─────────────────────────────────────────────────────────────
 // CATEGORY STYLES
@@ -676,10 +676,6 @@ function gonder(){
     }
   });
 
-  // 🔥 YENİ: metinBosluklari dizisini oluştur (her metnin boşluk sayısı)
-  const metinBosluklari = selectedTexts.map(txt => blankCount(txt));
-  const totalBlanks = metinBosluklari.reduce((a,b) => a + b, 0); // toplam boşluk
-
   const payload = {
     tarih:      new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR'),
     isim:       document.getElementById('isim').value.trim() || 'Anonim',
@@ -691,19 +687,16 @@ function gonder(){
     okul:       document.getElementById('okul').value.trim() || '',
     sinif:      document.getElementById('sinif').value.trim() || '',
     metinler:   textIds.join(','),
-    metinBosluklari: metinBosluklari,
     cevaplar:   answers,
-    toplam:     toplam,
+    toplam,
     toplamBosluk: totalBlanks
   };
 
-  // Gönder butonunu devre dışı bırak, spinner'ı göster
   document.getElementById('btn-gonder').disabled = true;
   document.getElementById('spinner').classList.add('show');
 
   fetch(SCRIPT_URL, {
-    method:'POST',
-    mode:'no-cors',
+    method:'POST', mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   })
