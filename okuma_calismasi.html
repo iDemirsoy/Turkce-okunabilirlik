@@ -145,10 +145,10 @@ footer a,.box a{color:var(--accent);}
           <option value="universite">Üniversite (ön lisans / lisans)</option><option value="lisansustu">Lisansüstü (yüksek lisans / doktora)</option></select></div>
       <div class="field hidden" id="f-sinif"><label for="sinif">Sınıfınız</label>
         <select id="sinif"><option value="">Seçiniz</option></select></div>
-      <div class="field hidden" id="f-okul"><label for="okulAdi">Okulunuzun adı</label>
+      <div class="field hidden" id="f-okul"><label for="okulAdi" id="okul-etiket">Okulunuzun adı</label>
         <input type="text" id="okulAdi" placeholder="ör. Uşak Anadolu Lisesi / Uşak Üniversitesi" autocomplete="off"></div>
       <div class="field hidden" id="f-bolum"><label for="bolum">Bölüm / alan</label>
-        <input type="text" id="bolum" placeholder="ör. Türk Dili ve Edebiyatı" autocomplete="off"></div>
+        <input type="text" id="bolum" placeholder="ör. Türk Dili ve Edebiyatı / Sayısal" autocomplete="off"></div>
       <div class="field hidden" id="f-oturum"><label for="oturum">Okul oturum kodu <span class="req">*</span></label>
         <input type="text" id="oturum" placeholder="Öğretmeninizden alınız" autocomplete="off"></div>
     </div>
@@ -332,8 +332,9 @@ function bilgiAlanlari(){
     $('sinif').innerHTML = '<option value="">Seçiniz</option>' + SINIFLAR[e].map(s => `<option value="${s}">${s}. sınıf</option>`).join('');
     if(SINIFLAR[e].includes(+mevcut)) $('sinif').value = mevcut;
   }
-  $('f-okul').classList.toggle('hidden', d !== 'ogrenci');
-  $('f-bolum').classList.toggle('hidden', !(e === 'universite' || e === 'lisansustu'));
+  $('f-okul').classList.toggle('hidden', !e);
+  $('okul-etiket').textContent = d === 'ogrenci' ? 'Okulunuzun adı' : d === 'mezun' ? 'En son bitirdiğiniz okulun adı' : 'Okul adı';
+  $('f-bolum').classList.toggle('hidden', !['lise', 'universite', 'lisansustu'].includes(e));
   $('egitim-etiket').firstChild.textContent = d === 'ogrenci' ? 'Okuduğunuz okul düzeyi ' : d === 'mezun' ? 'Bitirdiğiniz en son okul düzeyi ' : 'Eğitim düzeyi ';
   const y = yas(); $('f-oturum').classList.toggle('hidden', !(y < 18));
 }
