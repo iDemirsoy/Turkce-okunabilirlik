@@ -72,6 +72,13 @@ header p{font-size:.88rem;color:#B5A89A;margin-top:.3rem;font-style:italic;}
 .spinner{text-align:center;padding:1rem;font-size:.9rem;color:var(--ink-3);}
 footer{text-align:center;padding:1.5rem 1rem;font-size:.78rem;color:var(--ink-3);border-top:1px solid var(--border);margin-top:2rem;line-height:2;}
 footer a,.box a{color:var(--accent);}
+.blank input.dolu{border-bottom-color:var(--green);color:var(--green);background:var(--green-bg);}
+.bos-liste{font-size:.86rem;color:var(--ink-3);margin:.2rem 0 1rem;min-height:1.4em;}
+.bos-liste a{color:var(--accent);cursor:pointer;text-decoration:underline;margin:0 .2rem;font-weight:600;}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-row .btn.ghost{margin-top:0;}
+@media(max-width:480px){.btn-row{grid-template-columns:1fr;}}
+.durum-not{font-size:.8rem;color:var(--ink-3);text-align:center;margin-top:.6rem;min-height:1.2em;}
 </style>
 </head>
 <body>
@@ -84,11 +91,12 @@ footer a,.box a{color:var(--accent);}
 
 <!-- ═════════ 1. BİLGİLENDİRME VE ONAY ═════════ -->
 <section class="step active" id="s-onay">
+  <div class="msg ok hidden" id="donen-bilgi" style="margin:0 0 1.2rem">Tekrar hoş geldiniz! Bu kez bilgi formunu doldurmanız gerekmiyor; daha önce okumadığınız yeni metinlerle devam edeceksiniz.</div>
   <div class="box">
     <h2>Çalışma Hakkında</h2>
     <p>Bu çalışma, Türkçe metinlerin okunabilirliğini ölçen TROi okunabilirlik metodunu geliştirmek amacıyla yapılmaktadır.</p>
     <ul style="margin-top:.5rem">
-      <li>Size eğitim düzeyinize uygun <strong id="metin-sayisi-yazi">3</strong> kısa metin gösterilecek. Her metinde 8 sözcük boş bırakılmıştır.</li>
+      <li>Size eğitim düzeyinize uygun <strong id="metin-sayisi-yazi">2</strong> kısa metin gösterilecek. Her metinde 8 sözcük boş bırakılmıştır. İsterseniz sonrasında daha fazla metin de doldurabilirsiniz.</li>
       <li>Her boşluğa, metne göre en uygun gördüğünüz <strong>tek bir sözcüğü</strong> yazın.</li>
       <li>Bu bir sınav değildir; ölçülen sizin başarınız değil, metinlerin okunabilirliğidir.</li>
       <li>Katılım gönüllüdür. İstediğiniz anda sayfayı kapatarak çalışmadan ayrılabilirsiniz.</li>
@@ -96,7 +104,8 @@ footer a,.box a{color:var(--accent);}
   </div>
   <div class="box">
     <h2>Kişisel Verilerin Korunması</h2>
-    <p>Adınız, e-posta adresiniz ya da okulunuzun adı gibi kimliğinizi belirleyen bilgiler <strong>istenmez</strong>. Yanıtlarınız size rastgele verilen bir katılımcı koduyla saklanır ve yalnızca bilimsel amaçla, toplu olarak analiz edilir.</p>
+    <p>Adınızı ve soyadınızı yazmak <strong>isteğe bağlıdır</strong>. Verdiğiniz bilgiler ve yanıtlarınız gizli tutulur, yalnızca araştırmacı tarafından bilimsel amaçla kullanılır; sonuçlar kimlik bilgisi içermeyecek biçimde, toplu olarak raporlanır.</p>
+    <p>Çalışmanın sonunda size yeni metinler için hatırlatma göndermemizi isterseniz e-posta adresiniz ayrıca ve yalnızca bu amaçla saklanır.</p>
     <p>Çalışma sonunda katılımcı kodunuz gösterilecektir. Verilerinizin silinmesini isterseniz bu kodla <a href="mailto:idris.demirsoy@usak.edu.tr">idris.demirsoy@usak.edu.tr</a> adresine yazabilirsiniz.</p>
     <p id="etik-bilgi" style="font-style:italic;color:var(--ink-3)">Etik kurul onay bilgisi: eklenecek.</p>
   </div>
@@ -109,34 +118,41 @@ footer a,.box a{color:var(--accent);}
 
 <!-- ═════════ 2. KATILIMCI BİLGİLERİ ═════════ -->
 <section class="step" id="s-bilgi">
+  <div class="msg err hidden" id="bilgi-not" style="margin:0 0 1rem"></div>
   <div class="box">
     <h3>Katılımcı Bilgileri</h3>
+    <div class="field" style="margin-bottom:12px"><label for="adSoyad">Ad Soyad <span style="color:var(--ink-3)">(isteğe bağlı)</span></label>
+      <input type="text" id="adSoyad" placeholder="Adınız Soyadınız" autocomplete="name"></div>
     <div class="grid">
       <div class="field"><label for="dogumYili">Doğum yılı <span class="req">*</span></label>
         <input type="number" id="dogumYili" inputmode="numeric" placeholder="ör. 1995" min="1930" max="2022"></div>
       <div class="field"><label for="cinsiyet">Cinsiyet <span class="req">*</span></label>
         <select id="cinsiyet"><option value="">Seçiniz</option><option value="kadin">Kadın</option><option value="erkek">Erkek</option></select></div>
-      <div class="field"><label for="il">Yaşadığınız il</label>
-        <input type="text" id="il" placeholder="ör. Uşak" autocomplete="off"></div>
+      <div class="field"><label for="memleket">Memleketiniz (il) <span class="req">*</span></label>
+        <select id="memleket" class="il-secim"></select></div>
+      <div class="field"><label for="il">Yaşadığınız il <span class="req">*</span></label>
+        <select id="il" class="il-secim"></select></div>
     </div>
   </div>
   <div class="box">
     <h3>Eğitim Bilgileri</h3>
     <div class="grid">
-      <div class="field"><label for="durum">Öğrenim durumunuz <span class="req">*</span></label>
-        <select id="durum"><option value="">Seçiniz</option><option value="ogrenci">Öğrenciyim</option><option value="mezun">Öğrenci değilim</option></select></div>
+      <div class="field"><label for="durum">Öğrenci misiniz?</label>
+        <select id="durum"><option value="">Seçiniz</option><option value="ogrenci">Evet, öğrenciyim</option><option value="mezun">Hayır</option></select></div>
       <div class="field"><label for="egitim" id="egitim-etiket">Eğitim düzeyi <span class="req">*</span></label>
         <select id="egitim"><option value="">Seçiniz</option>
           <option value="ilkokul">İlkokul</option><option value="ortaokul">Ortaokul</option><option value="lise">Lise</option>
           <option value="universite">Üniversite (ön lisans / lisans)</option><option value="lisansustu">Lisansüstü (yüksek lisans / doktora)</option></select></div>
       <div class="field hidden" id="f-sinif"><label for="sinif">Sınıfınız</label>
         <select id="sinif"><option value="">Seçiniz</option></select></div>
+      <div class="field hidden" id="f-okul"><label for="okulAdi">Okulunuzun adı</label>
+        <input type="text" id="okulAdi" placeholder="ör. Uşak Anadolu Lisesi / Uşak Üniversitesi" autocomplete="off"></div>
       <div class="field hidden" id="f-bolum"><label for="bolum">Bölüm / alan</label>
         <input type="text" id="bolum" placeholder="ör. Türk Dili ve Edebiyatı" autocomplete="off"></div>
       <div class="field hidden" id="f-oturum"><label for="oturum">Okul oturum kodu <span class="req">*</span></label>
         <input type="text" id="oturum" placeholder="Öğretmeninizden alınız" autocomplete="off"></div>
     </div>
-    <p style="font-size:.8rem;color:var(--ink-3);margin-top:.7rem">Öğrenciyseniz okuduğunuz okulu, değilseniz en son bitirdiğiniz okulu seçin.</p>
+    <p style="font-size:.8rem;color:var(--ink-3);margin-top:.7rem">Öğrenciyseniz okuduğunuz okulun düzeyini, değilseniz en son bitirdiğiniz okulun düzeyini seçin.</p>
   </div>
   <div class="msg err hidden" id="bilgi-hata"></div>
   <button class="btn" id="btn-bilgi" style="margin-top:1rem">Devam →</button>
@@ -149,9 +165,9 @@ footer a,.box a{color:var(--accent);}
     <ul>
       <li>Metni baştan sona okuyun. Her boşluğa metindeki anlama ve cümleye uyan <strong>tek bir sözcük</strong> yazın.</li>
       <li>Sözcüğü cümleye uygun ekleriyle birlikte yazın (ör. <em>okula</em>, <em>gördüm</em>).</li>
-      <li>Emin olmasanız da tahmin edin. Hiçbir fikriniz yoksa boşluğu boş bırakabilirsiniz.</li>
-      <li>Türkçe karakter (ç, ğ, ı, ö, ş, ü) kullanamıyorsanız sorun değil.</li>
-      <li>Bir boşluktan sonrakine geçmek için <strong>Enter</strong> tuşunu da kullanabilirsiniz.</li>
+      <li>Emin olmasanız da tahmin edin. Hiçbir fikriniz yoksa boşluğu boş bırakıp devam edebilirsiniz.</li>
+      <li>Sözcükleri Türkçe karakterlerle (ç, ğ, ı, ö, ş, ü) ve doğru yazımla yazmaya özen gösterin.</li>
+      <li>Doldurduğunuz boşluk <span style="color:var(--green);font-weight:600">yeşile</span> döner. Bir boşluktan sonrakine geçmek için <strong>Enter</strong> tuşunu da kullanabilirsiniz.</li>
     </ul>
     <p style="margin-top:.8rem"><strong>Örnek:</strong></p>
     <div class="example">Kedi, kasedeki sütün hepsini <span class="blank"><span class="no">ö</span><input id="ornek" autocomplete="off" autocapitalize="off" spellcheck="false"></span> ve mutlu bir şekilde uyudu.</div>
@@ -163,36 +179,60 @@ footer a,.box a{color:var(--accent);}
 <!-- ═════════ 4. METİNLER ═════════ -->
 <section class="step" id="s-metin">
   <div class="progress">
-    <div class="progress-label"><span id="metin-sira">Metin 1 / 3</span><span id="bos-durum">0 / 8 boşluk</span></div>
+    <div class="progress-label"><span id="metin-sira">Metin 1 / 2</span><span id="bos-durum">0 / 8 boşluk dolu</span></div>
     <div class="bar"><div id="bar"></div></div>
   </div>
   <div class="text-card">
     <div class="text-head"><div class="badge" id="badge">1</div><h3 id="metin-baslik">Metin 1</h3></div>
     <div class="text-body" id="metin-govde"></div>
   </div>
+  <p class="bos-liste" id="bos-liste"></p>
   <div class="box">
     <label class="check"><input type="checkbox" id="once-okudum"> <span>Bu metni daha önce okudum.</span></label>
   </div>
-  <div class="msg err hidden" id="metin-uyari"></div>
-  <button class="btn" id="btn-sonraki" style="margin-top:1rem">Sonraki metin →</button>
+  <button class="btn" id="btn-sonraki">Sonraki metin →</button>
+  <p class="durum-not" id="kayit-durum"></p>
 </section>
 
-<!-- ═════════ 5. GÖNDERİM ═════════ -->
-<section class="step" id="s-gonder">
+<!-- ═════════ 5. EK METİN ═════════ -->
+<section class="step" id="s-ek">
   <div class="box">
-    <div class="spinner" id="gonder-spin">⏳ Yanıtlarınız kaydediliyor…</div>
-    <div class="msg err hidden" id="gonder-hata">Yanıtlar kaydedilemedi. İnternet bağlantınızı kontrol edip yeniden deneyin. Yanıtlarınız bu tarayıcıda saklandı.</div>
-    <button class="btn hidden" id="btn-tekrar" style="margin-top:1rem">Yeniden dene</button>
+    <h2>Teşekkür ederiz!</h2>
+    <p id="ek-metin">Yanıtlarınız kaydedildi.</p>
+    <p style="margin-top:.7rem"><strong>Bize destek olmak için bir metin daha doldurmak ister misiniz?</strong></p>
+    <p style="font-size:.82rem;color:var(--ink-3)">Her metin ayrı kaydedilir; istediğiniz zaman bırakabilirsiniz.</p>
   </div>
+  <div class="btn-row">
+    <button class="btn" id="btn-ek-evet">Evet, bir metin daha</button>
+    <button class="btn ghost" id="btn-ek-hayir">Hayır, bitir</button>
+  </div>
+  <p class="durum-not" id="ek-durum"></p>
 </section>
 
 <!-- ═════════ 6. TEŞEKKÜR ═════════ -->
 <section class="step" id="s-son">
   <div class="box">
     <h2>Teşekkür ederiz!</h2>
-    <p>Yanıtlarınız kaydedildi. <span id="puan-yazi"></span></p>
+    <p id="son-metin">Katılımınız için çok teşekkür ederiz.</p>
     <p>Katılımcı kodunuz: <span class="code" id="kod"></span></p>
     <p style="font-size:.82rem;color:var(--ink-3)">Verilerinizin silinmesini isterseniz bu kodu belirterek <a href="mailto:idris.demirsoy@usak.edu.tr">idris.demirsoy@usak.edu.tr</a> adresine yazabilirsiniz.</p>
+    <div class="msg err hidden" id="son-kayit-hata">Yanıtlarınızın bir kısmı henüz kaydedilemedi; bu tarayıcıda saklanıyor. İnternet bağlantınızı kontrol edip <a href="#" id="btn-son-tekrar">yeniden deneyin</a>.</div>
+  </div>
+  <div class="box hidden" id="hatirlatma">
+    <h3>Yeni metinler için hatırlatma</h3>
+    <p>Önümüzdeki günlerde yeni metinlerle size yeniden ulaşmamızı ister misiniz?</p>
+    <div class="btn-row" id="hat-sec" style="margin-top:.8rem">
+      <button class="btn" id="btn-hat-evet">Evet, ulaşın</button>
+      <button class="btn ghost" id="btn-hat-hayir">Hayır, teşekkürler</button>
+    </div>
+    <div class="hidden" id="hat-form" style="margin-top:.9rem">
+      <div class="field"><label for="eposta">E-posta adresiniz</label>
+        <input type="email" id="eposta" placeholder="ornek@eposta.com" autocomplete="email" inputmode="email"></div>
+      <label class="check" style="margin-top:.7rem"><input type="checkbox" id="eposta-onay"> <span>E-posta adresimin yalnızca bu çalışmayla ilgili hatırlatma göndermek için kullanılmasını kabul ediyorum.</span></label>
+      <button class="btn" id="btn-hat-kaydet" style="margin-top:.8rem">Kaydet</button>
+    </div>
+    <div class="msg err hidden" id="hat-hata"></div>
+    <div class="msg ok hidden" id="hat-ok">Teşekkürler! E-posta adresiniz kaydedildi.</div>
   </div>
   <div class="box">
     <h3>Okuduğunuz metinlerin kaynakları</h3>
@@ -211,35 +251,34 @@ footer a,.box a{color:var(--accent);}
 <script>
 // ══════════════ AYARLAR ══════════════
 const AYAR = {
-  // Google Apps Script web uygulaması adresi (Dağıt → Web uygulaması → /exec ile biten URL)
+  // Google Apps Script web uygulaması adresi (Deploy → Web app → /exec ile biten URL)
   SHEETS_URL: 'BURAYA_APPS_SCRIPT_URL',
-  METIN_SAYISI: 3,                 // her katılımcıya gösterilecek metin sayısı
+  ZORUNLU_METIN: 2,                // herkesin dolduracağı metin sayısı; sonrası isteğe bağlı "bir metin daha"
   OTURUM_KODLARI: [],              // 18 yaş altı, gözetimli okul oturumları için kodlar (ör. ['USAK-7A-2026'])
   SAYAC_ZAMAN_ASIMI: 5000,         // sayaç okunamazsa rastgele seçime geçilir (ms)
   ANALYTICS_ID: 'G-3PQL5QN3JD',    // onaydan sonra yüklenir; istemezseniz '' yapın
-  SAYFA_SURUMU: 'v1-2026-11-01'
+  SAYFA_SURUMU: 'v2-2026-11-01'
 };
-const SEVIYE_ADI = {ilkokul:'İlkokul', ortaokul:'Ortaokul', lise:'Lise', universite:'Üniversite'};
 const HAVUZ_ESLE = {ilkokul:'ilkokul', ortaokul:'ortaokul', lise:'lise', universite:'universite', lisansustu:'universite'};
 const SINIFLAR = {ilkokul:[1,2,3,4], ortaokul:[5,6,7,8], lise:[9,10,11,12]};
-const BEKLEYEN = 'troi_bekleyen_kayitlar';
+const KUYRUK = 'troi_kayit_kuyrugu';
+const ILLER = ["Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkâri", "Hatay", "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"];
+document.querySelectorAll('.il-secim').forEach(sel => {
+  sel.innerHTML = '<option value="">Seçiniz</option>' + ILLER.slice().sort((a, b) => a.localeCompare(b, 'tr'))
+    .map(i => `<option>${i}</option>`).join('') + '<option value="Yurt dışı">Yurt dışı</option>';
+});
 
 // ══════════════ DURUM ══════════════
-const D = {katilimci_id:'', baslangic:null, havuz:'', secilen:[], sira:0, yanitlar:[], t0:0, payload:null};
+const D = {katilimci_id:'', donen_kod:'', donen:false, havuz:'', kisi:null, yetiskin:true,
+           gorulen:[], bu_ziyaret:[], plan:[], ek_mi:false, ek_sayisi:0, aktif:'', t0:0,
+           ilk_metin_gonderildi:false, kuyruk:[], secim_yontemi:''};
 const $ = id => document.getElementById(id);
-
-function adim(id){
-  document.querySelectorAll('.step').forEach(s => s.classList.toggle('active', s.id === id));
-  window.scrollTo({top:0, behavior:'smooth'});
-}
+function adim(id){ document.querySelectorAll('.step').forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo({top:0, behavior:'smooth'}); }
 function yeniKod(){
   const harf = 'ABCDEFGHJKLMNPRSTUVYZ23456789';
   const r = new Uint32Array(8); (window.crypto || window.msCrypto).getRandomValues(r);
   return Array.from(r, x => harf[x % harf.length]).join('').replace(/^(.{4})/, '$1-');
 }
-function cevapAc(s){ return JSON.parse(decodeURIComponent(escape(atob(s.split('').reverse().join(''))))); }
-function normal(s){ return (s||'').trim().toLocaleLowerCase('tr-TR').replace(/[^a-zçğıöşüâîû]/g,''); }
-function katla(s){ return s.replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u'); }
 function karistir(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function analyticsYukle(){
   if(!AYAR.ANALYTICS_ID) return;
@@ -248,14 +287,38 @@ function analyticsYukle(){
   window.gtag = function(){ dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', AYAR.ANALYTICS_ID);
 }
 function sunucuHazir(){ return /^https:\/\/script\.google(usercontent)?\.com\//.test(AYAR.SHEETS_URL) || /^http:\/\/(localhost|127\.0\.0\.1)/.test(AYAR.SHEETS_URL); }
+async function getJSON(q){
+  const c = new AbortController(); const z = setTimeout(() => c.abort(), AYAR.SAYAC_ZAMAN_ASIMI);
+  try{ const r = await fetch(AYAR.SHEETS_URL + q, {signal:c.signal}); return await r.json(); }
+  finally{ clearTimeout(z); }
+}
 
-// ══════════════ 1. ONAY ══════════════
-$('metin-sayisi-yazi').textContent = AYAR.METIN_SAYISI;
-$('btn-onay').onclick = () => {
-  if(!$('onay').checked){ $('onay-hata').classList.remove('hidden'); return; }
-  $('onay-hata').classList.add('hidden');
-  D.katilimci_id = yeniKod(); D.baslangic = new Date();
-  analyticsYukle(); adim('s-bilgi');
+// ══════════════ 1. ONAY (yeni ya da geri dönen katılımcı) ══════════════
+$('metin-sayisi-yazi').textContent = AYAR.ZORUNLU_METIN;
+const metinYok = typeof METINLER === 'undefined' || typeof HAVUZLAR === 'undefined';
+if(metinYok){
+  $('btn-onay').disabled = true;
+  $('onay-hata').textContent = 'Çalışma şu anda açılamıyor: metin dosyası (metinler.js) bulunamadı.';
+  $('onay-hata').classList.remove('hidden');
+}
+const kodParam = (new URLSearchParams(location.search).get('k') || '').trim().toUpperCase();
+if(/^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(kodParam) && sunucuHazir()){ D.donen_kod = kodParam; $('donen-bilgi').classList.remove('hidden'); }
+
+$('btn-onay').onclick = async () => {
+  if(!$('onay').checked){ $('onay-hata').textContent = 'Devam etmek için onay kutusunu işaretleyin.'; $('onay-hata').classList.remove('hidden'); return; }
+  $('onay-hata').classList.add('hidden'); analyticsYukle();
+  if(D.donen_kod){
+    $('btn-onay').disabled = true; $('btn-onay').textContent = 'Bilgileriniz kontrol ediliyor…';
+    let g = null; try{ g = await getJSON('?islem=gecmis&k=' + encodeURIComponent(D.donen_kod)); }catch(e){}
+    $('btn-onay').disabled = false; $('btn-onay').textContent = 'Devam →';
+    if(g && g.bulundu && HAVUZLAR[g.havuz]){
+      D.katilimci_id = D.donen_kod; D.donen = true; D.havuz = g.havuz; D.yetiskin = !!g.yetiskin; D.gorulen = g.gorulen || [];
+      return planKur();
+    }
+    $('bilgi-not').textContent = 'Bağlantıdaki katılımcı kodu bulunamadı; yeni katılımcı olarak devam ediyorsunuz.';
+    $('bilgi-not').classList.remove('hidden');
+  }
+  D.katilimci_id = yeniKod(); adim('s-bilgi');
 };
 
 // ══════════════ 2. BİLGİLER ══════════════
@@ -269,8 +332,9 @@ function bilgiAlanlari(){
     $('sinif').innerHTML = '<option value="">Seçiniz</option>' + SINIFLAR[e].map(s => `<option value="${s}">${s}. sınıf</option>`).join('');
     if(SINIFLAR[e].includes(+mevcut)) $('sinif').value = mevcut;
   }
+  $('f-okul').classList.toggle('hidden', d !== 'ogrenci');
   $('f-bolum').classList.toggle('hidden', !(e === 'universite' || e === 'lisansustu'));
-  $('egitim-etiket').firstChild.textContent = d === 'ogrenci' ? 'Okuduğunuz okul ' : d === 'mezun' ? 'En son bitirdiğiniz okul ' : 'Eğitim düzeyi ';
+  $('egitim-etiket').firstChild.textContent = d === 'ogrenci' ? 'Okuduğunuz okul düzeyi ' : d === 'mezun' ? 'Bitirdiğiniz en son okul düzeyi ' : 'Eğitim düzeyi ';
   const y = yas(); $('f-oturum').classList.toggle('hidden', !(y < 18));
 }
 ['egitim','durum','dogumYili'].forEach(id => $(id).addEventListener('input', bilgiAlanlari));
@@ -281,7 +345,8 @@ $('btn-bilgi').onclick = async () => {
   const dy = parseInt($('dogumYili').value, 10), simdi = new Date().getFullYear();
   if(!dy || dy < 1920 || dy > simdi - 5) return hata('Lütfen doğum yılınızı dört haneli olarak yazın (ör. 1995).');
   if(!$('cinsiyet').value) return hata('Lütfen cinsiyetinizi seçin.');
-  if(!$('durum').value) return hata('Lütfen öğrenim durumunuzu seçin.');
+  if(!$('memleket').value) return hata('Lütfen memleketinizi seçin.');
+  if(!$('il').value) return hata('Lütfen yaşadığınız ili seçin.');
   if(!$('egitim').value) return hata('Lütfen eğitim düzeyinizi seçin.');
   if(yas() < 18){
     const kod = $('oturum').value.trim().toUpperCase();
@@ -290,41 +355,66 @@ $('btn-bilgi').onclick = async () => {
     if(!gecerli.includes(kod)) return hata('Okul oturum kodu geçerli değil. Lütfen kodu öğretmeninizden kontrol edin.');
   }
   $('bilgi-hata').classList.add('hidden');
-  D.havuz = HAVUZ_ESLE[$('egitim').value];
+  D.havuz = HAVUZ_ESLE[$('egitim').value]; D.yetiskin = yas() >= 18;
+  const d = $('durum').value;
+  D.kisi = {
+    ad_soyad: $('adSoyad').value.trim(), dogum_yili: dy, yas: yas(), cinsiyet: $('cinsiyet').value,
+    memleket: $('memleket').value, yasadigi_il: $('il').value,
+    ogrenci_mi: d === 'ogrenci' ? 'evet' : d === 'mezun' ? 'hayır' : '', egitim: $('egitim').value,
+    sinif: $('f-sinif').classList.contains('hidden') ? '' : $('sinif').value,
+    okul_adi: $('f-okul').classList.contains('hidden') ? '' : $('okulAdi').value.trim(),
+    bolum: $('f-bolum').classList.contains('hidden') ? '' : $('bolum').value.trim(),
+    oturum_kodu: $('f-oturum').classList.contains('hidden') ? '' : $('oturum').value.trim().toUpperCase(),
+    havuz: D.havuz, cihaz: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobil' : 'masaustu',
+    sayfa_surumu: AYAR.SAYFA_SURUMU, metin_surumu: (typeof METIN_SURUMU !== 'undefined' ? METIN_SURUMU : '')
+  };
   $('btn-bilgi').disabled = true; $('btn-bilgi').textContent = 'Metinler hazırlanıyor…';
-  D.secilen = await metinSec(D.havuz);
+  await planKur();
   $('btn-bilgi').disabled = false; $('btn-bilgi').textContent = 'Devam →';
-  adim('s-yonerge');
 };
 
-// ══════════════ METİN SEÇİMİ: en az gösterilen önce ══════════════
+// ══════════════ METİN SEÇİMİ: en az okunan önce (sayaç tablosundan) ══════════════
 async function sayacOku(){
   if(!sunucuHazir()) return null;
-  try{
-    const c = new AbortController(); const z = setTimeout(() => c.abort(), AYAR.SAYAC_ZAMAN_ASIMI);
-    const r = await fetch(AYAR.SHEETS_URL + '?islem=sayac', {signal:c.signal}); clearTimeout(z);
-    const j = await r.json(); return j && j.sayac ? j.sayac : null;
-  }catch(e){ return null; }
+  try{ const j = await getJSON('?islem=sayac'); return j && j.sayac ? j.sayac : null; }catch(e){ return null; }
 }
-async function metinSec(havuz){
-  const sayac = await sayacOku(); D.secim_yontemi = sayac ? 'en_az_gosterilen' : 'rastgele';
-  const aday = HAVUZLAR[havuz].map(id => ({id, k:((sayac && +sayac[id]) || 0) + Math.random()}));
-  aday.sort((a, b) => a.k - b.k);
-  return karistir(aday.slice(0, AYAR.METIN_SAYISI).map(x => x.id));
+/** adaylar içinden kişinin görmediği, en az okunmuş `adet` metni seçer (eşitlikte rastgele) */
+async function enAzOkunan(adaylar, adet){
+  const sayac = await sayacOku(); D.secim_yontemi = sayac ? 'en_az_okunan' : 'rastgele';
+  return adaylar.filter(id => METINLER[id] && !D.gorulen.includes(id))
+    .map(id => ({id, k:((sayac && +sayac[id]) || 0) + Math.random()}))
+    .sort((a, b) => a.k - b.k).slice(0, adet).map(x => x.id);
+}
+/** ek metin havuzu: üniversite → tüm metinler (alt düzeyler dahil); diğerleri → kendi havuzu */
+function ekHavuz(){ return D.havuz === 'universite' ? Object.keys(METINLER) : HAVUZLAR[D.havuz]; }
+async function planKur(){
+  let plan = [];
+  try{ plan = karistir(await enAzOkunan(HAVUZLAR[D.havuz], AYAR.ZORUNLU_METIN)); }catch(e){ plan = []; }
+  if(!plan.length){
+    if(metinYok) return;
+    return son('Bu düzeydeki bütün metinleri daha önce doldurdunuz. Desteğiniz için çok teşekkür ederiz!');
+  }
+  D.plan = plan; D.ek_mi = false; adim('s-yonerge');
 }
 
 // ══════════════ 3. YÖNERGE ══════════════
+$('ornek').addEventListener('input', () => $('ornek').classList.toggle('dolu', !!$('ornek').value.trim()));
 $('ornek').addEventListener('change', () => $('ornek-cevap').classList.remove('hidden'));
-$('btn-basla').onclick = () => { $('ornek-cevap').classList.remove('hidden'); D.sira = 0; D.yanitlar = []; metniGoster(); };
+$('btn-basla').onclick = () => { $('ornek-cevap').classList.remove('hidden'); siradaki(); };
 
 // ══════════════ 4. METİN ══════════════
-function metniGoster(){
-  const id = D.secilen[D.sira], m = METINLER[id], n = D.secilen.length;
-  $('metin-sira').textContent = `Metin ${D.sira + 1} / ${n}`;
-  $('badge').textContent = D.sira + 1;
-  $('metin-baslik').textContent = `Metin ${D.sira + 1}`;
-  $('once-okudum').checked = false; $('metin-uyari').classList.add('hidden');
-  $('btn-sonraki').textContent = D.sira === n - 1 ? 'Tamamladım — Gönder' : 'Sonraki metin →';
+function siradaki(){ if(D.plan.length) metniGoster(D.plan.shift()); else ekSor(); }
+function metniGoster(id){
+  const m = METINLER[id]; D.aktif = id;
+  const zorunluSira = D.bu_ziyaret.length + 1;
+  if(D.ek_mi){
+    $('metin-sira').textContent = `Ek metin ${D.ek_sayisi}`; $('badge').textContent = '+'; $('metin-baslik').textContent = `Ek metin ${D.ek_sayisi}`;
+  }else{
+    $('metin-sira').textContent = `Metin ${zorunluSira} / ${zorunluSira + D.plan.length}`;
+    $('badge').textContent = zorunluSira; $('metin-baslik').textContent = `Metin ${zorunluSira}`;
+  }
+  $('once-okudum').checked = false;
+  $('btn-sonraki').textContent = (D.ek_mi || !D.plan.length) ? 'Tamamladım — Kaydet' : 'Sonraki metin →';
   const g = $('metin-govde'); g.innerHTML = '';
   m.p.forEach(par => {
     const p = document.createElement('p'); p.className = 'para';
@@ -338,110 +428,119 @@ function metniGoster(){
   });
   const girdiler = Array.from(g.querySelectorAll('input'));
   girdiler.forEach((inp, i) => {
-    inp.addEventListener('input', () => { inp.style.width = Math.max(7.5, inp.value.length * 0.62 + 1.5) + 'em'; ilerleme(); });
+    inp.addEventListener('input', () => {
+      inp.style.width = Math.max(7.5, inp.value.length * 0.62 + 1.5) + 'em';
+      inp.classList.toggle('dolu', !!inp.value.trim()); ilerleme();
+    });
     inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); (girdiler[i + 1] || $('btn-sonraki')).focus(); } });
   });
   ilerleme(); D.t0 = performance.now(); adim('s-metin');
 }
 function ilerleme(){
   const g = Array.from(document.querySelectorAll('#metin-govde input'));
-  const dolu = g.filter(i => i.value.trim()).length;
-  $('bos-durum').textContent = `${dolu} / ${g.length} boşluk`;
-  const genel = (D.sira + dolu / g.length) / D.secilen.length;
-  $('bar').style.width = Math.round(genel * 100) + '%';
+  const bos = g.filter(i => !i.value.trim());
+  $('bos-durum').textContent = `${g.length - bos.length} / ${g.length} boşluk dolu`;
+  const toplam = D.ek_mi ? 1 : D.bu_ziyaret.length + 1 + D.plan.length;
+  const once = D.ek_mi ? 0 : D.bu_ziyaret.length;
+  $('bar').style.width = Math.round((once + (g.length - bos.length) / g.length) / toplam * 100) + '%';
+  const l = $('bos-liste');
+  if(!bos.length){ l.innerHTML = '<span style="color:var(--green)">✓ Bütün boşlukları doldurdunuz.</span>'; return; }
+  l.innerHTML = 'Boş kalan boşluklar: ' + bos.map(i => `<a data-k="${i.dataset.k}">${i.dataset.k}</a>`).join(' ') +
+    ' <span>(boş bırakıp devam edebilirsiniz)</span>';
+  l.querySelectorAll('a').forEach(a => a.onclick = () => { const i = document.querySelector(`#metin-govde input[data-k="${a.dataset.k}"]`); i.scrollIntoView({block:'center', behavior:'smooth'}); i.focus({preventScroll:true}); });
 }
 $('btn-sonraki').onclick = () => {
   const g = Array.from(document.querySelectorAll('#metin-govde input')).sort((a, b) => a.dataset.k - b.dataset.k);
-  const bos = g.filter(i => !i.value.trim()).length;
-  if(bos && $('btn-sonraki').dataset.uyarildi !== String(D.sira)){
-    $('metin-uyari').textContent = `${bos} boşluk boş kaldı. Tahmin etmeyi deneyebilirsiniz; yine de devam etmek için düğmeye tekrar basın.`;
-    $('metin-uyari').classList.remove('hidden'); $('btn-sonraki').dataset.uyarildi = String(D.sira); return;
-  }
-  const id = D.secilen[D.sira], m = METINLER[id], dogru = cevapAc(m.c);
-  const cevaplar = g.map(i => i.value.trim());
-  D.yanitlar.push({
-    sira: D.sira + 1, metin_id: id, ic_kod: m.ic, metin_seviyesi: m.seviye,
-    sure_sn: Math.round((performance.now() - D.t0) / 100) / 10,
-    once_okudu: $('once-okudum').checked ? 1 : 0,
-    cevaplar, dogru_cevaplar: dogru,
-    tam: cevaplar.map((c, k) => +(normal(c) !== '' && normal(c) === normal(dogru[k]))),
-    katlanmis: cevaplar.map((c, k) => +(normal(c) !== '' && katla(normal(c)) === katla(normal(dogru[k]))))
-  });
-  D.sira++;
-  if(D.sira < D.secilen.length) metniGoster(); else bitir();
+  const kayit = {metin_id: D.aktif, cevaplar: g.map(i => i.value.trim()),
+                 sure_sn: Math.round((performance.now() - D.t0) / 100) / 10, once_okudu: $('once-okudum').checked ? 1 : 0};
+  D.bu_ziyaret.push(kayit); D.gorulen.push(D.aktif); D.aktif = '';
+  kuyrugaEkle({islem:'metin', katilimci_id: D.katilimci_id, kisi: D.kisi, yeni_ziyaret: !D.ilk_metin_gonderildi, metin: kayit});
+  D.ilk_metin_gonderildi = true;
+  if(D.ek_mi) ekSor(); else siradaki();
 };
 
-// ══════════════ 5. GÖNDERİM ══════════════
-function payloadOlustur(){
-  const bitis = new Date();
-  return {
-    sayfa_surumu: AYAR.SAYFA_SURUMU, metin_surumu: (typeof METIN_SURUMU !== 'undefined' ? METIN_SURUMU : ''),
-    katilimci_id: D.katilimci_id, baslangic: D.baslangic.toISOString(), bitis: bitis.toISOString(),
-    toplam_sure_sn: Math.round((bitis - D.baslangic) / 1000),
-    dogum_yili: +$('dogumYili').value, yas: yas(), cinsiyet: $('cinsiyet').value,
-    ogrenim_durumu: $('durum').value, egitim: $('egitim').value, havuz: D.havuz,
-    sinif: $('f-sinif').classList.contains('hidden') ? '' : $('sinif').value,
-    bolum: $('f-bolum').classList.contains('hidden') ? '' : $('bolum').value.trim(),
-    il: $('il').value.trim(), oturum_kodu: $('f-oturum').classList.contains('hidden') ? '' : $('oturum').value.trim().toUpperCase(),
-    secim_yontemi: D.secim_yontemi, cihaz: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobil' : 'masaustu',
-    ekran: `${window.screen.width}x${window.screen.height}`,
-    metinler: D.yanitlar.map(({dogru_cevaplar, ...y}) => y)
-  };
+// ══════════════ 5. EK METİN ══════════════
+function ekSor(){
+  $('ek-metin').textContent = `Şimdiye kadar ${D.bu_ziyaret.length} metin doldurdunuz; yanıtlarınız kaydedildi.`;
+  $('ek-durum').textContent = ''; adim('s-ek');
 }
+$('btn-ek-evet').onclick = async () => {
+  $('btn-ek-evet').disabled = true; $('ek-durum').textContent = 'Metin hazırlanıyor…';
+  let sec = []; try{ sec = await enAzOkunan(ekHavuz(), 1); }catch(e){}
+  $('btn-ek-evet').disabled = false; $('ek-durum').textContent = '';
+  if(!sec.length) return son('Size gösterebileceğimiz bütün metinleri doldurdunuz. Desteğiniz için çok teşekkür ederiz!');
+  D.ek_mi = true; D.ek_sayisi++; metniGoster(sec[0]);
+};
+$('btn-ek-hayir').onclick = () => son();
+
+// ══════════════ KAYIT KUYRUĞU: her metin bitince gönderilir ══════════════
+function kuyrukYaz(){ try{ localStorage.setItem(KUYRUK, JSON.stringify(D.kuyruk)); }catch(e){} }
+function kuyrukOku(){ try{ return JSON.parse(localStorage.getItem(KUYRUK) || '[]'); }catch(e){ return []; } }
 async function postEt(payload){
-  const govde = JSON.stringify(payload);
   if(!sunucuHazir()) throw new Error('SHEETS_URL ayarlanmamış');
+  const govde = JSON.stringify(payload);
   try{
     const r = await fetch(AYAR.SHEETS_URL, {method:'POST', body:govde, headers:{'Content-Type':'text/plain;charset=utf-8'}});
-    const j = await r.json(); if(j && j.ok) return true;
+    const j = await r.json(); if(j && j.ok) return j;
     throw new Error((j && j.hata) || 'kayıt hatası');
   }catch(e){
-    // Yanıt okunamadıysa (CORS vb.) bir kez de no-cors ile gönder; sunucu aynı katılımcı kodunu iki kez yazmaz.
+    if(e.message && /geçersiz|eksik|kurulum/.test(e.message)) throw e;
+    // Yanıt okunamadıysa (CORS vb.) no-cors ile bir kez daha gönder; sunucu aynı metni iki kez yazmaz.
     await fetch(AYAR.SHEETS_URL, {method:'POST', mode:'no-cors', body:govde, headers:{'Content-Type':'text/plain;charset=utf-8'}});
-    return true;
+    return {ok:true};
   }
 }
-function bekleyenler(){ try{ return JSON.parse(localStorage.getItem(BEKLEYEN) || '[]'); }catch(e){ return []; } }
-function bekleyenYaz(l){ try{ localStorage.setItem(BEKLEYEN, JSON.stringify(l)); }catch(e){} }
-async function bitir(){
-  window.removeEventListener('beforeunload', ayrilmaUyarisi);
-  D.payload = payloadOlustur(); adim('s-gonder'); await gonder();
-}
-async function gonder(){
-  $('gonder-spin').classList.remove('hidden'); $('gonder-hata').classList.add('hidden'); $('btn-tekrar').classList.add('hidden');
-  try{
-    await postEt(D.payload);
-    bekleyenYaz(bekleyenler().filter(p => p.katilimci_id !== D.payload.katilimci_id));
-    sonuc();
-  }catch(e){
-    const l = bekleyenler(); if(!l.some(p => p.katilimci_id === D.payload.katilimci_id)){ l.push(D.payload); bekleyenYaz(l); }
-    $('gonder-spin').classList.add('hidden'); $('gonder-hata').classList.remove('hidden'); $('btn-tekrar').classList.remove('hidden');
-  }
-}
-$('btn-tekrar').onclick = gonder;
-function sonuc(){
-  const top = D.yanitlar.reduce((s, y) => s + y.katlanmis.reduce((a, b) => a + b, 0), 0);
-  const n = D.yanitlar.reduce((s, y) => s + y.cevaplar.length, 0);
-  $('puan-yazi').textContent = `${n} boşluğun ${top} tanesini metindeki sözcükle aynı doldurdunuz.`;
-  $('kod').textContent = D.katilimci_id;
-  $('kaynaklar').innerHTML = D.yanitlar.map(y => {
-    const m = METINLER[y.metin_id];
-    const link = m.url ? ` <a href="${m.url}" target="_blank" rel="noopener">Kaynağa git</a>` : '';
-    return `<li><strong>Metin ${y.sira}:</strong> ${m.kaynak.replace(/\s*\[[^\]]*\]\s*$/, '').replace(/</g, '&lt;')} (Metnin bir bölümüdür.)${link}</li>`;
-  }).join('');
-  adim('s-son');
+let gonderim = null;
+function kuyrugaEkle(p){ D.kuyruk.push(p); kuyrukYaz(); kuyrukGonder(); }
+function kuyrukGonder(){
+  if(gonderim) return gonderim;
+  gonderim = (async () => {
+    while(D.kuyruk.length){
+      try{ await postEt(D.kuyruk[0]); D.kuyruk.shift(); kuyrukYaz(); $('kayit-durum').textContent = '✓ Önceki metniniz kaydedildi.'; }
+      catch(e){ $('kayit-durum').textContent = 'Bağlantı sorunu: yanıtlarınız saklanıyor, sonra yeniden gönderilecek.'; break; }
+    }
+    gonderim = null; return D.kuyruk.length === 0;
+  })();
+  return gonderim;
 }
 
+// ══════════════ 6. SON ══════════════
+async function son(mesaj){
+  $('son-metin').textContent = mesaj || 'Katılımınız için çok teşekkür ederiz.';
+  $('kod').textContent = D.katilimci_id;
+  $('kaynaklar').innerHTML = D.bu_ziyaret.length ? D.bu_ziyaret.map((y, i) => {
+    const m = METINLER[y.metin_id];
+    const link = m.url ? ` <a href="${m.url}" target="_blank" rel="noopener">Kaynağa git</a>` : '';
+    return `<li><strong>Metin ${i + 1}:</strong> ${m.kaynak.replace(/\s*\[[^\]]*\]\s*$/, '').replace(/</g, '&lt;')} (Metnin bir bölümüdür.)${link}</li>`;
+  }).join('') : '<li>—</li>';
+  $('hatirlatma').classList.toggle('hidden', !(D.yetiskin && !D.donen && sunucuHazir()));
+  adim('s-son');
+  const tamam = await kuyrukGonder();
+  $('son-kayit-hata').classList.toggle('hidden', tamam);
+}
+$('btn-son-tekrar').onclick = async e => { e.preventDefault(); const t = await kuyrukGonder(); $('son-kayit-hata').classList.toggle('hidden', t); };
+$('btn-hat-evet').onclick = () => { $('hat-sec').classList.add('hidden'); $('hat-form').classList.remove('hidden'); $('eposta').focus(); };
+$('btn-hat-hayir').onclick = () => { $('hatirlatma').classList.add('hidden'); };
+$('btn-hat-kaydet').onclick = async () => {
+  const hata = m => { $('hat-hata').textContent = m; $('hat-hata').classList.remove('hidden'); };
+  const ep = $('eposta').value.trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ep)) return hata('Lütfen geçerli bir e-posta adresi yazın.');
+  if(!$('eposta-onay').checked) return hata('Devam etmek için onay kutusunu işaretleyin.');
+  $('hat-hata').classList.add('hidden'); $('btn-hat-kaydet').disabled = true; $('btn-hat-kaydet').textContent = 'Kaydediliyor…';
+  try{
+    await postEt({islem:'iletisim', katilimci_id: D.katilimci_id, ad_soyad: (D.kisi && D.kisi.ad_soyad) || '', e_posta: ep,
+                  egitim: (D.kisi && D.kisi.egitim) || D.havuz, baglanti: location.origin + location.pathname + '?k=' + D.katilimci_id});
+    $('hat-form').classList.add('hidden'); $('hat-ok').classList.remove('hidden');
+  }catch(e){ hata('Kaydedilemedi. Lütfen yeniden deneyin.'); $('btn-hat-kaydet').disabled = false; $('btn-hat-kaydet').textContent = 'Kaydet'; }
+};
+
 // ══════════════ Yardımcılar ══════════════
-function ayrilmaUyarisi(e){ if(D.yanitlar.length || document.querySelector('#s-metin.active')){ e.preventDefault(); e.returnValue = ''; } }
-window.addEventListener('beforeunload', ayrilmaUyarisi);
+window.addEventListener('beforeunload', e => {
+  const yaziyor = document.querySelector('#s-metin.active') && Array.from(document.querySelectorAll('#metin-govde input')).some(i => i.value.trim());
+  if(yaziyor || D.kuyruk.length){ e.preventDefault(); e.returnValue = ''; }
+});
 // Önceki ziyarette gönderilemeyen kayıtlar varsa sessizce yeniden dene
-(async () => {
-  const l = bekleyenler(); if(!l.length || !sunucuHazir()) return;
-  const kalan = [];
-  for(const p of l){ try{ await postEt(p); }catch(e){ kalan.push(p); } }
-  bekleyenYaz(kalan);
-})();
+D.kuyruk = kuyrukOku(); if(D.kuyruk.length) kuyrukGonder();
 </script>
 </body>
 </html>
