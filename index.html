@@ -343,14 +343,14 @@ footer a:hover{text-decoration:underline;}
       </div>
     </div>
 
-    <!-- Demirsoy -->
+    <!-- TROi -->
     <div class="formula-card" style="border-color:#5DCAA5;">
       <div class="formula-head" style="background:#E1F5EE;" onclick="toggleDetail('det-t','ch-t')">
         <div class="formula-head-left">
           <div class="formula-badge" style="background:#E1F5EE;border:1.5px solid #0F6E56;color:#0F6E56;">T</div>
           <div>
             <div class="formula-name">TROi <span style="font-size:.65rem;background:#0F6E56;color:#fff;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:400;">deneysel</span></div>
-            <div class="formula-year">TROi (geliştirme aşamasında)</div>
+            <div class="formula-year">TROi Okunabilirlik Metodu (deneysel, geçici katsayılar)</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
@@ -362,17 +362,14 @@ footer a:hover{text-decoration:underline;}
         </div>
       </div>
       <div class="formula-detail" id="det-t">
-        <div class="formula-eq">TROi = 100 – 6(OHU) – 1,8(OCU) – 0,25(NBR)</div>
-        <div class="formula-vars">OHU: karakter tabanlı hece/sözcük &nbsp;|&nbsp; OCU: sözcük/cümle &nbsp;|&nbsp; NBR: nadir sözcük yüzdesi (%)</div>
-        <table class="levels-table">
-          <tr><td>75–100</td><td>Çok Kolay</td></tr>
-          <tr><td>55–74</td><td>Kolay</td></tr>
-          <tr><td>35–54</td><td>Orta</td></tr>
-          <tr><td>15–34</td><td>Güç</td></tr>
-          <tr><td>0–14</td><td>Çok Güç</td></tr>
-        </table>
+        <div class="formula-eq">TROi = 100 / (1 + e<sup>δ</sup>)<br>δ = 0,51·z(OHU) + 0,39·z(ln OCU) + 0,62·z(NBR) + 0,25·z(OHU)·z(NBR)</div>
+        <div class="formula-vars">OHU: hece/sözcük (sesli harf sayımı) &nbsp;|&nbsp; OCU: sözcük/cümle (kısaltma ve sıra sayısı düzeltmeli) &nbsp;|&nbsp; NBR: sözlükte bulunmayan sözcük yüzdesi &nbsp;|&nbsp; z: 120 metinlik çalışma havuzuna göre standart değer. Ortalama metin 50 puan alır; puan yükseldikçe metin kolaylaşır.</div>
+        <div style="font-size:.74rem;color:#0F6E56;background:#E1F5EE;border:1px solid #9FE1CB;border-radius:6px;padding:6px 9px;margin:4px 0 6px;">
+          <strong>Deneysel:</strong> katsayılar geçicidir; okuma çalışması verileriyle yeniden hesaplanacaktır.</div>
+        <div class="formula-vars" id="troi-degerler" style="margin-bottom:2px;"></div>
+        <div class="formula-vars" id="troi-yuzde"></div>
         <button class="about-toggle" onclick="toggleAbout('ab-t')">Daha fazla bilgi ▾</button>
-        <div class="about-box" id="ab-t">TROi, sözcük bilinirliği boyutunu ekleyen ilk Türkçe formüldür. Katsayılar <a href="pilot.html" style="color:#0F6E56;">pilot çalışma</a> verileriyle kalibre edilecektir.</div>
+        <div class="about-box" id="ab-t">TROi, hece uzunluğu ve cümle uzunluğuna sözcük bilinirliği (NBR) boyutunu da ekleyen Türkçe okunabilirlik metodudur. Şu anki katsayılar geçicidir: yöntemin sınandığı simülasyonlardaki değerlerdir. Gerçek katsayılar, <a href="okuma_calismasi.html" style="color:#0F6E56;">okuma çalışması</a> verileri toplandıkça hesaplanacaktır.</div>
       </div>
     </div>
 
@@ -409,6 +406,45 @@ function cumleBol(t){return t.split(/(?<=[.!?…])\s+/).map(s=>s.trim()).filter(
 function paragrafSay(t){
   return t.split(/\n+/).map(s=>s.trim()).filter(s=>s.length>0).length;
 }
+
+// ── TROi (DENEYSEL): ölçümler v2 + geçici katsayılar ──
+// Puan = 100 / (1 + e^δ),  δ = 0,51·z(OHU) + 0,39·z(ln OCU) + 0,62·z(NBR) + 0,25·z(OHU)·z(NBR)
+// z: 120 metinlik çalışma havuzunun ortalama ve standart sapmasına göre. Ortalama metin = 50.
+// Katsayılar GEÇİCİDİR (simülasyon varsayımı); okuma çalışması verileriyle yeniden hesaplanacak.
+const TROI = {
+  b: {ohu: 0.51, lnocu: 0.39, nbr: 0.62, etk: 0.25},
+  ort: [2.802, 2.5303, 5.588], ss: [0.2534, 0.3938, 3.5363],              // [OHU, ln(OCU), NBR] — havuz ortalaması ve standart sapması
+  havuz: [1.7, 4.0, 8.7, 10.1, 10.5, 14.9, 15.0, 18.0, 20.0, 20.7, 22.8, 22.8, 27.0, 27.3, 27.4, 28.2, 30.4, 30.4, 30.6, 31.6, 32.0, 32.3, 32.4, 32.9, 33.7, 34.9, 36.5, 38.2, 39.2, 39.8, 40.4, 40.6, 42.4, 42.9, 43.2, 43.5, 44.0, 44.1, 45.1, 45.3, 46.7, 46.8, 47.3, 49.9, 50.0, 50.0, 50.4, 50.5, 50.7, 50.8, 50.9, 51.0, 51.1, 52.0, 52.1, 53.0, 53.0, 53.4, 53.6, 54.2, 54.6, 54.7, 55.4, 55.7, 57.5, 58.0, 58.7, 58.8, 58.9, 60.1, 60.2, 60.8, 60.9, 62.0, 62.4, 62.5, 63.3, 64.0, 64.3, 64.6, 64.7, 64.9, 65.2, 65.3, 65.5, 65.7, 66.1, 67.3, 67.7, 67.9, 68.4, 68.6, 68.7, 68.9, 69.0, 69.4, 69.4, 69.6, 70.0, 70.5, 70.6, 70.8, 71.1, 71.4, 71.7, 72.0, 74.1, 74.3, 74.3, 74.7, 75.0, 75.2, 75.5, 75.8, 75.9, 75.9, 79.0, 79.0, 79.0, 82.7]                       // havuzdaki 120 metnin TROi puanları (sıralı)
+};
+const TROI_TOK = /[a-zA-ZğüşıöçĞÜŞİÖÇâîûÂÎÛ0-9'’`]+/g;
+const TROI_KISALTMA = new RegExp('^(?:\\d+|[IVXLCDM]+|vb|vs|vd|Dr|Prof|Doç|Yrd|bkz|md|No|Av|St|Sn|Hz|Mah|Cad|Sok|örn|yy|bk)\\.$');
+function troiSozcukler(t){ return (t.match(TROI_TOK) || []).map(w => w.replace(/^['’`]+|['’`]+$/g, '')).filter(Boolean); }
+function troiKucukMu(c){ return !!c && c !== c.toLocaleUpperCase('tr-TR') && c === c.toLocaleLowerCase('tr-TR'); }
+function troiCumleler(t){
+  const out = []; let bas = 0; const re = /[.!?…]+["”’»)]*\s+/g; let m;
+  while((m = re.exec(t))){
+    const onceki = (t.slice(0, m.index + 1).match(/(\S+)\s*$/) || ['', ''])[1];
+    const sonra = t.charAt(m.index + m[0].length);
+    if(TROI_KISALTMA.test(onceki) || troiKucukMu(sonra)) continue;   // 18. yüzyıl, Dr., "… dedi" gibi durumlarda bölme
+    out.push(t.slice(bas, m.index + m[0].length).trim()); bas = m.index + m[0].length;
+  }
+  out.push(t.slice(bas).trim());
+  return out.filter(s => /[a-zA-ZğüşıöçĞÜŞİÖÇâîûÂÎÛ0-9'’`]/.test(s));
+}
+function troiHesapla(txt){
+  const T = troiSozcukler(txt), S = troiCumleler(txt);
+  const A = T.filter(w => !/\d/.test(w) && !/^[IVXLCDM]{2,}$/.test(w) && !(w.length === 1 && normSoz(w) !== 'o'));
+  if(!A.length) return null;
+  const hece = A.reduce((s, w) => s + Math.max(1, (w.match(SESLI) || []).length), 0);
+  const bilinmeyen = A.filter(w => { const k = normSoz(w.split(/['’`]/)[0]); return !(TEMEL.has(k) || k === 'o'); }).length;
+  const ohu = hece / A.length, ocu = T.length / Math.max(S.length, 1), nbr = 100 * bilinmeyen / A.length;
+  const z = [ohu, Math.log(ocu), nbr].map((v, i) => (v - TROI.ort[i]) / TROI.ss[i]);
+  const d = TROI.b.ohu * z[0] + TROI.b.lnocu * z[1] + TROI.b.nbr * z[2] + TROI.b.etk * z[0] * z[2];
+  const puan = 100 / (1 + Math.exp(d));
+  const kolay = TROI.havuz.filter(p => p < puan).length;
+  return {puan, ohu, ocu, nbr, yuzde: Math.round(100 * kolay / TROI.havuz.length)};
+}
+
 
 // ── GLOBAL SONUÇLAR ──
 let sonuclar = null;
@@ -495,10 +531,13 @@ function hesapla(txt){
   document.getElementById('sc-s').textContent = pS.toFixed(5);
   document.getElementById('lv-s').textContent = lvSonmez(pS);
 
-  // 5. TROİ
-  const pT = 100 - 6*x1a - 1.8*x2 - 0.25*NBR;
-  document.getElementById('sc-t').textContent = Math.round(pT);
-  document.getElementById('lv-t').textContent = lvTroi(pT);
+  // 5. TROİ (deneysel)
+  const tr = troiHesapla(txt);
+  const pT = tr ? tr.puan : NaN;
+  document.getElementById('sc-t').textContent = tr ? Math.round(pT) : '—';
+  document.getElementById('lv-t').textContent = lvTroi(tr);
+  document.getElementById('troi-degerler').textContent = tr ? `Bu metin: OHU ${tr.ohu.toFixed(2)} · OCU ${tr.ocu.toFixed(1)} (ln ${Math.log(tr.ocu).toFixed(2)}) · NBR %${tr.nbr.toFixed(1)}` : '';
+  document.getElementById('troi-yuzde').textContent = tr ? `Çalışma havuzundaki ${TROI.havuz.length} metinden ${TROI.havuz.filter(p => p < pT).length} tanesi bu metinden daha zor.` : '';
 
   renderFreq(sozler);
 
@@ -507,7 +546,7 @@ function hesapla(txt){
     pC:Math.round(pC), lvC:lvCetinkaya(pC),
     pB:pB.toFixed(2),  lvB:lvBezirci(pB),
     pS:pS.toFixed(5),  lvS:lvSonmez(pS),
-    pT:Math.round(pT), lvT:lvTroi(pT),
+    pT:tr?Math.round(pT):'', lvT:lvTroi(tr),
     sozSay, cumSay, parSay,
     x1:x1.toFixed(2), x1a:x1a.toFixed(2), x2:x2.toFixed(2),
     zorSay, NBR:NBR.toFixed(1)
@@ -579,7 +618,7 @@ function lvAtesman(p){if(p>=90)return'Çok Kolay';if(p>=70)return'Kolay';if(p>=5
 function lvCetinkaya(p){if(p>=65)return'Bağımsız Okuma';if(p>=50)return'Kolay';if(p>=35)return'Eğitsel Okuma';return'Engelli Okuma';}
 function lvBezirci(p){if(p<=0)return'—';if(p<=8)return'İlköğretim';if(p<=12)return'Ortaöğretim';if(p<=16)return'Lisans';return'Akademik';}
 function lvSonmez(p){if(p>=0.26)return'Anlamsız/Bulanık';if(p>=0.09)return'Zor anlaşılır';if(p>=0.001)return'Anlaşılabilir';return'Açık/Tam iletişim';}
-function lvTroi(p){if(p>=75)return'Çok Kolay';if(p>=55)return'Kolay';if(p>=35)return'Orta';if(p>=15)return'Güç';return'Çok Güç';}
+function lvTroi(tr){return tr?'Deneysel':'—';}
 
 // ── FREKANS ──
 function renderFreq(sozler){
@@ -596,7 +635,7 @@ function renderFreq(sozler){
 function htmlSil(){const e=document.getElementById('txt');e.value=e.value.replace(/<[^>]*>/g,'');}
 function buyukHarf(){const e=document.getElementById('txt');e.value=e.value.toLocaleUpperCase('tr-TR');}
 function kucukHarf(){const e=document.getElementById('txt');e.value=e.value.toLocaleLowerCase('tr-TR');}
-function temizle(){document.getElementById('txt').value='';document.getElementById('yabanciSay').value='';['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-nbr','s-h3','s-h4','s-h5','s-h6'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('s-longest').style.display='none';['sc-a','sc-c','sc-b','sc-s','sc-t','lv-a','lv-c','lv-b','lv-s','lv-t'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('freq-area').innerHTML='<div class="empty">Metni girin ve "Hesapla" butonuna basın.</div>';document.getElementById('send-status').style.display='none';}
+function temizle(){document.getElementById('txt').value='';document.getElementById('yabanciSay').value='';['s-kar','s-kar2','s-soz','s-cum','s-par','s-x1','s-x1a','s-x2','s-zor','s-nbr','s-h3','s-h4','s-h5','s-h6'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('s-longest').style.display='none';['sc-a','sc-c','sc-b','sc-s','sc-t','lv-a','lv-c','lv-b','lv-s','lv-t'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('freq-area').innerHTML='<div class="empty">Metni girin ve "Hesapla" butonuna basın.</div>';document.getElementById('send-status').style.display='none';document.getElementById('troi-degerler').textContent='';document.getElementById('troi-yuzde').textContent='';}
 
 // ── UI ──
 function toggleDetail(id,chId){document.getElementById(id).classList.toggle('open');document.getElementById(chId).classList.toggle('open');}
