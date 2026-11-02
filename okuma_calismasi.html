@@ -337,7 +337,6 @@ function bilgiAlanlari(){
   $('okul-etiket').textContent = d === 'ogrenci' ? 'Okulunuzun adı' : d === 'mezun' ? 'En son bitirdiğiniz okulun adı' : 'Okul adı';
   $('f-bolum').classList.toggle('hidden', !['lise', 'universite', 'lisansustu'].includes(e));
   $('egitim-etiket').firstChild.textContent = d === 'ogrenci' ? 'Okuduğunuz okul düzeyi ' : d === 'mezun' ? 'Bitirdiğiniz en son okul düzeyi ' : 'Eğitim düzeyi ';
-  const y = yas(); $('f-oturum').classList.toggle('hidden', !(y < 18));
 }
 ['egitim','durum','dogumYili'].forEach(id => $(id).addEventListener('input', bilgiAlanlari));
 ['egitim','durum'].forEach(id => $(id).addEventListener('change', bilgiAlanlari));
@@ -350,12 +349,6 @@ $('btn-bilgi').onclick = async () => {
   if(!$('memleket').value) return hata('Lütfen memleketinizi seçin.');
   if(!$('il').value) return hata('Lütfen yaşadığınız ili seçin.');
   if(!$('egitim').value) return hata('Lütfen eğitim düzeyinizi seçin.');
-  if(yas() < 18){
-    const kod = $('oturum').value.trim().toUpperCase();
-    const gecerli = AYAR.OTURUM_KODLARI.map(k => k.toUpperCase());
-    if(!gecerli.length) return hata('Çevrim içi katılım 18 yaş ve üzeri içindir. 18 yaşından küçük öğrenciler bu çalışmaya yalnızca okulda, öğretmen gözetiminde düzenlenen oturumlarda katılabilir.');
-    if(!gecerli.includes(kod)) return hata('Okul oturum kodu geçerli değil. Lütfen kodu öğretmeninizden kontrol edin.');
-  }
   $('bilgi-hata').classList.add('hidden');
   D.havuz = HAVUZ_ESLE[$('egitim').value]; D.yetiskin = yas() >= 18;
   const d = $('durum').value;
